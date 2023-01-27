@@ -132,7 +132,7 @@ CFL.add_velocities(('u', 'v'))
 
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
-flow.add_property("sqrt(u*u + v*v) / R", name='Re_rms')
+flow.add_property("sqrt(u*u + v*v)", name='U_rms')
 
 # Main loop
 try:
@@ -146,7 +146,7 @@ try:
         solver.step(dt)
         if (solver.iteration-1) % 2 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
-            logger.info('Max Re = %f' %flow.max('Re_rms'))
+            logger.info('U_rms = %f' %flow.integ('U_rms'))
 except:
     logger.error('Exception raised, triggering end of main loop.')
     raise
