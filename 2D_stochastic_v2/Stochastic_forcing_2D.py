@@ -37,14 +37,14 @@ def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise = gaussian_filter(noise, sigma=5)
+    noise = gaussian_filter(noise, sigma=1)
     return noise/np.sqrt(deltaT)
 
 def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise = gaussian_filter(noise, sigma=5)
+    noise = gaussian_filter(noise, sigma=1)
     return noise/np.sqrt(deltaT)
 
 
