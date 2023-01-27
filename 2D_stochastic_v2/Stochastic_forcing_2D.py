@@ -47,7 +47,7 @@ def forcingy(deltaT):
 
 # Parameters
 Lx, Lz = (2*np.pi, 2*np.pi)
-Re = 10
+Re = 500
 
 # Create bases and domain
 x_basis = de.Fourier('x', 128, interval=(0, Lx), dealias=3/2)
@@ -93,8 +93,8 @@ rand = np.random.RandomState(seed=42)
 noise = rand.standard_normal(gshape)[slices]
 
 # Linear background + perturbations damped at walls
-zb, zt = z_basis.interval
-pert =  1e-3 * noise * (zt - z) * (z - zb)
+#zb, zt = z_basis.interval
+#pert =  1e-3 * noise * (zt - z) * (z - zb)
 
 # Integration parameters
 solver.stop_sim_time = 1000
@@ -132,7 +132,7 @@ CFL.add_velocities(('u', 'v'))
 
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
-flow.add_property("sqrt(u*u + v*v)", name='U_rms')
+flow.add_property("integ(sqrt(u*u + v*v))", name='U_rms')
 
 # Main loop
 try:
@@ -146,7 +146,7 @@ try:
         solver.step(dt)
         if (solver.iteration-1) % 2 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
-            logger.info('U_rms = %f' %flow.integ('U_rms'))
+            logger.info('U_rms = %f' %flow.max('U_rms'))
 except:
     logger.error('Exception raised, triggering end of main loop.')
     raise
