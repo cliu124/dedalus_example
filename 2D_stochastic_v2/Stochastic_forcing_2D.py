@@ -80,8 +80,8 @@ logger.info('Solver built')
 logger.info('dt')
 
 #forcing_func.args = [solver.dt]
-forcing_func.original_args = [0.0001]
-
+forcing_func_x.original_args = [0.0001]
+forcing_func_y.original_args = [0.0001]
 # Initial conditions
 x = domain.grid(0)
 z = domain.grid(1)
