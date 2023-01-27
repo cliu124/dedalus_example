@@ -18,6 +18,7 @@ To run, merge, and plot using 4 processes, for instance, you could use:
 """
 
 import numpy as np
+from scipy.ndimage import gaussian_filter
 from mpi4py import MPI
 import time
 
@@ -36,18 +37,20 @@ def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
+    noise = gaussian_filter(noise, sigma=5)
     return noise/np.sqrt(deltaT)
 
 def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
+    noise = gaussian_filter(noise, sigma=5)
     return noise/np.sqrt(deltaT)
 
 
 # Parameters
 Lx, Lz = (2*np.pi, 2*np.pi)
-Re = 500
+Re = 100
 
 # Create bases and domain
 x_basis = de.Fourier('x', 128, interval=(0, Lx), dealias=3/2)
@@ -97,7 +100,7 @@ noise = rand.standard_normal(gshape)[slices]
 #pert =  1e-3 * noise * (zt - z) * (z - zb)
 
 # Integration parameters
-solver.stop_sim_time = 1000
+solver.stop_sim_time = 200
 solver.stop_wall_time = 10 * 60.
 solver.stop_iteration = np.inf
 
