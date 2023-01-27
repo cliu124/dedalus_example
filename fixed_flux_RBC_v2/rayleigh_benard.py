@@ -100,7 +100,7 @@ if not pathlib.Path('restart.h5').exists():
 
     # Timestepping and output
     dt = 0.125
-    stop_sim_time = 25
+    stop_sim_time = 300
     fh_mode = 'overwrite'
 
 else:
