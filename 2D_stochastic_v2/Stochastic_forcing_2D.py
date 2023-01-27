@@ -71,7 +71,7 @@ problem.parameters['forcing_func_y'] = forcing_func_y
 
 problem.add_equation("dx(u) + dz(v) = 0", condition="(nx!=0) or (nz!=0)")
 problem.add_equation("dt(u) + dx(p) - R**(-1)*(dx(dx(u)) + dz(dz(u)))  = - u*dx(u) - v*dz(u) + forcing_func_x")
-problem.add_equation("dt(v) + dx(p) - R**(-1)*(dx(dx(v)) + dz(dz(v)))  = - u*dx(v) - v*dz(v) + forcing_func_y")
+problem.add_equation("dt(v) + dz(p) - R**(-1)*(dx(dx(v)) + dz(dz(v)))  = - u*dx(v) - v*dz(v) + forcing_func_y")
 problem.add_equation("p=0",condition = "(nx==0) and (nz==0)")
 
 # Build solver
