@@ -75,7 +75,7 @@ problem.add_equation("dt(v) + dz(p) - R**(-1)*(dx(dx(v)) + dz(dz(v)))  = - u*dx(
 problem.add_equation("p=0",condition = "(nx==0) and (nz==0)")
 
 # Build solver
-solver = problem.build_solver(de.timesteppers.RK111)
+solver = problem.build_solver(de.timesteppers.RK222)
 logger.info('Solver built')
 logger.info('dt')
 
