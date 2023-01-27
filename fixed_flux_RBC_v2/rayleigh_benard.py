@@ -56,6 +56,8 @@ problem = de.IVP(domain, variables=['p','b','u','w','bz','uz','wz'])
 problem.parameters['P'] = (Rayleigh * Prandtl)**(-1/2)
 problem.parameters['R'] = (Rayleigh / Prandtl)**(-1/2)
 problem.parameters['F'] = F = 1
+problem.parameters['Lx'] = Lx
+problem.parameters['Lz'] = Lz
 problem.add_equation("dx(u) + wz = 0")
 problem.add_equation("dt(b) - P*(dx(dx(b)) + dz(bz)) - F*w       = (-integ(w*b)/Lx/Lz)*w -(u*dx(b) + w*bz)")
 #problem.add_equation("dt(b) - P*(dx(dx(b)) + dz(bz))             = -(u*dx(b) + w*bz)")
