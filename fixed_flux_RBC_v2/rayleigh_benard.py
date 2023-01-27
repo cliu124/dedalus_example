@@ -57,9 +57,11 @@ problem.parameters['P'] = (Rayleigh * Prandtl)**(-1/2)
 problem.parameters['R'] = (Rayleigh / Prandtl)**(-1/2)
 problem.parameters['F'] = F = 1
 problem.add_equation("dx(u) + wz = 0")
-problem.add_equation("dt(b) - P*(dx(dx(b)) + dz(bz)) - F*w       = -(u*dx(b) + w*bz)")
+problem.add_equation("dt(b) - P*(dx(dx(b)) + dz(bz)) - F*w       = (-integ(w*T)/Lx/Lz)*w -(u*dx(b) + w*bz)")
+#problem.add_equation("dt(b) - P*(dx(dx(b)) + dz(bz))             = -(u*dx(b) + w*bz)")
 problem.add_equation("dt(u) - R*(dx(dx(u)) + dz(uz)) + dx(p)     = -(u*dx(u) + w*uz)")
 problem.add_equation("dt(w) - R*(dx(dx(w)) + dz(wz)) + dz(p) - b = -(u*dx(w) + w*wz)")
+problem.add_equation("F=")
 problem.add_equation("bz - dz(b) = 0")
 problem.add_equation("uz - dz(u) = 0")
 problem.add_equation("wz - dz(w) = 0")
@@ -124,7 +126,9 @@ CFL.add_velocities(('u', 'w'))
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("sqrt(u*u + w*w) / R", name='Re')
-
+flow_out = flow_tools.GlobalFlowProperty(solver, cadence=1)
+flow_out.add_property('w*T',name='wT')
+                
 # Main loop
 try:
     logger.info('Starting loop')
@@ -134,6 +138,10 @@ try:
         if (solver.iteration-1) % 10 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
             logger.info('Max Re = %f' %flow.max('Re'))
+            dy_T_mean_q=flow_out.volume_average('wT')-1                
+            logger.info('dy_T_mean_q: {}'.format(dy_T_mean_q))
+            logger.info('Nu: {}'.format(-1/dy_T_mean_q))
+
 except:
     logger.error('Exception raised, triggering end of main loop.')
     raise
