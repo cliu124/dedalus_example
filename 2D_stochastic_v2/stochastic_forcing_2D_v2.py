@@ -10,9 +10,9 @@ folder can be used to merge distributed analysis sets from parallel runs,
 and the `plot_2d_series.py` script can be used to plot the snapshots.
 
 To run, merge, and plot using 4 processes, for instance, you could use:
-    $ mpiexec -n 4 python3 rayleigh_benard.py
+    $ mpiexec -n 4 python3 stochastic_forcing_2D_v2.py
     $ mpiexec -n 4 python3 merge.py snapshots
-    $ mpiexec -n 4 python3 plot_2d_series.py snapshots/*.h5
+    $ mpiexec -n 4 python3 plot_slices.py snapshots/*.h5
 
 
 """
@@ -50,7 +50,7 @@ def forcingy(deltaT):
 
 # Parameters
 Lx, Lz = (2*np.pi, 2*np.pi)
-Re = 100
+Re = 10
 
 # Create bases and domain
 x_basis = de.Fourier('x', 128, interval=(0, Lx), dealias=3/2)
@@ -95,38 +95,24 @@ slices = domain.dist.grid_layout.slices(scales=1)
 rand = np.random.RandomState(seed=42)
 noise = rand.standard_normal(gshape)[slices]
 
-# Linear background + perturbations damped at walls
-#zb, zt = z_basis.interval
-#pert =  1e-3 * noise * (zt - z) * (z - zb)
-
 # Integration parameters
 solver.stop_sim_time = 200
 solver.stop_wall_time = 10 * 60.
 solver.stop_iteration = np.inf
 
 # Analysis
-snapshots = solver.evaluator.add_file_handler('snapshots_4e4', sim_dt=0.1, max_writes=50)
+snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.1, max_writes=50)
 snapshots.add_system(solver.state)
 
 # Scalar Data
-analysis1 = solver.evaluator.add_file_handler("scalar_data_4e4", iter=10)
+analysis1 = solver.evaluator.add_file_handler("scalar_data", iter=10)
 analysis1.add_task("integ(0.5*(u*u+v*v))", name="Ek")
 analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
 analysis1.add_task("integ(0.5*(v*v))", name="Ekz")
 
 analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
-
-
 analysis1.add_task("R")       #try to add Ra in graph
 
-
-# horizontally averaged profiles
-#analysis2 = solver.evaluator.add_file_handler("profile_data_4e4", iter=100)
-#analysis2.add_task("integ(u,'x')", name="u_profile")
-#analysis2.add_task("integ(w,'x')", name="w_profile")
-#analysis2.add_task("integ(T,'x')", name="T_profile")
-
-#analysis2.add_task("z", name="z")     #try to add z for Tz profile graph
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=0.0001, cadence=10, safety=1,
