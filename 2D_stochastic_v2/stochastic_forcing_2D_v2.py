@@ -96,7 +96,7 @@ rand = np.random.RandomState(seed=42)
 noise = rand.standard_normal(gshape)[slices]
 
 # Integration parameters
-solver.stop_sim_time = 200
+solver.stop_sim_time = 10
 solver.stop_wall_time = 10 * 60.
 solver.stop_iteration = np.inf
 
