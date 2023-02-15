@@ -14,4 +14,6 @@ conda init bash
 conda activate dedalus2
 
 mpiexec -n $SLURM_NTASKS python3 stochastic_forcing_2D_v2.py
+mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs snapshots
+mpiexec -n $SLURM_NTASKS python3 plot_slices.py snapshots/*.h5
 
