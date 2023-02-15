@@ -10,7 +10,7 @@
 #SBATCH --error=dedalus_error_%j
 export SLURM_EXPORT_ENV=ALL
 #export I_MPI_FABRICS=shm,tcp
-
+conda init bash
 conda activate dedalus2
 
 mpiexec -n $SLURM_NTASKS python3 stochastic_forcing_2D_v2.py
