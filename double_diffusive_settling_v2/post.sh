@@ -5,6 +5,8 @@ today="$(date +"%Y%m%d%H%M%S")"
 frames_name="frames_$today"
 mv frames "$frames_name"
 cp -r "$frames_name" /mnt/d/Data/dedalus_example/double_diffusive_settling_v2
+cp double_diffusive_settling.py snapshots/
+cp plot_slices.py snapshots/
 snapshots_name="snapshots_$today"
 mv snapshots "$snapshots_name"
 cp -r "$snapshots_name" /mnt/d/Data/dedalus_example/double_diffusive_settling_v2
