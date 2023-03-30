@@ -50,7 +50,7 @@ def forcingy(deltaT):
 
 # Parameters
 Lx, Lz = (2*np.pi, 2*np.pi)
-Re = 10
+Re = 100
 
 # Create bases and domain
 x_basis = de.Fourier('x', 128, interval=(0, Lx), dealias=3/2)
@@ -122,6 +122,7 @@ CFL.add_velocities(('u', 'v'))
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("integ(sqrt(u*u + v*v))", name='U_rms')
+flow.add_property("(integ( v*v)-integ(u*u))/integ(u*u+v*v)", name='m')
 
 # Main loop
 try:
@@ -136,6 +137,7 @@ try:
         if (solver.iteration-1) % 2 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
             logger.info('U_rms = %f' %flow.max('U_rms'))
+            logger.info('m = %f' %flow.max('m'))
 except:
     logger.error('Exception raised, triggering end of main loop.')
     raise
