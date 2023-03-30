@@ -134,7 +134,7 @@ try:
         forcing_func_x.args = [dt]
         forcing_func_y.args = [dt]
         solver.step(dt)
-        if (solver.iteration-1) % 2 == 0:
+        if (solver.iteration-1) % 100 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
             logger.info('U_rms = %f' %flow.max('U_rms'))
             logger.info('m = %f' %flow.max('m'))
