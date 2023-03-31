@@ -119,7 +119,7 @@ analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
 analysis1.add_task("integ(0.5*(v*v))", name="Ekz")
 
 analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
-analysis1.add_task("R")       #try to add Ra in graph
+#analysis1.add_task("R")       #try to add Ra in graph
 
 
 # CFL
