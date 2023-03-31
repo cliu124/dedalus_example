@@ -32,29 +32,37 @@ logger = logging.getLogger(__name__)
 
 rand = np.random.RandomState(seed=42)
 
+# Parameters
+Lx, Lz = (2*np.pi, 2*np.pi)
+nu  = 0.01
+eps = 1.0
+Nx=128
+Ny=128
+
+rand = np.random.RandomState(seed=42)
+
 # Define a function to get back the time-step needed to rescale white noise
 def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise = gaussian_filter(noise, sigma=1)
-    return noise/np.sqrt(deltaT)
+    tmpx  = 2*np.mean(noise**2)
+    noise = noise / np.sqrt(tmpx)
+    #noise = gaussian_filter(noise, sigma=1)
+    return noise*np.sqrt(2*eps)/np.sqrt(deltaT)
 
 def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise = gaussian_filter(noise, sigma=1)
-    return noise/np.sqrt(deltaT)
-
-
-# Parameters
-Lx, Lz = (2*np.pi, 2*np.pi)
-Re = 100
+    tmpy  = 2*np.mean(noise**2)
+    noise = noise / np.sqrt(tmpy)
+    #noise = gaussian_filter(noise, sigma=1)
+    return noise*np.sqrt(2*eps)/np.sqrt(deltaT)
 
 # Create bases and domain
-x_basis = de.Fourier('x', 128, interval=(0, Lx), dealias=3/2)
-z_basis = de.Fourier('z', 128, interval=(0, Lz), dealias=3/2)
+x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
+z_basis = de.Fourier('z', Ny, interval=(0, Lz), dealias=3/2)
 domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
 x = domain.grid(0)
 z = domain.grid(1)
@@ -68,13 +76,13 @@ forcing_func_y = operators.GeneralFunction(domain,'g',forcingy,args=[])
 
 # 2D Boussinesq hydrodynamics
 problem = de.IVP(domain, variables=['u','v','p'])
-problem.parameters['R'] = Re
+problem.parameters['nu'] = nu
 problem.parameters['forcing_func_x'] = forcing_func_x
 problem.parameters['forcing_func_y'] = forcing_func_y
 
 problem.add_equation("dx(u) + dz(v) = 0", condition="(nx!=0) or (nz!=0)")
-problem.add_equation("dt(u) + dx(p) - R**(-1)*(dx(dx(u)) + dz(dz(u)))  = - u*dx(u) - v*dz(u) + forcing_func_x")
-problem.add_equation("dt(v) + dz(p) - R**(-1)*(dx(dx(v)) + dz(dz(v)))  = - u*dx(v) - v*dz(v) + forcing_func_y")
+problem.add_equation("dt(u) + dx(p) - nu*(dx(dx(u)) + dz(dz(u)))  = - u*dx(u) - v*dz(u) + forcing_func_x")
+problem.add_equation("dt(v) + dz(p) - nu*(dx(dx(v)) + dz(dz(v)))  = - u*dx(v) - v*dz(v) + forcing_func_y")
 problem.add_equation("p=0",condition = "(nx==0) and (nz==0)")
 
 # Build solver
