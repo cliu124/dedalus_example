@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 rand = np.random.RandomState(seed=42)
 
 # Parameters
-Lx, Lz = (2*np.pi, 2*np.pi)
+Lx, Ly = (2*np.pi, 2*np.pi)
 nu  = 0.01
 eps = 1.0
 Nx=128
@@ -46,7 +46,7 @@ k2=8
 
 # Create bases and domain
 x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
-y_basis = de.Fourier('y', Ny, interval=(0, Lz), dealias=3/2)
+y_basis = de.Fourier('y', Ny, interval=(0, Ly), dealias=3/2)
 domain = de.Domain([x_basis, y_basis], grid_dtype=np.float64)
 x = domain.grid(0)
 y = domain.grid(1)
@@ -55,18 +55,20 @@ y = domain.grid(1)
 #slices = domain.dist.grid_layout.slices(scales=3/2)
 #tmp    = rand.standard_normal(gshape)[slices]
 #mask   = np.ones_like(tmp['c'])
-mask = np.ones([Nx,Ny])
+mask = np.ones([Nx/2,Ny-1])
 for i in range(len(mask[:,0])):
-   for j in range(len(mask[0,:])):
-      if ((k1 <= np.sqrt(i**2 + j**2) ) and (np.sqrt(i**2 + j**2)<=k2)):
-         mask[i,j] = 0.0
+    kx=i*2*np.pi/Lx
+    for j in range(len(mask[0,:])):
+        ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
+        if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
+            mask[i,j] = 0.0
 
 # Define a function to get back the time-step needed to rescale white noise
 def forcingx(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise[mask] = 0
+    noise['c'][mask] = 0
     tmpx  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpx)
     #noise = gaussian_filter(noise, sigma=1)
@@ -76,7 +78,7 @@ def forcingy(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise[mask] = 0
+    noise['c'][mask] = 0
     tmpy  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpy)
     #noise = gaussian_filter(noise, sigma=1)
