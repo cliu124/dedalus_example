@@ -51,9 +51,9 @@ domain = de.Domain([x_basis, y_basis], grid_dtype=np.float64)
 x = domain.grid(0)
 y = domain.grid(1)
 
-gshape = domain.dist.grid_layout.global_shape(scales=3/2)
-slices = domain.dist.grid_layout.slices(scales=3/2)
-tmp    = rand.standard_normal(gshape)[slices]
+#gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+#slices = domain.dist.grid_layout.slices(scales=3/2)
+#tmp    = rand.standard_normal(gshape)[slices]
 #mask   = np.ones_like(tmp['c'])
 mask = np.ones(Nx,Ny)
 for i in range(len(mask[:,0])):
