@@ -64,12 +64,14 @@ for i in range(len(mask[:,0])):
             
 print(mask)
 tmp_grid=domain.new_field()
+tmp_grid.set_scales(3/2)
+
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
 
 def forcingx(deltaT):
-    gshape = domain.dist.grid_layout.global_shape(scales=1)
-    slices = domain.dist.grid_layout.slices(scales=1)
+    gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+    slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     print(deltaT)
     print(noise)
@@ -84,8 +86,8 @@ def forcingx(deltaT):
     return noise_filter_normalized
 
 def forcingy(deltaT):
-    gshape = domain.dist.grid_layout.global_shape(scales=1)
-    slices = domain.dist.grid_layout.slices(scales=1)
+    gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+    slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     print(deltaT)
     print(noise)
