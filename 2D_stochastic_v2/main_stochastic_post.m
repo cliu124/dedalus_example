@@ -2,7 +2,7 @@ clear all;
 close all;
 clc;
 
-slurm_num={'20230406155244'};
+slurm_num={'20230406155616'};
 flag.print=1;
 flag.visible=1;
 flag.video=0;

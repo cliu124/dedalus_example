@@ -40,9 +40,9 @@ flag.Nx=128
 flag.Ny=128
 flag.k1=7
 flag.k2=9
-flag.stop_sim_time=10
+flag.stop_sim_time=100
 flag.initial_dt=0.01
-
+flag.post_store_dt=0.1
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
 y_basis = de.Fourier('y', flag.Ny, interval=(0, flag.Ly), dealias=3/2)
@@ -119,7 +119,7 @@ solver.stop_wall_time = np.inf
 solver.stop_iteration = np.inf
 
 # Analysis
-analysis = solver.evaluator.add_file_handler('analysis', sim_dt=0.1)
+analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 analysis.add_system(solver.state)
 analysis.add_task("forcing_var_x",layout='c',name='forcing_var_x_coeff')
 analysis.add_task("forcing_var_y",layout='c',name='forcing_var_y_coeff')
@@ -127,7 +127,7 @@ analysis.add_task("u",layout='c',name='u_coeff')
 analysis.add_task("v",layout='c',name='v_coeff')
 
 # Scalar Data
-scalar_data = solver.evaluator.add_file_handler("scalar_data", sim_dt=0.1)
+scalar_data = solver.evaluator.add_file_handler("scalar_data", sim_dt=flag.post_store_dt)
 scalar_data.add_task("integ(0.5*(u*u+v*v))", name="Ek")
 scalar_data.add_task("integ(0.5*(u*u))", name="Ekx")
 scalar_data.add_task("integ(0.5*(v*v))", name="Eky")
