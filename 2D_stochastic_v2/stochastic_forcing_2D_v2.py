@@ -29,7 +29,6 @@ from dedalus.core import operators
 import logging
 logger = logging.getLogger(__name__)
 
-
 rand = np.random.RandomState(seed=42)
 
 # Parameters
@@ -63,6 +62,7 @@ for i in range(len(mask[:,0])):
         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
             mask[i,j] = False
             
+print(mask)
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
 def forcingx(deltaT,mask):
@@ -70,6 +70,7 @@ def forcingx(deltaT,mask):
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     noise['c'][mask] = 0j
+    print(noise['c'])
     tmpx  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpx)
     #noise = gaussian_filter(noise, sigma=1)
