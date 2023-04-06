@@ -64,13 +64,13 @@ tmp_grid_y.set_scales(3/2)
 kx=domain.elements(0)
 ky=domain.elements(1)
 rand = np.random.RandomState(seed=42)
-gshape = domain.dist.grid_layout.global_shape(scales=3/2)
-slices = domain.dist.grid_layout.slices(scales=3/2)
+#gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+#slices = domain.dist.grid_layout.slices(scales=3/2)
  
 
 def forcingx(deltaT):
-    #gshape = domain.dist.grid_layout.global_shape(scales=3/2)
-    #slices = domain.dist.grid_layout.slices(scales=3/2)
+    gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+    slices = domain.dist.grid_layout.slices(scales=3/2)
  
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid_x['g']=noise
@@ -82,8 +82,8 @@ def forcingx(deltaT):
     return noise_filter_normalized
 
 def forcingy(deltaT):
-    #gshape = domain.dist.grid_layout.global_shape(scales=3/2)
-    #slices = domain.dist.grid_layout.slices(scales=3/2)
+    gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+    slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid_y['g']=noise
     mask=np.invert(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)
