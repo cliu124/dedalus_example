@@ -52,13 +52,13 @@ y = domain.grid(1)
 
 tmp_grid_x=domain.new_field()
 tmp_grid_x.set_scales(3/2)
-tmp_grid_x_filter=domain.new_field()
-tmp_grid_x_filter.set_scales(3/2)
+#tmp_grid_x_filter=domain.new_field()
+#tmp_grid_x_filter.set_scales(3/2)
 
 tmp_grid_y=domain.new_field()
 tmp_grid_y.set_scales(3/2)
-tmp_grid_y_filter=domain.new_field()
-tmp_grid_y_filter.set_scales(3/2)
+#tmp_grid_y_filter=domain.new_field()
+#tmp_grid_y_filter.set_scales(3/2)
 
 
 kx=domain.elements(0)
@@ -71,9 +71,9 @@ def forcingx(deltaT):
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid_x['g']=noise
-    tmp_grid_x_filter['g']=0
-    tmp_grid_x_filter['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=tmp_grid_x['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
-    noise_filter=tmp_grid_x_filter['g']
+    tmp_grid_x['c'][np.invert(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=0j
+    #tmp_grid_x['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
+    noise_filter=tmp_grid_x['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
     return noise_filter_normalized
@@ -83,9 +83,9 @@ def forcingy(deltaT):
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid_y['g']=noise
-    tmp_grid_y_filter['g']=0
-    tmp_grid_y_filter['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]=tmp_grid_y['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]
-    noise_filter=tmp_grid_y_filter['g']
+    tmp_grid_y['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]=0j
+    #tmp_grid_y['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]
+    noise_filter=tmp_grid_y['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
     return noise_filter_normalized
