@@ -39,33 +39,48 @@ eps = 1.0
 Nx=128
 Ny=128
 
-rand = np.random.RandomState(seed=42)
+#rand = np.random.RandomState(seed=42)
+
+k1=7
+k2=8
+
+# Create bases and domain
+x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
+y_basis = de.Fourier('y', Ny, interval=(0, Lz), dealias=3/2)
+domain = de.Domain([x_basis, y_basis], grid_dtype=np.float64)
+x = domain.grid(0)
+y = domain.grid(1)
+
+gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+slices = domain.dist.grid_layout.slices(scales=3/2)
+tmp    = rand.standard_normal(gshape)[slices]
+mask   = np.ones_like(tmp['c'])
+for i in range(len(mask[:,0])):
+   for j in range(len(mask[0,:])):
+      if ((k1 <= np.sqrt(i**2 + j**2) ) and (np.sqrt(i**2 + j**2)<=k2)):
+         mask[i,j] = 0.0
 
 # Define a function to get back the time-step needed to rescale white noise
-def forcingx(deltaT):
+def forcingx(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
+    noise[mask] = 0
     tmpx  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpx)
     #noise = gaussian_filter(noise, sigma=1)
     return noise*np.sqrt(2*eps)/np.sqrt(deltaT)
 
-def forcingy(deltaT):
+def forcingy(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
+    noise[mask] = 0
     tmpy  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpy)
     #noise = gaussian_filter(noise, sigma=1)
     return noise*np.sqrt(2*eps)/np.sqrt(deltaT)
 
-# Create bases and domain
-x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
-z_basis = de.Fourier('z', Ny, interval=(0, Lz), dealias=3/2)
-domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
-x = domain.grid(0)
-z = domain.grid(1)
 
 # Define the internal heat forcing function (a constant usually)
 #forcing_func = domain.new_field(name='forcing_func')
@@ -80,10 +95,10 @@ problem.parameters['nu'] = nu
 problem.parameters['forcing_func_x'] = forcing_func_x
 problem.parameters['forcing_func_y'] = forcing_func_y
 
-problem.add_equation("dx(u) + dz(v) = 0", condition="(nx!=0) or (nz!=0)")
-problem.add_equation("dt(u) + dx(p) - nu*(dx(dx(u)) + dz(dz(u)))  = - u*dx(u) - v*dz(u) + forcing_func_x")
-problem.add_equation("dt(v) + dz(p) - nu*(dx(dx(v)) + dz(dz(v)))  = - u*dx(v) - v*dz(v) + forcing_func_y")
-problem.add_equation("p=0",condition = "(nx==0) and (nz==0)")
+problem.add_equation("dx(u) + dy(v) = 0", condition="(nx!=0) or (ny!=0)")
+problem.add_equation("dt(u) + dx(p) - nu*(dx(dx(u)) + dy(dy(u)))  = - u*dx(u) - v*dy(u) + forcing_func_x")
+problem.add_equation("dt(v) + dy(p) - nu*(dx(dx(v)) + dy(dy(v)))  = - u*dx(v) - v*dy(v) + forcing_func_y")
+problem.add_equation("p=0",condition = "(nx==0) and (ny==0)")
 
 # Build solver
 solver = problem.build_solver(de.timesteppers.RK222)
@@ -94,14 +109,14 @@ logger.info('dt')
 forcing_func_x.original_args = [0.0001]
 forcing_func_y.original_args = [0.0001]
 # Initial conditions
-x = domain.grid(0)
-z = domain.grid(1)
+#x = domain.grid(0)
+#z = domain.grid(1)
 
 # Random perturbations, initialized globally for same results in parallel
-gshape = domain.dist.grid_layout.global_shape(scales=1)
-slices = domain.dist.grid_layout.slices(scales=1)
-rand = np.random.RandomState(seed=42)
-noise = rand.standard_normal(gshape)[slices]
+#gshape = domain.dist.grid_layout.global_shape(scales=1)
+#slices = domain.dist.grid_layout.slices(scales=1)
+#rand = np.random.RandomState(seed=42)
+#noise = rand.standard_normal(gshape)[slices]
 
 # Integration parameters
 solver.stop_sim_time = 10
@@ -116,9 +131,9 @@ snapshots.add_system(solver.state)
 analysis1 = solver.evaluator.add_file_handler("scalar_data", iter=10)
 analysis1.add_task("integ(0.5*(u*u+v*v))", name="Ek")
 analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
-analysis1.add_task("integ(0.5*(v*v))", name="Ekz")
+analysis1.add_task("integ(0.5*(v*v))", name="Eky")
 
-analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
+#analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
 #analysis1.add_task("R")       #try to add Ra in graph
 
 
