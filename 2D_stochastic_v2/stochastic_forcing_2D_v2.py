@@ -55,7 +55,7 @@ y = domain.grid(1)
 #slices = domain.dist.grid_layout.slices(scales=3/2)
 #tmp    = rand.standard_normal(gshape)[slices]
 #mask   = np.ones_like(tmp['c'])
-mask = np.ones([Nx/2,Ny-1])
+mask = np.ones([round(Nx/2),round(Ny-1)])
 for i in range(len(mask[:,0])):
     kx=i*2*np.pi/Lx
     for j in range(len(mask[0,:])):
