@@ -210,7 +210,15 @@ classdef stochastic_post
                     plot_config.ytick_list=[0,0.001,0.01,0.1,1,10,100,1000];
                     plot_config.ylim_list=[0];%,0.1,10];
                     plot_config.xtick_list=[1,0.001,0.01,0.1,1,10,100];
-                    plot_config.legend_list={1,['$\int E_',variable_name,'(k_x,k_y)dk_y$'],['$\int E_',variable_name,'(k_x,k_y)d k_x$']};
+                    switch variable_name
+                        case 'forcing_var_x'
+                            variable_name_legend='{f_x}';
+                        case 'forcing_var_y'
+                            variable_name_legend='{f_y}';
+                        otherwise
+                            variable_name_legend=variable_name;
+                    end
+                    plot_config.legend_list={1,['$\int E_',variable_name_legend,'(k_x,k_y)dk_y$'],['$\int E_',variable_name_legend,'(k_x,k_y)d k_x$']};
                     plot_config.name=[obj.h5_name(1:end-3),'_spectrum_',variable_name,'_1D_t_',num2str(round(obj.t_list(t_ind),2)),'.png'];
                     plot_config.print=obj.print;
                     plot_config.visible=obj.visible;
@@ -246,10 +254,7 @@ classdef stochastic_post
             plot_config.colormap='white_zero';
             plot_config.name=[obj.h5_name(1:end-3),'_spectrum_',variable_name,'_2D_time_average.png'];
             plot_config.print=obj.print;
-            plot_config.ytick_list=[0,10^(-8),10^(-7),10^(-6),10^(-5),10^(-4),...
-                0.001,0.01,0.1,1,10,100,1000];
-            plot_config.xtick_list=[0,10^(-8),10^(-7),10^(-6),10^(-5),10^(-4),...
-                0.001,0.01,0.1,1,10,100,1000];
+            
             plot_config.visible=obj.visible;
             plot_contour(data,plot_config);
 
@@ -264,10 +269,22 @@ classdef stochastic_post
             plot_config.loglog=[1,1];
 
             plot_config.label_list={1,'$k_x$ or $k_y$',''};
-            plot_config.legend_list={1,['$\int E_',variable_name,'(k_x,k_y)dk_y$'],['$\int E_',variable_name,'(k_x,k_y)d k_x$']};
+            switch variable_name
+                case 'forcing_var_x'
+                    variable_name_legend='{f_x}';
+                case 'forcing_var_y'
+                    variable_name_legend='{f_y}';
+                otherwise
+                    variable_name_legend=variable_name;
+            end
+            plot_config.legend_list={1,['$\int E_',variable_name_legend,'(k_x,k_y)dk_y$'],['$\int E_',variable_name_legend,'(k_x,k_y)d k_x$']};
             plot_config.name=[obj.h5_name(1:end-3),'_spectrum_',variable_name,'_1D_time_average.png'];
             plot_config.print=obj.print;
             plot_config.visible=obj.visible;
+            plot_config.ytick_list=[1,10^(-8),10^(-7),10^(-6),10^(-5),10^(-4),...
+                0.001,0.01,0.1,1,10,100,1000];
+            plot_config.xtick_list=[1,10^(-8),10^(-7),10^(-6),10^(-5),10^(-4),...
+                0.001,0.01,0.1,1,10,100,1000];
             plot_line(data,plot_config);
         end
         
@@ -309,13 +326,18 @@ classdef stochastic_post
             data{2}.y=2*dx*sum(spectrum_TKE_average,2);
             
             plot_config.loglog=[1,1];
-            plot_config.ytick_list=[0,0.001,0.01,0.1,1,10,100,1000];
+            plot_config.ytick_list=[1,0.001,0.01,0.1,1,10,100,1000];
             plot_config.label_list={1,'$k_x$ or $k_z$',''};
             plot_config.legend_list={1,'$\int E_u(k_x,k_y)dk_y$','$\int E_u(k_x,k_y)d k_x$'};
             plot_config.name=[obj.h5_name(1:end-3),'_spectrum_TKE_1D_time_average.png'];
             plot_config.print=obj.print;
             plot_config.visible=obj.visible;
             plot_line(data,plot_config);
+        end
+        
+        function obj=scalar_data(obj)
+            
+            
         end
         
     end

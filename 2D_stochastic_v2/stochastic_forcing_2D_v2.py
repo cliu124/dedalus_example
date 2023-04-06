@@ -73,10 +73,10 @@ def forcingx(deltaT):
     tmp_grid_x['g']=noise
     tmp_grid_x['c'][np.invert(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=0j
     #tmp_grid_x['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
-    noise_filter=tmp_grid_x['g']
-    tmpx  = 2*np.mean(noise_filter**2)
-    noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
-    return noise_filter_normalized
+    noise_x_filter=tmp_grid_x['g']
+    tmpx  = 2*np.mean(noise_x_filter**2)
+    noise_x_filter_normalized = noise_x_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
+    return noise_x_filter_normalized
 
 def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
@@ -85,10 +85,10 @@ def forcingy(deltaT):
     tmp_grid_y['g']=noise
     tmp_grid_y['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]=0j
     #tmp_grid_y['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]
-    noise_filter=tmp_grid_y['g']
-    tmpx  = 2*np.mean(noise_filter**2)
-    noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
-    return noise_filter_normalized
+    noise_y_filter=tmp_grid_y['g']
+    tmpy  = 2*np.mean(noise_y_filter**2)
+    noise_y_filter_normalized = noise_y_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpy)/np.sqrt(deltaT)
+    return noise_y_filter_normalized
 
 forcing_func_x = operators.GeneralFunction(domain,'g',forcingx,args=[])
 forcing_func_y = operators.GeneralFunction(domain,'g',forcingy,args=[])
