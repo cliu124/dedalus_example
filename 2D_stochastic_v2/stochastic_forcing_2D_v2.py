@@ -156,16 +156,16 @@ solver.stop_wall_time = 10 * 60.
 solver.stop_iteration = np.inf
 
 # Analysis
-snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.1, max_writes=50)
+snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.1)
 snapshots.add_system(solver.state)
 
 # Scalar Data
-analysis1 = solver.evaluator.add_file_handler("scalar_data", iter=10)
+analysis1 = solver.evaluator.add_file_handler("scalar_data", sim_dt=0.1)
 analysis1.add_task("integ(0.5*(u*u+v*v))", name="Ek")
 analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
 analysis1.add_task("integ(0.5*(v*v))", name="Eky")
-analysis1.add_task("forcing_var_x",name="forcing_var_x")
-analysis1.add_task("forcing_var_y",name="forcing_var_y")
+#analysis1.add_task("forcing_var_x",name="forcing_var_x")
+#analysis1.add_task("forcing_var_y",name="forcing_var_y")
 #analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
 #analysis1.add_task("R")       #try to add Ra in graph
 

@@ -9,3 +9,6 @@ cp -r "$frames_name" /mnt/d/Data/dedalus_example/2D_stochastic_v2
 snapshots_name="snapshots_$today"
 mv snapshots "$snapshots_name"
 cp -r "$snapshots_name" /mnt/d/Data/dedalus_example/2D_stochastic_v2
+scalar_data_name="scalar_data_$today"
+mv scalar_data "$scalar_data_name"
+cp -r "$scalar_data_name" /mnt/d/Data/dedalus_example/2D_stochastic_v2
