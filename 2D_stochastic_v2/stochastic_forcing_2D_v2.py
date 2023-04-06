@@ -40,7 +40,7 @@ flag.Nx=128
 flag.Ny=128
 flag.k1=7
 flag.k2=9
-flag.stop_sim_time=100
+flag.stop_sim_time=10
 flag.initial_dt=0.01
 flag.post_store_dt=0.1
 # Create bases and domain
@@ -127,11 +127,11 @@ analysis.add_task("u",layout='c',name='u_coeff')
 analysis.add_task("v",layout='c',name='v_coeff')
 
 # Scalar Data
-scalar_data = solver.evaluator.add_file_handler("scalar_data", sim_dt=flag.post_store_dt)
-scalar_data.add_task("integ(0.5*(u*u+v*v))", name="Ek")
-scalar_data.add_task("integ(0.5*(u*u))", name="Ekx")
-scalar_data.add_task("integ(0.5*(v*v))", name="Eky")
-scalar_data.add_task("(integ(v*v)-integ(u*u))/integ(u*u+v*v)",name="m")
+#scalar_data = solver.evaluator.add_file_handler("scalar_data", sim_dt=flag.post_store_dt)
+analysis.add_task("integ(0.5*(u*u+v*v))", name="Ek")
+analysis.add_task("integ(0.5*(u*u))", name="Ekx")
+analysis.add_task("integ(0.5*(v*v))", name="Eky")
+analysis.add_task("(integ(v*v)-integ(u*u))/integ(u*u+v*v)",name="m")
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=0.0001, cadence=10, safety=1,
@@ -184,7 +184,6 @@ finally:
     logger.info('Iterations: %i' %solver.iteration)
     logger.info('Sim end time: %f' %solver.sim_time)
     logger.info('Run time: %.2f sec' %(end_time-start_time))
-
 
 
 

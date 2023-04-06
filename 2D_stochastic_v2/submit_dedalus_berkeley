@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --account=fc_phact2d3D
+#SBATCH --partition=savio
+#SBATCH --nodes=1
+#SBATCH --ntasks=20
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00:10:00
+#SBATCH --job-name=dedalus
+#SBATCH --output=dedalus_output_%j
+#SBATCH --error=dedalus_error_%j
+export SLURM_EXPORT_ENV=ALL
+#export I_MPI_FABRICS=shm,tcp
+###conda init bash
+conda activate dedalus2
+
+SUBMITDIR=$SLURM_SUBMIT_DIR
+WORKDIR=./dedalus_$SLURM_JOB_ID
+mkdir -p "$WORKDIR" && cp -r stochastic_forcing_2D_v2.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cd "$WORKDIR" || exit -1
+
+mpiexec -n $SLURM_NTASKS python3 stochastic_forcing_2D_v2.py
+mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs analysis
+mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs scalar_data
+mpiexec -n $SLURM_NTASKS python3 plot_slices.py analysis/*.h5
+
+cd "$SUBMITDIR" && cp dedalus_output_$SLURM_JOB_ID "$WORKDIR"

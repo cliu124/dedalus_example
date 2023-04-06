@@ -38,6 +38,8 @@ classdef stochastic_post
         spectrum_TKE;
         
         title_time=1;
+        
+        post_store_dt;
     end
     
     methods

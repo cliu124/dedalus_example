@@ -1,17 +1,17 @@
 #!/bin/bash
-#SBATCH --account=fc_phact2d3D
-#SBATCH --partition=savio
+###SBATCH --qos=preemptable
+#SBATCH --qos=blanca-appm
 #SBATCH --nodes=1
-#SBATCH --ntasks=20
-#SBATCH --cpus-per-task=1
+#SBATCH --ntasks=24
 #SBATCH --time=00:10:00
 #SBATCH --job-name=dedalus
 #SBATCH --output=dedalus_output_%j
 #SBATCH --error=dedalus_error_%j
 export SLURM_EXPORT_ENV=ALL
 #export I_MPI_FABRICS=shm,tcp
-conda init bash
-conda activate dedalus2
+
+source /curc/sw/anaconda3/latest
+conda activate dedalus
 
 SUBMITDIR=$SLURM_SUBMIT_DIR
 WORKDIR=./dedalus_$SLURM_JOB_ID
