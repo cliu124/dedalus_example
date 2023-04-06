@@ -40,8 +40,8 @@ Ny=128
 
 #rand = np.random.RandomState(seed=42)
 
-k1=0
-k2=1
+k1=7
+k2=9
 
 # Create bases and domain
 x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
@@ -54,15 +54,15 @@ y = domain.grid(1)
 #slices = domain.dist.grid_layout.slices(scales=3/2)
 #tmp    = rand.standard_normal(gshape)[slices]
 #mask   = np.ones_like(tmp['c'])
-mask = np.ones([round(Nx/2),round(Ny-1)],dtype=bool)
-for i in range(len(mask[:,0])):
-    kx=i*2*np.pi/Lx
-    for j in range(len(mask[0,:])):
-        ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
-        if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
-            mask[i,j] = False
+# mask = np.ones([round(Nx/2),round(Ny-1)],dtype=bool)
+# for i in range(len(mask[:,0])):
+#     kx=i*2*np.pi/Lx
+#     for j in range(len(mask[0,:])):
+#         ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
+#         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
+#             mask[i,j] = False
             
-print(mask)
+# print(mask)
 tmp_grid=domain.new_field()
 tmp_grid.set_scales(3/2)
 tmp_grid_filter=domain.new_field()
@@ -121,7 +121,7 @@ forcing_func_x = operators.GeneralFunction(domain,'g',forcingx,args=[])
 forcing_func_y = operators.GeneralFunction(domain,'g',forcingy,args=[])
 
 # 2D Boussinesq hydrodynamics
-problem = de.IVP(domain, variables=['u','v','p'])
+problem = de.IVP(domain, variables=['u','v','p','forcing_var_x','forcing_var_y'])
 problem.parameters['nu'] = nu
 problem.parameters['forcing_func_x'] = forcing_func_x
 problem.parameters['forcing_func_y'] = forcing_func_y
@@ -130,7 +130,8 @@ problem.add_equation("dx(u) + dy(v) = 0", condition="(nx!=0) or (ny!=0)")
 problem.add_equation("dt(u) + dx(p) - nu*(dx(dx(u)) + dy(dy(u)))  = - u*dx(u) - v*dy(u) + forcing_func_x")
 problem.add_equation("dt(v) + dy(p) - nu*(dx(dx(v)) + dy(dy(v)))  = - u*dx(v) - v*dy(v) + forcing_func_y")
 problem.add_equation("p=0",condition = "(nx==0) and (ny==0)")
-
+problem.add_equation("forcing_var_x=forcing_func_x")
+problem.add_equation("forcing_var_y=forcing_func_y")
 # Build solver
 solver = problem.build_solver(de.timesteppers.RK222)
 logger.info('Solver built')
@@ -163,7 +164,8 @@ analysis1 = solver.evaluator.add_file_handler("scalar_data", iter=10)
 analysis1.add_task("integ(0.5*(u*u+v*v))", name="Ek")
 analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
 analysis1.add_task("integ(0.5*(v*v))", name="Eky")
-
+analysis1.add_task("forcing_var_x",name="forcing_var_x")
+analysis1.add_task("forcing_var_y",name="forcing_var_y")
 #analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
 #analysis1.add_task("R")       #try to add Ra in graph
 
