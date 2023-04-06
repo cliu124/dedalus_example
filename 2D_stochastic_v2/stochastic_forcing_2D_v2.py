@@ -54,7 +54,8 @@ y = domain.grid(1)
 gshape = domain.dist.grid_layout.global_shape(scales=3/2)
 slices = domain.dist.grid_layout.slices(scales=3/2)
 tmp    = rand.standard_normal(gshape)[slices]
-mask   = np.ones_like(tmp['c'])
+#mask   = np.ones_like(tmp['c'])
+mask = np.ones(Nx,Ny)
 for i in range(len(mask[:,0])):
    for j in range(len(mask[0,:])):
       if ((k1 <= np.sqrt(i**2 + j**2) ) and (np.sqrt(i**2 + j**2)<=k2)):
