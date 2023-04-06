@@ -34,7 +34,7 @@ class flag:
 # Parameters
 flag=flag()
 flag.Lx, flag.Ly = (2*np.pi, 2*np.pi)
-flag.nu  = 0.01
+flag.nu  = 0.1
 flag.eps = 0.1
 flag.Nx=128
 flag.Ny=128
@@ -84,7 +84,7 @@ def forcingy(deltaT):
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid_y['g']=noise
     tmp_grid_y_filter['g']=0
-    tmp_grid_y_filter['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=tmp_grid_y['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
+    tmp_grid_y_filter['c'][not((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]=tmp_grid_y['c'][not((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]
     noise_filter=tmp_grid_y_filter['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
