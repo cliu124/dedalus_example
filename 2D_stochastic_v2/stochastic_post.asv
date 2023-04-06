@@ -1,0 +1,31 @@
+classdef stochastic_post
+    %POST_CLASS Summary of this class goes here
+    %   Detailed explanation goes here
+    
+    properties
+        x_list;
+        y_list;
+        kx_list;
+        ky_list;
+        t_list;
+        
+    end
+    
+    methods
+        function obj = stochastic_post(h5_name)
+            %POST_CLASS Construct an instance of this class
+            %   Detailed explanation goes here
+            obj.x_list=h5read(h5_name,'/scales/x/1.0');
+            obj.y_list=h5read(h5_name,'/scales/y/1.0');
+            obj.t_list=h5read_complex(h5_name,'/scales/sim_time');
+            obj.kx_list=h5read_complex(h5_name,'/scales/kx');        
+        end
+    
+        function outputArg = method1(obj,inputArg)
+            %METHOD1 Summary of this method goes here
+            %   Detailed explanation goes here
+            outputArg = obj.Property1 + inputArg;
+        end
+    end
+end
+

@@ -112,19 +112,19 @@ solver.stop_wall_time = np.inf
 solver.stop_iteration = np.inf
 
 # Analysis
-snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.1)
-snapshots.add_system(solver.state)
-snapshots.add_task("forcing_var_x",layout='c',name='forcing_var_x_coeff')
-snapshots.add_task("forcing_var_y",layout='c',name='forcing_var_y_coeff')
-snapshots.add_task("u",layout='c',name='u_coeff')
-snapshots.add_task("v",layout='c',name='v_coeff')
+analysis = solver.evaluator.add_file_handler('analysis', sim_dt=0.1)
+analysis.add_system(solver.state)
+analysis.add_task("forcing_var_x",layout='c',name='forcing_var_x_coeff')
+analysis.add_task("forcing_var_y",layout='c',name='forcing_var_y_coeff')
+analysis.add_task("u",layout='c',name='u_coeff')
+analysis.add_task("v",layout='c',name='v_coeff')
 
 # Scalar Data
-analysis1 = solver.evaluator.add_file_handler("scalar_data", sim_dt=0.1)
-analysis1.add_task("integ(0.5*(u*u+v*v))", name="Ek")
-analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
-analysis1.add_task("integ(0.5*(v*v))", name="Eky")
-analysis1.add_task("(integ(v*v)-integ(u*u))/integ(u*u+v*v)",name="m")
+scalar_data = solver.evaluator.add_file_handler("scalar_data", sim_dt=0.1)
+scalar_data.add_task("integ(0.5*(u*u+v*v))", name="Ek")
+scalar_data.add_task("integ(0.5*(u*u))", name="Ekx")
+scalar_data.add_task("integ(0.5*(v*v))", name="Eky")
+scalar_data.add_task("(integ(v*v)-integ(u*u))/integ(u*u+v*v)",name="m")
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=0.0001, cadence=10, safety=1,
