@@ -158,6 +158,10 @@ solver.stop_iteration = np.inf
 # Analysis
 snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.1)
 snapshots.add_system(solver.state)
+snapshots.add_task("forcing_var_x",layout='c',name='forcing_var_x_coeff')
+snapshots.add_task("forcing_var_y",layout='c',name='forcing_var_y_coeff')
+snapshots.add_task("u",layout='c',name='u_coeff')
+snapshots.add_task("v",layout='c',name='v_coeff')
 
 # Scalar Data
 analysis1 = solver.evaluator.add_file_handler("scalar_data", sim_dt=0.1)
