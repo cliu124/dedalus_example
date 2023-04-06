@@ -40,6 +40,13 @@ classdef stochastic_post
         title_time=1;
         
         post_store_dt;
+        
+        h5_name_scalar_data;
+        
+        Ek;
+        Ekx;
+        Eky;
+        m;
     end
     
     methods
@@ -53,7 +60,7 @@ classdef stochastic_post
             end
             %construction function...
             obj.h5_name=h5_name;%name for the h5file
-            
+            obj.h5_name_scalar_data=strrep(h5_name,'analysis','scalar_data');
             %modify these flag.
             obj.print=flag.print;
             obj.video=flag.video;
@@ -337,9 +344,13 @@ classdef stochastic_post
             plot_line(data,plot_config);
         end
         
-        function obj=scalar_data(obj)
-            
-            
+        function obj=scalar_data(obj,variable_name)
+            obj.([variable_name])=h5read_complex(obj.h5_name_scalar_data,['/tasks/',variable_name]);
+            data{1}.x=obj.t_list;
+            data{1}.y=squeeze(obj.([variable_name]));
+            plot_config.label_list={1,'$t$',variable_name};
+            plot_config.name=[obj.h5_name(1:end-3),variable_name,'_time_history.png'];
+            plot_line(data,plot_config);
         end
         
     end
