@@ -9,7 +9,7 @@ today="$(date +"%Y%m%d%H%M%S")"
 frames_name="frames_$today"
 mv frames "$frames_name"
 cp -r "$frames_name" /mnt/d/Data/dedalus_example/2D_stochastic_v2
-analysis_name="snapshots_$today"
+analysis_name="analysis_$today"
 mv analysis "$analysis_name"
 cp -r "$analysis_name" /mnt/d/Data/dedalus_example/2D_stochastic_v2
 scalar_data_name="scalar_data_$today"
