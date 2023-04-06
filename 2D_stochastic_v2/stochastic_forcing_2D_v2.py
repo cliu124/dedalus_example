@@ -68,6 +68,8 @@ tmp_grid.set_scales(3/2)
 
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
+kx=domain.elements(0)
+ky=domain.elements(1)
 
 def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
@@ -79,7 +81,7 @@ def forcingx(deltaT):
     #print(len(noise[0,:]))
     #print(len(noise[:,0]))
     tmp_grid['g']=noise
-    tmp_grid['c'][mask[slices]] = 0j
+    tmp_grid['c'][(kx**2+ky**2<k1**2) or (kx**2+ky**2>k2**2)] = 0j
     noise_filter=tmp_grid['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
@@ -95,7 +97,7 @@ def forcingy(deltaT):
     #print(len(noise[0,:]))
     #print(len(noise[:,0]))
     tmp_grid['g']=noise
-    tmp_grid['c'][mask[slices]] = 0j
+    tmp_grid['c'][(kx**2+ky**2<k1**2) or (kx**2+ky**2>k2**2)] = 0j
     noise_filter=tmp_grid['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
