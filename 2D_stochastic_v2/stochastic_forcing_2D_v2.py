@@ -65,7 +65,9 @@ for i in range(len(mask[:,0])):
 print(mask)
 tmp_grid=domain.new_field()
 tmp_grid.set_scales(3/2)
-
+tmp_grid_filter=domain.new_field()
+tmp_grid_filter.set_scale(3/2)
+tmp_grid_filter=0
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
 kx=domain.elements(0)
@@ -85,6 +87,7 @@ def forcingx(deltaT):
     #tmp_grid_copy = ((tmp_grid + 1e-16) - 1e-16).evaluate()
     #mask_slices=mask[slices]
     #tmp_grid_copy['c'][mask_slices]=0j
+    print((kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2))
     tmp_grid['c'][(kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2)] = 0j
     noise_filter=tmp_grid['g']
     tmpx  = 2*np.mean(noise_filter**2)
