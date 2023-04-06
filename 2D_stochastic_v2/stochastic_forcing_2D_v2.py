@@ -82,7 +82,8 @@ def forcingx(deltaT):
     #print(len(noise[:,0]))
     tmp_grid['g']=noise
     tmp_grid_copy = ((tmp_grid + 1e-16) - 1e-16).evaluate()
-    tmp_grid_copy['c'][mask]=0j
+    mask_slices=mask[slices]
+    tmp_grid_copy['c'][mask_slices]=0j
     #tmp_grid['c'][not((kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2))] = 0j
     noise_filter=tmp_grid_copy['g']
     tmpx  = 2*np.mean(noise_filter**2)
@@ -100,7 +101,8 @@ def forcingy(deltaT):
     #print(len(noise[:,0]))
     tmp_grid['g']=noise
     tmp_grid_copy = ((tmp_grid + 1e-16) - 1e-16).evaluate()
-    tmp_grid_copy['c'][mask]=0j
+    mask_slices=mask[slices]
+    tmp_grid_copy['c'][mask_slices]=0j
     #tmp_grid['c'][not((kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2))] = 0j
     noise_filter=tmp_grid_copy['g']
     tmpx  = 2*np.mean(noise_filter**2)
