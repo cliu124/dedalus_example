@@ -73,12 +73,13 @@ def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    print(deltaT)
-    print(noise)
-    print(len(noise[0,:]))
-    print(len(noise[:,0]))
+    #print(deltaT)
+    #print(noise)
+    print(slices)
+    #print(len(noise[0,:]))
+    #print(len(noise[:,0]))
     tmp_grid['g']=noise
-    tmp_grid['c'][mask] = 0j
+    tmp_grid['c'][mask[slices]] = 0j
     noise_filter=tmp_grid['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
@@ -89,12 +90,12 @@ def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    print(deltaT)
-    print(noise)
-    print(len(noise[0,:]))
-    print(len(noise[:,0]))
+    #print(deltaT)
+    #print(noise)
+    #print(len(noise[0,:]))
+    #print(len(noise[:,0]))
     tmp_grid['g']=noise
-    tmp_grid['c'][mask] = 0j
+    tmp_grid['c'][mask[slices]] = 0j
     noise_filter=tmp_grid['g']
     tmpx  = 2*np.mean(noise_filter**2)
     noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
