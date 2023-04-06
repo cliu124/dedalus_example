@@ -106,8 +106,8 @@ logger.info('Solver built')
 logger.info('dt')
 
 #forcing_func.args = [solver.dt]
-forcing_func_x.original_args = [0.0001]
-forcing_func_y.original_args = [0.0001]
+forcing_func_x.original_args = [0.0001,mask]
+forcing_func_y.original_args = [0.0001,mask]
 # Initial conditions
 #x = domain.grid(0)
 #z = domain.grid(1)
@@ -154,8 +154,8 @@ try:
     while solver.ok:
 #    for i in range(10):
         dt = CFL.compute_dt()
-        forcing_func_x.args = [dt]
-        forcing_func_y.args = [dt]
+        forcing_func_x.args = [dt,mask]
+        forcing_func_y.args = [dt,mask]
         solver.step(dt)
         if (solver.iteration-1) % 100 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
