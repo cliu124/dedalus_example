@@ -2,7 +2,7 @@ conda activate dedalus2
 mpiexec -n 4 python3 stochastic_forcing_2D_v2.py
 mpiexec -n 4 python3 -m dedalus merge_procs snapshots
 mpiexec -n 4 python3 plot_slices.py snapshots/*.h5
-today="$(date +"%m%d%H%M")"
+today="$(date +"%Y%m%d%H%M%S")"
 frames_name="frames_$today"
 mv frames "$frames_name"
 cp -r "$frames_name" /mnt/d/Data/dedalus_example/2D_stochastic_v2
