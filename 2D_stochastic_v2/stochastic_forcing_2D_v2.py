@@ -55,15 +55,15 @@ y = domain.grid(1)
 #slices = domain.dist.grid_layout.slices(scales=3/2)
 #tmp    = rand.standard_normal(gshape)[slices]
 #mask   = np.ones_like(tmp['c'])
-mask = np.ones([round(Nx/2),round(Ny-1)])
+mask = np.ones([round(Nx/2),round(Ny-1)],dtype=bool)
 for i in range(len(mask[:,0])):
     kx=i*2*np.pi/Lx
     for j in range(len(mask[0,:])):
         ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
-            mask[i,j] = 0
+            mask[i,j] = False
             
-mask=bool(mask)
+#mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
 def forcingx(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
