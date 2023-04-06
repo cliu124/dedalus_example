@@ -66,7 +66,7 @@ y = domain.grid(1)
 tmp_grid=domain.new_field()
 tmp_grid.set_scales(3/2)
 tmp_grid_filter=domain.new_field()
-tmp_grid_filter.set_scale(3/2)
+tmp_grid_filter.set_scales(3/2)
 tmp_grid_filter['g']=0
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
