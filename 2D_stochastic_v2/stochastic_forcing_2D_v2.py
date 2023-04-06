@@ -40,8 +40,8 @@ Ny=128
 
 #rand = np.random.RandomState(seed=42)
 
-k1=7
-k2=8
+k1=0
+k2=1
 
 # Create bases and domain
 x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
@@ -69,8 +69,11 @@ def forcingx(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise['c'][mask] = 0j
+    print(dt)
     print(noise['c'])
+    print(len(noise['c'][0,:]))
+    print(len(noise['c'][:,0]))
+    noise['c'][mask] = 0j
     tmpx  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpx)
     #noise = gaussian_filter(noise, sigma=1)
