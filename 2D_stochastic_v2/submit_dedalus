@@ -13,7 +13,13 @@ export SLURM_EXPORT_ENV=ALL
 conda init bash
 conda activate dedalus2
 
-mpiexec -n $SLURM_NTASKS python3 stochastic_forcing_2D_v2.py
-mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs snapshots
-mpiexec -n $SLURM_NTASKS python3 plot_slices.py snapshots/*.h5
+SUBMITDIR=$SLURM_SUBMIT_DIR
+WORKDIR=./dedalus_$SLURM_JOB_ID
+mkdir -p "$WORKDIR" && cp -r stochastic_forcing_2D_v2.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cd "$WORKDIR" || exit -1
 
+mpiexec -n $SLURM_NTASKS python3 stochastic_forcing_2D_v2.py
+mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs analysis
+mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs scalar_data
+mpiexec -n $SLURM_NTASKS python3 plot_slices.py analysis/*.h5
+
+cd "$SUBMITDIR" && cp dedalus_output_$SLURM_JOB_ID "$WORKDIR"
