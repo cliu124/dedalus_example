@@ -71,7 +71,7 @@ def forcingx(deltaT):
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid_x['g']=noise
-    tmp_grid_x['c'][np.invert(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=0j
+    tmp_grid_x['c'][np.invert((kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2))]=0j
     #tmp_grid_x['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
     noise_x_filter=tmp_grid_x['g']
     tmpx  = 2*np.mean(noise_x_filter**2)

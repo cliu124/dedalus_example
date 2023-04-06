@@ -248,7 +248,7 @@ classdef stochastic_post
             plot_config.label_list={1,'$k_x$','$k_y$'};
 
             spectrum_average=mean(abs(obj.([variable_name,'_coeff'])(1:obj.Ny/2,:,1:end)).^2,3);
-            data{1}.z=log10(spectrum_average);
+            data{1}.z=(spectrum_average);
             plot_config.loglog=[0,0];
             plot_config.print_size=[1,1100,900];
             plot_config.colormap='white_zero';
