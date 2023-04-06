@@ -145,7 +145,7 @@ def print_screen(flag,logger):
 
 def print_file(flag):
     #print the flag onto file
-    flag_text=open('./snapshots'+'/flag.txt','w+')
+    flag_text=open('./analysis'+'/flag.txt','w+')
     flag_attrs=vars(flag)
     print(', Attributes: 123,\n ------\n-------\n------',file=flag_text)
     print(', test: 123,',file=flag_text)
