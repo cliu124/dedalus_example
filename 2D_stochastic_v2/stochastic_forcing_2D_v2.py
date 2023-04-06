@@ -35,7 +35,7 @@ class flag:
 flag=flag()
 flag.Lx, flag.Ly = (2*np.pi, 2*np.pi)
 flag.nu  = 0.01
-flag.eps = 1
+flag.eps = 0.1
 flag.Nx=128
 flag.Ny=128
 flag.k1=7
