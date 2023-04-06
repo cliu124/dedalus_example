@@ -62,13 +62,14 @@ for i in range(len(mask[:,0])):
         ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
             mask[i,j] = 0
-
+            
+mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
 def forcingx(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise['c'][mask] = 0
+    noise['c'][mask] = 0j
     tmpx  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpx)
     #noise = gaussian_filter(noise, sigma=1)
@@ -78,7 +79,7 @@ def forcingy(deltaT,mask):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise['c'][mask] = 0
+    noise['c'][mask] = 0j
     tmpy  = 2*np.mean(noise**2)
     noise = noise / np.sqrt(tmpy)
     #noise = gaussian_filter(noise, sigma=1)
