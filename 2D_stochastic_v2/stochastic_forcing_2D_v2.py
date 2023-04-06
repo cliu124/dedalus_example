@@ -63,32 +63,41 @@ for i in range(len(mask[:,0])):
             mask[i,j] = False
             
 print(mask)
+tmp_grid=domain.new_field()
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
-def forcingx(deltaT,mask):
+
+def forcingx(deltaT,mask,tmp_grid):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     print(dt)
-    print(noise['c'])
-    print(len(noise['c'][0,:]))
-    print(len(noise['c'][:,0]))
-    noise['c'][mask] = 0j
-    tmpx  = 2*np.mean(noise**2)
-    noise = noise / np.sqrt(tmpx)
+    print(noise)
+    print(len(noise[0,:]))
+    print(len(noise[:,0]))
+    tmp_grid['g']=noise
+    tmp_grid['c'][mask] = 0j
+    noise_filter=tmp_grid['g']
+    tmpx  = 2*np.mean(noise_filter**2)
+    noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
     #noise = gaussian_filter(noise, sigma=1)
-    return noise*np.sqrt(2*eps)/np.sqrt(deltaT)
+    return noise_filter_normalized
 
-def forcingy(deltaT,mask):
+def forcingy(deltaT,mask,tmp_grid):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    noise['c'][mask] = 0j
-    tmpy  = 2*np.mean(noise**2)
-    noise = noise / np.sqrt(tmpy)
+    print(dt)
+    print(noise)
+    print(len(noise[0,:]))
+    print(len(noise[:,0]))
+    tmp_grid['g']=noise
+    tmp_grid['c'][mask] = 0j
+    noise_filter=tmp_grid['g']
+    tmpx  = 2*np.mean(noise_filter**2)
+    noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
     #noise = gaussian_filter(noise, sigma=1)
-    return noise*np.sqrt(2*eps)/np.sqrt(deltaT)
-
+    return noise_filter_normalized
 
 # Define the internal heat forcing function (a constant usually)
 #forcing_func = domain.new_field(name='forcing_func')
