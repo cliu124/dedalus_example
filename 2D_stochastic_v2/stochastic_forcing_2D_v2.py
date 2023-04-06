@@ -29,100 +29,66 @@ from dedalus.core import operators
 import logging
 logger = logging.getLogger(__name__)
 
-rand = np.random.RandomState(seed=42)
-
+class flag:
+    pass
 # Parameters
-Lx, Ly = (2*np.pi, 2*np.pi)
-nu  = 0.1
-eps = 0.01
-Nx=128
-Ny=128
-
-#rand = np.random.RandomState(seed=42)
-
-k1=7
-k2=9
+flag=flag()
+flag.Lx, flag.Ly = (2*np.pi, 2*np.pi)
+flag.nu  = 0.1
+flag.eps = 0.01
+flag.Nx=128
+flag.Ny=128
+flag.k1=7
+flag.k2=9
+flag.stop_sim_time=10
+flag.initial_dt=0.01
 
 # Create bases and domain
-x_basis = de.Fourier('x', Nx, interval=(0, Lx), dealias=3/2)
-y_basis = de.Fourier('y', Ny, interval=(0, Ly), dealias=3/2)
+x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
+y_basis = de.Fourier('y', flag.Ny, interval=(0, flag.Ly), dealias=3/2)
 domain = de.Domain([x_basis, y_basis], grid_dtype=np.float64)
 x = domain.grid(0)
 y = domain.grid(1)
 
-#gshape = domain.dist.grid_layout.global_shape(scales=3/2)
-#slices = domain.dist.grid_layout.slices(scales=3/2)
-#tmp    = rand.standard_normal(gshape)[slices]
-#mask   = np.ones_like(tmp['c'])
-# mask = np.ones([round(Nx/2),round(Ny-1)],dtype=bool)
-# for i in range(len(mask[:,0])):
-#     kx=i*2*np.pi/Lx
-#     for j in range(len(mask[0,:])):
-#         ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
-#         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
-#             mask[i,j] = False
-            
-# print(mask)
 tmp_grid=domain.new_field()
 tmp_grid.set_scales(3/2)
 tmp_grid_filter=domain.new_field()
 tmp_grid_filter.set_scales(3/2)
 tmp_grid_filter['g']=0
-#mask=bool(mask)
-# Define a function to get back the time-step needed to rescale white noise
+
 kx=domain.elements(0)
 ky=domain.elements(1)
+
+rand = np.random.RandomState(seed=42)
 
 def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    #print(deltaT)
-    #print(noise)
-    #print(slices)
-    #print(len(noise[0,:]))
-    #print(len(noise[:,0]))
     tmp_grid['g']=noise
-    #tmp_grid_copy = ((tmp_grid + 1e-16) - 1e-16).evaluate()
-    #mask_slices=mask[slices]
-    #tmp_grid_copy['c'][mask_slices]=0j
-    #print((kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2))
-    tmp_grid_filter['c'][(kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2)]=tmp_grid['c'][(kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2)]
+    tmp_grid_filter['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=tmp_grid['c'][(kx**2+ky**2>flag.k1**2)*(kx**2+ky**2<flag.k2**2)]
     noise_filter=tmp_grid_filter['g']
     tmpx  = 2*np.mean(noise_filter**2)
-    noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
-    #noise = gaussian_filter(noise, sigma=1)
+    noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
     return noise_filter_normalized
 
 def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
-    #print(deltaT)
-    #print(noise)
-    #print(len(noise[0,:]))
-    #print(len(noise[:,0]))
     tmp_grid['g']=noise
-    #tmp_grid_copy = ((tmp_grid + 1e-16) - 1e-16).evaluate()
-    #mask_slices=mask[slices]
-    #tmp_grid_copy['c'][mask_slices]=0j
-    tmp_grid_filter['c'][(kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2)]=tmp_grid['c'][(kx**2+ky**2>k1**2)*(kx**2+ky**2<k2**2)]
+    tmp_grid_filter['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=tmp_grid['c'][(kx**2+ky**2>flag.k1**2)*(kx**2+ky**2<flag.k2**2)]
     noise_filter=tmp_grid_filter['g']
     tmpx  = 2*np.mean(noise_filter**2)
-    noise_filter_normalized = noise_filter*np.sqrt(2*eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
-    #noise = gaussian_filter(noise, sigma=1)
+    noise_filter_normalized = noise_filter*np.sqrt(2*flag.eps)/np.sqrt(tmpx)/np.sqrt(deltaT)
     return noise_filter_normalized
-
-# Define the internal heat forcing function (a constant usually)
-#forcing_func = domain.new_field(name='forcing_func')
-#forcing_func['g'] = 1.
 
 forcing_func_x = operators.GeneralFunction(domain,'g',forcingx,args=[])
 forcing_func_y = operators.GeneralFunction(domain,'g',forcingy,args=[])
 
-# 2D Boussinesq hydrodynamics
+#governing equations
 problem = de.IVP(domain, variables=['u','v','p','forcing_var_x','forcing_var_y'])
-problem.parameters['nu'] = nu
+problem.parameters['nu'] = flag.nu
 problem.parameters['forcing_func_x'] = forcing_func_x
 problem.parameters['forcing_func_y'] = forcing_func_y
 
@@ -135,24 +101,14 @@ problem.add_equation("forcing_var_y=forcing_func_y")
 # Build solver
 solver = problem.build_solver(de.timesteppers.RK222)
 logger.info('Solver built')
-logger.info('dt')
 
 #forcing_func.args = [solver.dt]
 forcing_func_x.original_args = [0.0001]
 forcing_func_y.original_args = [0.0001]
-# Initial conditions
-#x = domain.grid(0)
-#z = domain.grid(1)
-
-# Random perturbations, initialized globally for same results in parallel
-#gshape = domain.dist.grid_layout.global_shape(scales=1)
-#slices = domain.dist.grid_layout.slices(scales=1)
-#rand = np.random.RandomState(seed=42)
-#noise = rand.standard_normal(gshape)[slices]
 
 # Integration parameters
-solver.stop_sim_time = 10
-solver.stop_wall_time = 10 * 60.
+solver.stop_sim_time = flag.stop_sim_time
+solver.stop_wall_time = np.inf
 solver.stop_iteration = np.inf
 
 # Analysis
@@ -168,11 +124,7 @@ analysis1 = solver.evaluator.add_file_handler("scalar_data", sim_dt=0.1)
 analysis1.add_task("integ(0.5*(u*u+v*v))", name="Ek")
 analysis1.add_task("integ(0.5*(u*u))", name="Ekx")
 analysis1.add_task("integ(0.5*(v*v))", name="Eky")
-#analysis1.add_task("forcing_var_x",name="forcing_var_x")
-#analysis1.add_task("forcing_var_y",name="forcing_var_y")
-#analysis1.add_task("z", name="z")     #try to add z for Tz profile graph
-#analysis1.add_task("R")       #try to add Ra in graph
-
+analysis1.add_task("(integ(v*v)-integ(u*u))/integ(u*u+v*v)",name="m")
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=0.0001, cadence=10, safety=1,
@@ -184,10 +136,29 @@ flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("integ(sqrt(u*u + v*v))", name='U_rms')
 flow.add_property("(integ( v*v)-integ(u*u))/integ(u*u+v*v)", name='m')
 
+def print_screen(flag,logger):
+    #print the flag onto the screen
+    flag_attrs=vars(flag)
+    #print(', '.join("%s: %s, \n" % item for item in flag_attrs.items()))
+    logger.info(', Attributes: Value,\n,')
+    logger.info(', '.join("%s: %s, \n" % item for item in flag_attrs.items()))
+
+def print_file(flag):
+    #print the flag onto file
+    flag_text=open(flag.current_path+'/snapshots'+'/flag.txt','w+')
+    flag_attrs=vars(flag)
+    print(', Attributes: 123,\n ------\n-------\n------',file=flag_text)
+    print(', test: 123,',file=flag_text)
+    print(', '+', '.join("%s: %s, \n" % item for item in flag_attrs.items()),file=flag_text)
+    flag_text.close()
 # Main loop
+
 try:
     logger.info('Starting loop')
     start_time = time.time()
+    print_screen(flag,logger)
+    print_file(flag)
+    dt=flag.initial_dt
     while solver.ok:
 #    for i in range(10):
         dt = CFL.compute_dt()
@@ -206,3 +177,19 @@ finally:
     logger.info('Iterations: %i' %solver.iteration)
     logger.info('Sim end time: %f' %solver.sim_time)
     logger.info('Run time: %.2f sec' %(end_time-start_time))
+
+
+
+
+#gshape = domain.dist.grid_layout.global_shape(scales=3/2)
+#slices = domain.dist.grid_layout.slices(scales=3/2)
+#tmp    = rand.standard_normal(gshape)[slices]
+#mask   = np.ones_like(tmp['c'])
+# mask = np.ones([round(Nx/2),round(Ny-1)],dtype=bool)
+# for i in range(len(mask[:,0])):
+#     kx=i*2*np.pi/Lx
+#     for j in range(len(mask[0,:])):
+#         ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
+#         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
+#             mask[i,j] = False
+            
