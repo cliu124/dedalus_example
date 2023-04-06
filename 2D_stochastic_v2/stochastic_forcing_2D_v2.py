@@ -61,7 +61,7 @@ for i in range(len(mask[:,0])):
     for j in range(len(mask[0,:])):
         ky=(j-np.floor((Ny-1)/2))*2*np.pi/Ly
         if ((k1 <= np.sqrt(kx**2 + ky**2) ) and (np.sqrt(kx**2 + ky**2)<=k2)):
-            mask[i,j] = 0.0
+            mask[i,j] = 0
 
 # Define a function to get back the time-step needed to rescale white noise
 def forcingx(deltaT,mask):
