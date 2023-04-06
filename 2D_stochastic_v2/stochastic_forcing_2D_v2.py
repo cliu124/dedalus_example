@@ -67,7 +67,7 @@ tmp_grid=domain.new_field()
 #mask=bool(mask)
 # Define a function to get back the time-step needed to rescale white noise
 
-def forcingx(deltaT,mask,tmp_grid):
+def forcingx(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
@@ -83,7 +83,7 @@ def forcingx(deltaT,mask,tmp_grid):
     #noise = gaussian_filter(noise, sigma=1)
     return noise_filter_normalized
 
-def forcingy(deltaT,mask,tmp_grid):
+def forcingy(deltaT):
     gshape = domain.dist.grid_layout.global_shape(scales=3/2)
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
@@ -123,8 +123,8 @@ logger.info('Solver built')
 logger.info('dt')
 
 #forcing_func.args = [solver.dt]
-forcing_func_x.original_args = [0.0001,mask]
-forcing_func_y.original_args = [0.0001,mask]
+forcing_func_x.original_args = [0.0001]
+forcing_func_y.original_args = [0.0001]
 # Initial conditions
 #x = domain.grid(0)
 #z = domain.grid(1)
@@ -171,8 +171,8 @@ try:
     while solver.ok:
 #    for i in range(10):
         dt = CFL.compute_dt()
-        forcing_func_x.args = [dt,mask]
-        forcing_func_y.args = [dt,mask]
+        forcing_func_x.args = [dt]
+        forcing_func_y.args = [dt]
         solver.step(dt)
         if (solver.iteration-1) % 100 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
