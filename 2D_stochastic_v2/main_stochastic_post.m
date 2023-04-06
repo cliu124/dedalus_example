@@ -2,7 +2,7 @@ clear all;
 close all;
 clc;
 
-slurm_num={'20230406150932'};
+slurm_num={'20230406152154'};
 flag.print=1;
 flag.visible=1;
 flag.video=0;
@@ -12,6 +12,9 @@ for slurm_ind=1:length(slurm_num)
         slurm_num{slurm_ind},...
         '\analysis_s1.h5'];
     dedalus_post_my{slurm_ind}=stochastic_post(h5_name,flag);
+    dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_average('forcing_var_y');
+
+    error('1');
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.snapshot('u',[],[],[10:10:100]);
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.snapshot('v',[],[],[10:10:100]);
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.snapshot('forcing_var_x',[],[],[10:10:100]);
@@ -19,7 +22,6 @@ for slurm_ind=1:length(slurm_num)
 
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_snapshot('u');
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_average('u');
-    dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_snapshot('forcing_var_x');
 
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_average('forcing_var_y');
 
