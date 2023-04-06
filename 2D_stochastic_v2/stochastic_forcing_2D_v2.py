@@ -54,7 +54,6 @@ tmp_grid=domain.new_field()
 tmp_grid.set_scales(3/2)
 tmp_grid_filter=domain.new_field()
 tmp_grid_filter.set_scales(3/2)
-tmp_grid_filter['g']=0
 
 kx=domain.elements(0)
 ky=domain.elements(1)
@@ -66,6 +65,7 @@ def forcingx(deltaT):
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid['g']=noise
+    tmp_grid_filter['g']=0
     tmp_grid_filter['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=tmp_grid['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
     noise_filter=tmp_grid_filter['g']
     tmpx  = 2*np.mean(noise_filter**2)
@@ -77,6 +77,7 @@ def forcingy(deltaT):
     slices = domain.dist.grid_layout.slices(scales=3/2)
     noise = rand.standard_normal(gshape)[slices]
     tmp_grid['g']=noise
+    tmp_grid_filter['g']=0
     tmp_grid_filter['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]=tmp_grid['c'][(kx**2+ky**2>=flag.k1**2)*(kx**2+ky**2<=flag.k2**2)]
     noise_filter=tmp_grid_filter['g']
     tmpx  = 2*np.mean(noise_filter**2)
