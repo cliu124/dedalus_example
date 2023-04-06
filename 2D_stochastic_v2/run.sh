@@ -1,4 +1,5 @@
 conda activate dedalus2
+mkdir analysis
 ###ln -s /home/cliu124/dedalus_example/2D_stochastic_v2/analysis_20230326162736/analysis_s1.h5 restart.h5
 mpiexec -n 4 python3 stochastic_forcing_2D_v2.py
 mpiexec -n 4 python3 -m dedalus merge_procs analysis
