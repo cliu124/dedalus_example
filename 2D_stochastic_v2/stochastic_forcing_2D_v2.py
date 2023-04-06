@@ -33,8 +33,8 @@ rand = np.random.RandomState(seed=42)
 
 # Parameters
 Lx, Ly = (2*np.pi, 2*np.pi)
-nu  = 0.01
-eps = 1.0
+nu  = 0.1
+eps = 0.01
 Nx=128
 Ny=128
 
