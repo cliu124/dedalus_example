@@ -126,7 +126,7 @@ else:
 solver.stop_sim_time = stop_sim_time
 
 # Analysis
-analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt, max_writes=50, mode=fh_mode)
+analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 analysis.add_system(solver.state)
 
 # CFL

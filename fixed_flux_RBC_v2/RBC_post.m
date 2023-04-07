@@ -46,7 +46,7 @@ classdef RBC_post
         title_time=1;
         
         post_store_dt;
-        
+        x_Test;
     end
     
     methods
