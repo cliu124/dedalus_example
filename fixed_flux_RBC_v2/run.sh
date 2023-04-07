@@ -1,8 +1,8 @@
 conda activate dedalus2
 ###ln -s /home/cliu124/dedalus_example/fixed_flux_RBC_v2/analysis_20230326162736/analysis_s1.h5 restart.h5
 mpiexec -n 4 python3 rayleigh_benard.py
-mpiexec -n 4 python3 -m dedalus merge_procs snapshots
-mpiexec -n 4 python3 plot_slices.py snapshots/*.h5
+mpiexec -n 4 python3 -m dedalus merge_procs analysis
+mpiexec -n 4 python3 plot_slices.py analysis/*.h5
 today="$(date +"%Y%m%d%H%M%S")"
 frames_name="frames_$today"
 mv frames "$frames_name"
