@@ -40,31 +40,39 @@ from dedalus.extras import flow_tools
 import logging
 logger = logging.getLogger(__name__)
 
+class flag:
+    pass
+# Parameters
+flag=flag()
 
 # Parameters
-Lx, Lz = (4., 4.)
-Prandtl = 1.
+flag.Lx, flag.Lz = (4., 4.)
+flag.Nx, flag.Nz = (256,256)
+flag.Prandtl = 1.
 #Rayleigh = 1e6
-tau=0.01 #diffusivity ratio
-R_rho=2 #density ratio
-d_T_z=1 #background temperature gradient
-d_C_z=1 #background salinity gradient
-W_st=1 #non-dimensional settling velocity
-
+flag.tau=0.01 #diffusivity ratio
+flag.R_rho=2 #density ratio
+flag.d_T_z=1 #background temperature gradient
+flag.d_C_z=1 #background salinity gradient
+flag.W_st=1 #non-dimensional settling velocity
+flag.initial_dt = 0.125
+flag.stop_sim_time = 300
+flag.post_store_dt = 0.25
+flag.A_noise=1e-3
 
 # Create bases and domain
-x_basis = de.Fourier('x', 256, interval=(0, Lx), dealias=3/2)
-z_basis = de.Fourier('z', 256, interval=(0, Lz), dealias=3/2)
+x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
+z_basis = de.Fourier('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
 domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
 
 # 2D Boussinesq hydrodynamics
 problem = de.IVP(domain, variables=['p','T','C','u','w'])
-problem.parameters['Pr'] = Prandtl
-problem.parameters['tau'] = tau
-problem.parameters['R_rho'] = R_rho
-problem.parameters['d_T_z'] = d_T_z
-problem.parameters['d_C_z'] = d_C_z
-problem.parameters['W_st'] = W_st
+problem.parameters['Pr'] = flag.Prandtl
+problem.parameters['tau'] = flag.tau
+problem.parameters['R_rho'] = flag.R_rho
+problem.parameters['d_T_z'] = flag.d_T_z
+problem.parameters['d_C_z'] = flag.d_C_z
+problem.parameters['W_st'] = flag.W_st
 
 problem.add_equation("dx(u) + dz(w) = 0",condition="(nx!=0) or (nz!=0)") #\nabla \cdot \boldsymbol{u}=0
 problem.add_equation("p=0", condition="(nx==0) and (nz==0)") #pressure gauge condition
@@ -91,13 +99,13 @@ if not pathlib.Path('restart.h5').exists():
     noise = rand.standard_normal(gshape)[slices]
 
     # Linear background + perturbations damped at walls
-    pert =  1e-3 * noise 
+    pert =  flag.A_noise * noise 
     T['g'] = pert
     C['g'] = pert
 
     # Timestepping and output
-    dt = 0.125
-    stop_sim_time = 300
+    dt = flag.initial_dt
+    stop_sim_time = flag.stop_sim_time
     fh_mode = 'overwrite'
 
 else:
@@ -106,18 +114,22 @@ else:
 
     # Timestepping and output
     dt = last_dt
-    stop_sim_time = 300
+    stop_sim_time = flag.stop_sim_time
     fh_mode = 'append'
 
 # Integration parameters
 solver.stop_sim_time = stop_sim_time
 
 # Analysis
-snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.25, max_writes=50, mode=fh_mode)
-snapshots.add_system(solver.state)
+analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt, max_writes=50, mode=fh_mode)
+analysis.add_system(solver.state)
+analysis.add_task("C",layout='c',name='C_coeff')
+analysis.add_task("T",layout='c',name='T_coeff')
+analysis.add_task("u",layout='c',name='u_coeff')
+analysis.add_task("w",layout='c',name='w_coeff')
 
 # CFL
-CFL = flow_tools.CFL(solver, initial_dt=dt, cadence=10, safety=0.5,
+CFL = flow_tools.CFL(solver, initial_dt=flag.initial_dt, cadence=10, safety=0.5,
                      max_change=1.5, min_change=0.5, max_dt=0.125, threshold=0.05)
 CFL.add_velocities(('u', 'w'))
 
@@ -126,10 +138,29 @@ flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("sqrt(u*u + w*w)/2", name='KE')
 #flow_out = flow_tools.GlobalFlowProperty(solver, cadence=1)
 #flow_out.add_property('w*b',name='wb')
-                
+               
+
+def print_screen(flag,logger):
+    #print the flag onto the screen
+    flag_attrs=vars(flag)
+    #print(', '.join("%s: %s, \n" % item for item in flag_attrs.items()))
+    logger.info(', Attributes: Value,\n,')
+    logger.info(', '.join("%s: %s, \n" % item for item in flag_attrs.items()))
+
+def print_file(flag):
+    #print the flag onto file
+    flag_text=open('./analysis'+'/flag.txt','w+')
+    flag_attrs=vars(flag)
+    print(', Attributes: 123,\n ------\n-------\n------',file=flag_text)
+    print(', test: 123,',file=flag_text)
+    print(', '+', '.join("%s: %s, \n" % item for item in flag_attrs.items()),file=flag_text)
+    flag_text.close()
+    
 # Main loop
 try:
     logger.info('Starting loop')
+    print_screen(flag,logger)
+    print_file(flag)
     while solver.proceed:
         dt = CFL.compute_dt()
         dt = solver.step(dt)

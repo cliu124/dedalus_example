@@ -1,24 +1,29 @@
-classdef stochastic_post
+classdef settling_post
     %POST_CLASS Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
         x_list;
-        y_list;
+        z_list;
         kx_list;
-        ky_list;
+        kz_list;
         t_list;
         
         Nx;
-        Ny;
+        Nz;
         eps;
-        k1;
-        k2;
-        nu;
+        Prandtl;
+        tau;
+        R_rho;
+        W_st;
+        A_noise;
+        d_T_z;
+        d_C_z;
+        
         stop_sim_time;
         initial_dt;
         Lx;
-        Ly;
+        Lz;
        
         h5_name;
         print;
@@ -27,30 +32,20 @@ classdef stochastic_post
         video;
         
         u;
-        v;
-        forcing_var_x;
-        forcing_var_y;
+        w;
         
         u_coeff;
-        v_coeff;
-        forcing_var_x_coeff;
-        forcing_var_y_coeff;
+        w_coeff;
         spectrum_TKE;
         
         title_time=1;
         
         post_store_dt;
         
-        h5_name_scalar_data;
-        
-        Ek;
-        Ekx;
-        Eky;
-        m;
     end
     
     methods
-        function obj = stochastic_post(h5_name,flag)
+        function obj = settling_post(h5_name,flag)
             %dedalus_post Construct an instance of this class
             %   Detailed explanation goes here
             if nargin<2 || isempty(flag)
@@ -82,10 +77,10 @@ classdef stochastic_post
             %POST_CLASS Construct an instance of this class
             %   Detailed explanation goes here
             obj.x_list=h5read(h5_name,'/scales/x/1.0');
-            obj.y_list=h5read(h5_name,'/scales/y/1.0');
+            obj.z_list=h5read(h5_name,'/scales/z/1.0');
             obj.t_list=h5read_complex(h5_name,'/scales/sim_time');
             obj.kx_list=h5read_complex(h5_name,'/scales/kx');        
-            obj.ky_list=h5read_complex(h5_name,'/scales/ky');        
+            obj.kz_list=h5read_complex(h5_name,'/scales/kz');        
 
         end
                
@@ -119,8 +114,8 @@ classdef stochastic_post
                     data{1}.z=obj.(variable_name)(:,:,t_ind);
                     
                     data{1}.x=obj.x_list;
-                    data{1}.y=obj.y_list;
-                    plot_config.label_list={1,'$x$','$y$'};
+                    data{1}.y=obj.z_list;
+                    plot_config.label_list={1,'$x$','$z$'};
 
                     plot_config.fontsize=40;
                     plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
@@ -153,8 +148,8 @@ classdef stochastic_post
                     data{1}.z=obj.(variable_name)(:,:,t_ind);
 
                     data{1}.x=obj.x_list;
-                    data{1}.y=obj.y_list;
-                    plot_config.label_list={1,'$x$','$y$'};
+                    data{1}.y=obj.z_list;
+                    plot_config.label_list={1,'$x$','$z$'};
 
 %                     plot_config.fontsize=40;
                     plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
@@ -191,9 +186,9 @@ classdef stochastic_post
                     clear data plot_config;
                     
                     data{1}.x=obj.kx_list;
-                    data{1}.y=obj.ky_list(1:obj.Ny/2);
-                    plot_config.label_list={1,'$k_x$','$k_y$'};
-                    data{1}.z=log10(abs(obj.([variable_name,'_coeff'])(1:obj.Ny/2,:,t_ind)).^2);
+                    data{1}.y=obj.kz_list(1:obj.Nz/2);
+                    plot_config.label_list={1,'$k_x$','$k_z$'};
+                    data{1}.z=log10(abs(obj.([variable_name,'_coeff'])(1:obj.Nz/2,:,t_ind)).^2);
                     %data{2}.x=obj.kx_list/obj.k_opt;
                     %data{2}.y=obj.ks/obj.k_opt*ones(size(obj.kx_list));
                     plot_config.print_size=[1,1100,900];
@@ -207,13 +202,13 @@ classdef stochastic_post
                     frame_spectrum_2D(t_ind)=plot_contour(data,plot_config);
 
                     dx=diff(obj.kx_list); dx=dx(1);
-                    dy=diff(obj.ky_list); dy=dy(1);
+                    dz=diff(obj.kz_list); dz=dz(1);
                     
                     data{1}.x=obj.kx_list;
-                    data{2}.x=obj.ky_list(1:obj.Ny/2);
-                    plot_config.label_list={1,'$k_x$ or $k_y$',''};
-                    data{1}.y=2*dy*sum(abs(obj.([variable_name,'_coeff'])(1:obj.Ny/2,:,t_ind)).^2,1);
-                    data{2}.y=2*dx*sum(abs(obj.([variable_name,'_coeff'])(1:obj.Ny/2,:,t_ind)).^2,2);
+                    data{2}.x=obj.kz_list(1:obj.Nz/2);
+                    plot_config.label_list={1,'$k_x$ or $k_z$',''};
+                    data{1}.y=2*dz*sum(abs(obj.([variable_name,'_coeff'])(1:obj.Nz/2,:,t_ind)).^2,1);
+                    data{2}.y=2*dx*sum(abs(obj.([variable_name,'_coeff'])(1:obj.Nz/2,:,t_ind)).^2,2);
                     
                     plot_config.loglog=[1,1];
                     plot_config.ytick_list=[0,0.001,0.01,0.1,1,10,100,1000];
@@ -227,7 +222,7 @@ classdef stochastic_post
                         otherwise
                             variable_name_legend=variable_name;
                     end
-                    plot_config.legend_list={1,['$\int E_',variable_name_legend,'(k_x,k_y)dk_y$'],['$\int E_',variable_name_legend,'(k_x,k_y)d k_x$']};
+                    plot_config.legend_list={1,['$\int E_',variable_name_legend,'(k_x,k_z)dk_z$'],['$\int E_',variable_name_legend,'(k_x,k_z)d k_x$']};
                     plot_config.name=[obj.h5_name(1:end-3),'_spectrum_',variable_name,'_1D_t_',num2str(round(obj.t_list(t_ind),2)),'.png'];
                     plot_config.print=obj.print;
                     plot_config.visible=obj.visible;
@@ -253,10 +248,10 @@ classdef stochastic_post
             obj.([variable_name,'_coeff'])=h5read_complex(obj.h5_name,['/tasks/',variable_name,'_coeff']);
 
             data{1}.x=obj.kx_list;
-            data{1}.y=obj.ky_list(1:obj.Ny/2);
-            plot_config.label_list={1,'$k_x$','$k_y$'};
+            data{1}.y=obj.kz_list(1:obj.Nz/2);
+            plot_config.label_list={1,'$k_x$','$k_z$'};
 
-            spectrum_average=mean(abs(obj.([variable_name,'_coeff'])(1:obj.Ny/2,:,1:end)).^2,3);
+            spectrum_average=mean(abs(obj.([variable_name,'_coeff'])(1:obj.Nz/2,:,1:end)).^2,3);
             data{1}.z=log10(spectrum_average);
             plot_config.loglog=[0,0];
             plot_config.print_size=[1,1100,900];
@@ -268,16 +263,16 @@ classdef stochastic_post
             plot_contour(data,plot_config);
 
             dx=diff(obj.kx_list); dx=dx(1);
-            dy=diff(obj.ky_list); dy=dy(1);
+            dz=diff(obj.kz_list); dz=dz(1);
 
             data{1}.x=obj.kx_list;
-            data{1}.y=2*dy*sum(spectrum_average,1);
-            data{2}.x=obj.ky_list(1:obj.Ny/2);
+            data{1}.y=2*dz*sum(spectrum_average,1);
+            data{2}.x=obj.kz_list(1:obj.Nz/2);
             data{2}.y=2*dx*sum(spectrum_average,2);
 
             plot_config.loglog=[1,1];
 
-            plot_config.label_list={1,'$k_x$ or $k_y$',''};
+            plot_config.label_list={1,'$k_x$ or $k_z$',''};
             switch variable_name
                 case 'forcing_var_x'
                     variable_name_legend='{f_x}';
@@ -286,7 +281,7 @@ classdef stochastic_post
                 otherwise
                     variable_name_legend=variable_name;
             end
-            plot_config.legend_list={1,['$\int E_',variable_name_legend,'(k_x,k_y)dk_y$'],['$\int E_',variable_name_legend,'(k_x,k_y)d k_x$']};
+            plot_config.legend_list={1,['$\int E_',variable_name_legend,'(k_x,k_z)dk_z$'],['$\int E_',variable_name_legend,'(k_x,k_z)d k_x$']};
             plot_config.name=[obj.h5_name(1:end-3),'_spectrum_',variable_name,'_1D_time_average.png'];
             plot_config.print=obj.print;
             plot_config.visible=obj.visible;
@@ -304,22 +299,22 @@ classdef stochastic_post
             %%energy spectrum as kx and kz
             
             %%This is the post-processing for the TKE in 2D... 
-            obj.v_coeff=h5read_complex(obj.h5_name,'/tasks/v_coeff');
+            obj.w_coeff=h5read_complex(obj.h5_name,'/tasks/w_coeff');
             %=w_coeff.r+1i*w_coeff.i;
             obj.u_coeff=h5read_complex(obj.h5_name,'/tasks/u_coeff');
             %obj.u_coeff=u_coeff.r+1i*u_coeff.i;
             for t_ind=1:length(obj.t_list)
-                obj.spectrum_TKE(:,:,t_ind)=abs(obj.u_coeff(:,:,t_ind)).^2+abs(obj.v_coeff(:,:,t_ind)).^2;
+                obj.spectrum_TKE(:,:,t_ind)=abs(obj.u_coeff(:,:,t_ind)).^2+abs(obj.w_coeff(:,:,t_ind)).^2;
             end
-            spectrum_TKE_average=mean(abs(obj.spectrum_TKE(1:obj.Ny/2,:,1:end)).^2,3);%max(3*max_ind,30)
+            spectrum_TKE_average=mean(abs(obj.spectrum_TKE(1:obj.Nz/2,:,1:end)).^2,3);%max(3*max_ind,30)
 
             data{1}.z=log10(spectrum_TKE_average);
             data{1}.x=obj.kx_list;
-            data{1}.y=obj.ky_list(1:obj.Ny/2);
+            data{1}.y=obj.kz_list(1:obj.Nz/2);
             
             plot_config.loglog=[0,0];
             plot_config.print_size=[1,1100,900];
-            plot_config.label_list={1,'$k_x$','$k_y$'};
+            plot_config.label_list={1,'$k_x$','$k_z$'};
             plot_config.colormap='white_zero';
             plot_config.name=[obj.h5_name(1:end-3),'_spectrum_TKE_2D_time_average.png'];
             plot_config.print=obj.print;
@@ -327,17 +322,17 @@ classdef stochastic_post
             plot_contour(data,plot_config);
             
             dx=diff(obj.kx_list); dx=dx(1);
-            dy=diff(obj.ky_list); dy=dy(1);
+            dz=diff(obj.kz_list); dz=dz(1);
 
             data{1}.x=obj.kx_list;
-            data{1}.y=2*dy*sum(spectrum_TKE_average,1);
-            data{2}.x=obj.ky_list(1:obj.Ny/2);
+            data{1}.y=2*dz*sum(spectrum_TKE_average,1);
+            data{2}.x=obj.kz_list(1:obj.Nz/2);
             data{2}.y=2*dx*sum(spectrum_TKE_average,2);
             
             plot_config.loglog=[1,1];
             plot_config.ytick_list=[1,0.001,0.01,0.1,1,10,100,1000];
             plot_config.label_list={1,'$k_x$ or $k_z$',''};
-            plot_config.legend_list={1,'$\int E_u(k_x,k_y)dk_y$','$\int E_u(k_x,k_y)d k_x$'};
+            plot_config.legend_list={1,'$\int E_u(k_x,k_z)dk_z$','$\int E_u(k_x,k_z)d k_x$'};
             plot_config.name=[obj.h5_name(1:end-3),'_spectrum_TKE_1D_time_average.png'];
             plot_config.print=obj.print;
             plot_config.visible=obj.visible;
