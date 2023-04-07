@@ -40,21 +40,32 @@ from dedalus.extras import flow_tools
 import logging
 logger = logging.getLogger(__name__)
 
+class flag:
+    pass
+# Parameters
+flag=flag()
 
 # Parameters
-Lx, Lz = (4., 1.)
-Prandtl = 1.
-Rayleigh = 1e6
+flag.Lx, flag.Lz = (4., 1.)
+flag.Prandtl = 1.
+flag.Rayleigh = 1e6
+flag.Nx=256
+flag.Nz=64
+flag.A_noise=1e-3
+flag.initial_dt=0.125
+flag.stop_sim_time=300
+flag.post_store_dt=0.25
+
 
 # Create bases and domain
-x_basis = de.Fourier('x', 256, interval=(0, Lx), dealias=3/2)
-z_basis = de.Chebyshev('z', 64, interval=(-Lz/2, Lz/2), dealias=3/2)
+x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
+z_basis = de.Chebyshev('z', flag.Nz, interval=(-flag.Lz/2, flag.Lz/2), dealias=3/2)
 domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
 
 # 2D Boussinesq hydrodynamics
 problem = de.IVP(domain, variables=['p','b','u','w','bz','uz','wz'])
-problem.parameters['P'] = (Rayleigh * Prandtl)**(-1/2)
-problem.parameters['R'] = (Rayleigh / Prandtl)**(-1/2)
+problem.parameters['P'] = (flag.Rayleigh * flag.Prandtl)**(-1/2)
+problem.parameters['R'] = (flag.Rayleigh / flag.Prandtl)**(-1/2)
 problem.parameters['F'] = F = 1
 #problem.parameters['Lx'] = Lx
 #problem.parameters['Lz'] = Lz
@@ -93,13 +104,13 @@ if not pathlib.Path('restart.h5').exists():
 
     # Linear background + perturbations damped at walls
     zb, zt = z_basis.interval
-    pert =  1e-3 * noise * (zt - z) * (z - zb)
+    pert =  flag.A_noise * noise * (zt - z) * (z - zb)
     b['g'] = F * pert
     b.differentiate('z', out=bz)
 
     # Timestepping and output
-    dt = 0.125
-    stop_sim_time = 300
+    dt = flag.initial_dt
+    stop_sim_time = flag.stop_sim_time
     fh_mode = 'overwrite'
 
 else:
@@ -108,15 +119,15 @@ else:
 
     # Timestepping and output
     dt = last_dt
-    stop_sim_time = 50
+    stop_sim_time = flag.stop_sim_time
     fh_mode = 'append'
 
 # Integration parameters
 solver.stop_sim_time = stop_sim_time
 
 # Analysis
-snapshots = solver.evaluator.add_file_handler('snapshots', sim_dt=0.25, max_writes=50, mode=fh_mode)
-snapshots.add_system(solver.state)
+analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt, max_writes=50, mode=fh_mode)
+analysis.add_system(solver.state)
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=dt, cadence=10, safety=0.5,
@@ -128,10 +139,29 @@ flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("sqrt(u*u + w*w) / R", name='Re')
 #flow_out = flow_tools.GlobalFlowProperty(solver, cadence=1)
 #flow_out.add_property('w*b',name='wb')
-                
+           
+def print_screen(flag,logger):
+    #print the flag onto the screen
+    flag_attrs=vars(flag)
+    #print(', '.join("%s: %s, \n" % item for item in flag_attrs.items()))
+    logger.info(', Attributes: Value,\n,')
+    logger.info(', '.join("%s: %s, \n" % item for item in flag_attrs.items()))
+
+def print_file(flag):
+    #print the flag onto file
+    flag_text=open('./analysis'+'/flag.txt','w+')
+    flag_attrs=vars(flag)
+    print(', Attributes: 123,\n ------\n-------\n------',file=flag_text)
+    print(', test: 123,',file=flag_text)
+    print(', '+', '.join("%s: %s, \n" % item for item in flag_attrs.items()),file=flag_text)
+    flag_text.close()
+    
+        
 # Main loop
 try:
     logger.info('Starting loop')
+    print_screen(flag,logger)
+    print_file(flag)
     while solver.proceed:
         dt = CFL.compute_dt()
         dt = solver.step(dt)

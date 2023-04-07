@@ -18,7 +18,5 @@ for slurm_ind=1:length(slurm_num)
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.snapshot('C',[],[],[10:10:100]);
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_average('C');
     dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_average('T');
-    dedalus_post_my{slurm_ind}=dedalus_post_my{slurm_ind}.spectrum_TKE_average();
-
 
 end
