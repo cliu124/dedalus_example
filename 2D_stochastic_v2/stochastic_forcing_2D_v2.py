@@ -106,7 +106,7 @@ problem.add_equation("p=0",condition = "(nx==0) and (ny==0)")
 problem.add_equation("forcing_var_x=forcing_func_x")
 problem.add_equation("forcing_var_y=forcing_func_y")
 # Build solver
-solver = problem.build_solver(de.timesteppers.RK222)
+solver = problem.build_solver(de.timesteppers.RK111)
 logger.info('Solver built')
 
 #forcing_func.args = [solver.dt]
