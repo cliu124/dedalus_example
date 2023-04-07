@@ -33,13 +33,10 @@ classdef RBC_post
         
         u;
         w;
-        C;
-        T;
+        b;
         
         u_coeff;
         w_coeff;
-        C_coeff;
-        T_coeff;
         
         spectrum_TKE;
         
@@ -47,6 +44,9 @@ classdef RBC_post
         
         post_store_dt;
         x_Test;
+        
+        z_basis_mode='Chebyshev';
+        spec_kx_z_b;
     end
     
     methods
@@ -70,14 +70,14 @@ classdef RBC_post
             %h5disp(h5_name);
             
             %read the flag_table.
-            flag_table=readtable([h5_name(1:end-14),'flag.txt']);
-            for table_ind=1:length(flag_table.x_Test)
-               if isnumeric(obj.(flag_table.x_Test{table_ind}(3:end)))
-                   obj.(flag_table.x_Test{table_ind}(3:end))=str2num(flag_table.x123_{table_ind}(1:end-1));
-               else
-                   obj.(flag_table.x_Test{table_ind}(3:end))=flag_table.x123_{table_ind}(1:end-1);
-               end
-            end
+%             flag_table=readtable([h5_name(1:end-14),'flag.txt']);
+%             for table_ind=1:length(flag_table.x_Test)
+%                if isnumeric(obj.(flag_table.x_Test{table_ind}(3:end)))
+%                    obj.(flag_table.x_Test{table_ind}(3:end))=str2num(flag_table.x123_{table_ind}(1:end-1));
+%                else
+%                    obj.(flag_table.x_Test{table_ind}(3:end))=flag_table.x123_{table_ind}(1:end-1);
+%                end
+%             end
             
             %POST_CLASS Construct an instance of this class
             %   Detailed explanation goes here
@@ -85,7 +85,6 @@ classdef RBC_post
             obj.z_list=h5read(h5_name,'/scales/z/1.0');
             obj.t_list=h5read_complex(h5_name,'/scales/sim_time');
             obj.kx_list=h5read_complex(h5_name,'/scales/kx');        
-            obj.kz_list=h5read_complex(h5_name,'/scales/kz');        
 
         end
                
@@ -123,7 +122,7 @@ classdef RBC_post
                     plot_config.label_list={1,'$x$','$z$'};
 
                     plot_config.fontsize=28;
-                    plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
+                    %plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
                     %plot_config.ytick_list=[1,0,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2];
                     
                     if obj.title_time
@@ -157,7 +156,7 @@ classdef RBC_post
                     plot_config.label_list={1,'$x$','$z$'};
 
 %                     plot_config.fontsize=40;
-                    plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
+                    %plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
                     %plot_config.ytick_list=[1,0,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2.0];
 
                     if obj.title_time
@@ -242,7 +241,7 @@ classdef RBC_post
                 plot_config.ytick_list=[1,0,0.2,0.4,0.6,0.8,1];
                 plot_config.xtick_list=[1,0,10,20,30];
                 plot_config.xlim_list=[1,0,20];
-                plot_config.ylim_list=[1,0,1];
+                %plot_config.ylim_list=[1,0,1];
                 
                 %This range is for the plotting of the bounded salt-finger
                 plot_config.zlim_list=[1,0,0.16];
