@@ -52,7 +52,7 @@ flag.Rayleigh = 1e2
 flag.Nx=256
 flag.Nz=64
 flag.A_noise=1e-3
-flag.initial_dt=0.125
+flag.initial_dt=0.001
 flag.stop_sim_time=300
 flag.post_store_dt=0.25
 
