@@ -53,8 +53,8 @@ flag.Nx=256
 flag.Nz=64
 flag.A_noise=1e-3
 flag.initial_dt=0.001
-flag.stop_sim_time=300
-flag.post_store_dt=0.25
+flag.stop_sim_time=10
+flag.post_store_dt=0.1
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
