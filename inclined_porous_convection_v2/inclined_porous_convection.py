@@ -64,11 +64,12 @@ domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
 # 2D Boussinesq hydrodynamics
 problem = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
 problem.parameters['Ra'] = flag.Rayleigh
-problem.parameters['phi'] = flag.phi
+problem.parameters['sin_phi'] = np.sin(flag.phi)
+problem.parameters['cos_phi'] = np.cos(flag.phi)
 problem.add_equation("dx(u) + wz = 0")
 problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz)) = -(u*dx(T) + w*Tz)")
-problem.add_equation(" u + dx(p) - Ra*sin(phi)*T = 0")
-problem.add_equation(" w + dz(p) - Ra*cos(phi)*T = 0")
+problem.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
+problem.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
 problem.add_equation("Tz - dz(T) = 0")
 problem.add_equation("wz - dz(w) = 0")
 problem.add_bc("T(z='left') = 1")
