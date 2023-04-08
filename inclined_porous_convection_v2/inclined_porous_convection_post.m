@@ -1,4 +1,4 @@
-classdef RBC_post
+classdef inclined_porous_convection_post
     %POST_CLASS Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -50,7 +50,7 @@ classdef RBC_post
     end
     
     methods
-        function obj = RBC_post(h5_name,flag)
+        function obj = inclined_porous_convection_post(h5_name,flag)
             %dedalus_post Construct an instance of this class
             %   Detailed explanation goes here
             if nargin<2 || isempty(flag)
