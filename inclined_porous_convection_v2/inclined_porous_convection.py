@@ -51,6 +51,7 @@ flag.phi = 35/180*np.pi #inclination angle
 flag.Rayleigh = 1e2
 flag.Nx=256
 flag.Nz=64
+flag.kappa=0
 flag.A_noise=1e-3
 flag.initial_dt=0.001
 flag.stop_sim_time=1
@@ -66,14 +67,15 @@ problem = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
 problem.parameters['Ra'] = flag.Rayleigh
 problem.parameters['sin_phi'] = np.sin(flag.phi)
 problem.parameters['cos_phi'] = np.cos(flag.phi)
+problem.parameters['kappa'] = flag.kappa
 problem.add_equation("dx(u) + wz = 0")
-problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz)) = -(u*dx(T) + w*Tz)")
+problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz)) = -((u+Ra*sin_phi*((kappa-1)*z-(kappa-1)/2))*dx(T) + w*Tz)")
 problem.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
 problem.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
 problem.add_equation("Tz - dz(T) = 0")
 problem.add_equation("wz - dz(w) = 0")
 problem.add_bc("T(z='left') = 1")
-problem.add_bc("T(z='right') = 0")
+problem.add_bc("(1-kappa)*T(z='right')+kappa*Tz(z='right') = 0")
 problem.add_bc("w(z='left') = 0")
 problem.add_bc("w(z='right') = 0", condition="(nx != 0)")
 problem.add_bc("integ(p) = 0", condition="(nx == 0)")
