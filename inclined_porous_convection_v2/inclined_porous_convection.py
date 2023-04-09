@@ -33,9 +33,9 @@ import numpy as np
 from mpi4py import MPI
 import time
 import pathlib
-
 from dedalus import public as de
 from dedalus.extras import flow_tools
+from dedalus.tools import post
 
 import logging
 logger = logging.getLogger(__name__)
@@ -57,6 +57,8 @@ flag.initial_dt=0.001
 flag.stop_sim_time=1
 flag.post_store_dt=0.01
 flag.A_LS=1
+flag.modulation='gaussian'# or gaussian
+flag.gaussian_sigma=1
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
@@ -109,11 +111,24 @@ if not pathlib.Path('restart.h5').exists():
     # Linear background + perturbations damped at walls
     #zb, zt = z_basis.interval
     pert = flag.A_noise * noise * z * (1 - z)
-    T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-    #pert
-    T.differentiate('z', out=Tz)
-    w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-    u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+    
+    #flag.A_LS=1 gives 3 wave LS...
+    #flag.A_LS=5 gives 2 wave LS... 
+    #flag.A_LS=3 gives steady convection roll, not LS..
+    
+    if flag.modulation=='sin':
+        T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+        #pert
+        T.differentiate('z', out=Tz)
+        w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+        u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+    elif flag.modulation == 'gaussian':
+        T['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+        #pert
+        T.differentiate('z', out=Tz)
+        w['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+        u['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+    
     # Timestepping and output
     dt = flag.initial_dt
     stop_sim_time = flag.stop_sim_time
@@ -177,6 +192,14 @@ try:
             #dy_T_mean_q=flow_out.volume_average('wb')-1                
             #logger.info('dy_T_mean_q: {}'.format(dy_T_mean_q))
             #logger.info('Nu: {}'.format(-1/dy_T_mean_q))
+    
+    #add check point, only store one snapshot
+    checkpoint=solver.evaluator.add_file_handler('checkpoint')
+    checkpoint.add_system(solver.state)
+    end_world_time = solver.get_world_time()
+    end_wall_time = end_world_time - solver.start_time
+    solver.evaluator.evaluate_handlers([checkpoint], timestep = flag.initial_dt, sim_time = solver.sim_time, world_time=end_world_time, wall_time=end_wall_time, iteration=solver.iteration)
+    post.merge_process_files('checkpoint',cleanup=True)
 
 except:
     logger.error('Exception raised, triggering end of main loop.')

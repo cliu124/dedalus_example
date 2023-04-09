@@ -10,6 +10,9 @@ cp -r "$frames_name" /mnt/d/Data/dedalus_example/inclined_porous_convection_v2
 analysis_name="analysis_$today"
 mv analysis "$analysis_name"
 cp -r "$analysis_name" /mnt/d/Data/dedalus_example/inclined_porous_convection_v2
+checkpoint_name="checkpoint_$today"
+mv checkpoint "$checkpoint_name"
+cp -r "$checkpoint_name" /mnt/d/Data/dedalus_example/inclined_porous_convection_v2
 echo $today
 echo "finished"
 ###rm -rf restart.h5
