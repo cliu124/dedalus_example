@@ -95,7 +95,7 @@ logger.info('Solver built')
 
 # Initial conditions or restart
 if not pathlib.Path('restart.h5').exists():
-
+    print('Set up initial condition!')
     # Initial conditions
     x, z = domain.all_grids()
     
@@ -138,6 +138,7 @@ if not pathlib.Path('restart.h5').exists():
 
 else:
     # Restart
+    print('Restart')
     write, last_dt = solver.load_state('restart.h5', -1)
 
     # Timestepping and output
@@ -194,12 +195,7 @@ try:
         if (solver.iteration-1) % 10 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
             logger.info('TKE = %f' %flow.max('TKE'))
-            #logger.info('Nu: {}'.format(-(np.mean(solver.state['T']['g'][0,:]）+flag.kappa-1)))
 
-            #dy_T_mean_q=flow_out.volume_average('wb')-1                
-            #logger.info('dy_T_mean_q: {}'.format(dy_T_mean_q))
-            #logger.info('Nu: {}'.format(-1/dy_T_mean_q))
-    
     #add check point, only store one snapshot
     checkpoint=solver.evaluator.add_file_handler('checkpoint')
     checkpoint.add_system(solver.state)
