@@ -68,13 +68,17 @@ problem.parameters['Ra'] = flag.Rayleigh
 problem.parameters['sin_phi'] = np.sin(flag.phi)
 problem.parameters['cos_phi'] = np.cos(flag.phi)
 problem.parameters['kappa'] = flag.kappa
+
+#The base state is U=Ra sin(phi)*[(kappa-1)*z-(kappa-1)/2] 
+#T=(kappa-1)*z+1. This will satisfies the boundary conditions. 
+#All variables here are perturbations around this base state. 
 problem.add_equation("dx(u) + wz = 0")
-problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz)) = -((u+Ra*sin_phi*((kappa-1)*z-(kappa-1)/2))*dx(T) + w*Tz)")
+problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz)) = -((u+Ra*sin_phi*((kappa-1)*z-(kappa-1)/2))*dx(T) + w*Tz+w*(kappa-1))")
 problem.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
 problem.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
 problem.add_equation("Tz - dz(T) = 0")
 problem.add_equation("wz - dz(w) = 0")
-problem.add_bc("T(z='left') = 1")
+problem.add_bc("T(z='left') = 0")
 problem.add_bc("(1-kappa)*T(z='right')+kappa*Tz(z='right') = 0")
 problem.add_bc("w(z='left') = 0")
 problem.add_bc("w(z='right') = 0", condition="(nx != 0)")
