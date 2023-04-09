@@ -153,10 +153,16 @@ classdef post_inclined_porous_convection
                         plot_config.title_list={0};
                     end
                     
-                    plot_config.print_size=[1,900,1200];
+                    plot_config.print_size=[1,2000,500];
                     plot_config.name=[obj.h5_name(1:end-3),'_snapshot_',variable_name,'_t_',num2str(round(obj.t_list(t_ind))),'.png'];
                     plot_config.print=obj.print;
                     plot_config.visible=obj.visible;
+                    plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
+                    plot_config.xlim_list=[1,round(min(data{1}.x)),round(max(data{1}.x))];
+                    plot_config.zlim_list=[1,round(min(min(data{1}.z))),round(max(max(data{1}.z)))];
+                    plot_config.ztick_list=[1,0,0.5,1];
+                    plot_config.daspect=[1,1,1,1];
+                    plot_config.fontsize=28;
                     snapshot(snapshot_ind)=plot_contour(data,plot_config);
                     snapshot_ind=snapshot_ind+1;
                     %plot_config.label_list={1,'$x$',''};

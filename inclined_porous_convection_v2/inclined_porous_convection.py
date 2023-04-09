@@ -46,20 +46,27 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (10., 1.)
+flag.Lx, flag.Lz = (10., 1.) #domain size
 flag.phi = 35/180*np.pi #inclination angle
-flag.Rayleigh = 1e2
-flag.Nx=256
-flag.Nz=64
-flag.kappa=0
-flag.A_noise=1e-3
-flag.initial_dt=0.001
-flag.stop_sim_time=1
-flag.post_store_dt=0.01
-flag.A_LS=1
-flag.modulation='gaussian'# or gaussian
-flag.gaussian_sigma=1
-flag.restart_t0=1
+flag.Rayleigh = 1e2 #Rayleigh number
+flag.Nx=256 #grid point number in x
+flag.Nz=64 #grid point number in z
+
+#a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
+#The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
+flag.kappa=0 
+
+#parameter to control simulation and storage time
+flag.initial_dt=0.001 #the initial time step
+flag.stop_sim_time=100 #The simulation time to stop
+flag.post_store_dt=0.4 #The time step to store the data
+
+#paramter for the initial guess
+flag.A_noise=1e-3 #random noise magnitude in the initial condition
+flag.A_LS=1 #The magnitude of initial localized structure guess
+flag.modulation='gaussian'# The modulation function shape, either 'sin' or 'gaussian'
+flag.gaussian_sigma=1 #The sigma parameter in the Gaussian modulation
+flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, will continue the previous one 
 
 
 # Create bases and domain
