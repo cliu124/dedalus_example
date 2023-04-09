@@ -56,6 +56,7 @@ flag.A_noise=1e-3
 flag.initial_dt=0.001
 flag.stop_sim_time=1
 flag.post_store_dt=0.01
+flag.A_LS=1
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
@@ -93,9 +94,12 @@ if not pathlib.Path('restart.h5').exists():
 
     # Initial conditions
     x, z = domain.all_grids()
+    
     T = solver.state['T']
     Tz = solver.state['Tz']
-
+    w = solver.state['w']
+    wz = solver.state['wz']
+    u = solver.state['u']
     # Random perturbations, initialized globally for same results in parallel
     gshape = domain.dist.grid_layout.global_shape(scales=1)
     slices = domain.dist.grid_layout.slices(scales=1)
@@ -103,11 +107,13 @@ if not pathlib.Path('restart.h5').exists():
     noise = rand.standard_normal(gshape)[slices]
 
     # Linear background + perturbations damped at walls
-    zb, zt = z_basis.interval
-    pert = flag.A_noise * noise * (zt - z) * (z - zb)
-    T['g'] = pert
-    #T.differentiate('z', out=Tz)
-
+    #zb, zt = z_basis.interval
+    pert = flag.A_noise * noise * z * (1 - z)
+    T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+    #pert
+    T.differentiate('z', out=Tz)
+    w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+    u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
     # Timestepping and output
     dt = flag.initial_dt
     stop_sim_time = flag.stop_sim_time
