@@ -59,6 +59,8 @@ flag.post_store_dt=0.01
 flag.A_LS=1
 flag.modulation='gaussian'# or gaussian
 flag.gaussian_sigma=1
+flag.restart_t0=1
+
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
@@ -142,6 +144,9 @@ else:
     dt = last_dt
     stop_sim_time = flag.stop_sim_time
     fh_mode = 'append'
+    if flag.restart_t0:
+        solver.sim_time=0
+        fh_mode='overwrite'
 
 # Integration parameters
 solver.stop_sim_time = stop_sim_time
@@ -189,6 +194,8 @@ try:
         if (solver.iteration-1) % 10 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
             logger.info('TKE = %f' %flow.max('TKE'))
+            #logger.info('Nu: {}'.format(-(np.mean(solver.state['T']['g'][0,:]）+flag.kappa-1)))
+
             #dy_T_mean_q=flow_out.volume_average('wb')-1                
             #logger.info('dy_T_mean_q: {}'.format(dy_T_mean_q))
             #logger.info('Nu: {}'.format(-1/dy_T_mean_q))
