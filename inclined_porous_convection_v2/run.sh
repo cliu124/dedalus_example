@@ -1,4 +1,5 @@
 conda activate dedalus2
+ln -s /home/cliu124/dedalus_example/inclined_porous_convection_v2/X1_checkpoint_s1.h5 restart.h5
 ###ln -s /home/cliu124/dedalus_example/inclined_porous_convection_v2/analysis_20230326162736/analysis_s1.h5 restart.h5
 mpiexec -n 4 python3 inclined_porous_convection.py
 mpiexec -n 4 python3 -m dedalus merge_procs analysis --cleanup
@@ -15,4 +16,4 @@ mv checkpoint "$checkpoint_name"
 cp -r "$checkpoint_name" /mnt/d/Data/dedalus_example/inclined_porous_convection_v2
 echo $today
 echo "finished"
-###rm -rf restart.h5
+rm -rf restart.h5
