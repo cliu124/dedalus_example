@@ -73,7 +73,7 @@ problem.parameters['kappa'] = flag.kappa
 #T=(kappa-1)*z+1. This will satisfies the boundary conditions. 
 #All variables here are perturbations around this base state. 
 problem.add_equation("dx(u) + wz = 0")
-problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz)) = -((u+Ra*sin_phi*((kappa-1)*z-(kappa-1)/2))*dx(T) + w*Tz+w*(kappa-1))")
+problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz))+w*(kappa-1)+Ra*sin_phi*((kappa-1)*z-(kappa-1)/2)*dx(T) = -((u)*dx(T) + w*Tz)")
 problem.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
 problem.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
 problem.add_equation("Tz - dz(T) = 0")
@@ -106,7 +106,7 @@ if not pathlib.Path('restart.h5').exists():
     zb, zt = z_basis.interval
     pert = flag.A_noise * noise * (zt - z) * (z - zb)
     T['g'] = pert
-    T.differentiate('z', out=Tz)
+    #T.differentiate('z', out=Tz)
 
     # Timestepping and output
     dt = flag.initial_dt
