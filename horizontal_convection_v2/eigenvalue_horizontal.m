@@ -10,6 +10,7 @@ tau_list=1;
 Wst_list=1;
 Pr_list=7;
 
+
 for Pr_ind=1:length(Pr_list)
     Pr=Pr_list(Pr_ind);
    for Wst_ind=1:length(Wst_list)
@@ -33,7 +34,7 @@ for Pr_ind=1:length(Pr_list)
                             phi*k/l-1, -K2, 0;
                             phi*k/l-1/R_rho,0,-tau*K2+Wst*1i*k];
                         [eig_vec,eig_val]=eig(A,M);
-                        growth_rate{Pr_ind,Wst_ind,tau_ind,R_rho_ind,phi_ind}(k_ind,l_ind)=...
+                        growth_rate{Pr_ind,Wst_ind,tau_ind,R_rho_ind,phi_ind,G_ind}(k_ind,l_ind)=...
                             max(real(diag(eig_val)));
                     end
                  end

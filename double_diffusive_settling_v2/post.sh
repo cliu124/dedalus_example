@@ -1,5 +1,5 @@
 conda activate dedalus2
-mpiexec -n 4 python3 -m dedalus merge_procs analysis
+mpiexec -n 4 python3 -m dedalus merge_procs analysis --cleanup
 mpiexec -n 4 python3 plot_slices.py analysis/*.h5
 today="$(date +"%Y%m%d%H%M%S")"
 frames_name="frames_$today"

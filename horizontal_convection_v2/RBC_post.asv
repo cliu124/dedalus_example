@@ -1,4 +1,4 @@
-classdef settling_post
+classdef RBC_post
     %POST_CLASS Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -102,7 +102,7 @@ classdef settling_post
             plot_config.colormap='bluewhitered';%bluewhitered
             variable_max=max(max(max(obj.(variable_name))));
             variable_min=min(min(min(obj.(variable_name))));
-            %plot_config.zlim_list=[1,variable_min,variable_max];
+            plot_config.zlim_list=[1,variable_min,variable_max];
 
             
             %Update 2022/09/14, update the zlim_list option so I could turn
