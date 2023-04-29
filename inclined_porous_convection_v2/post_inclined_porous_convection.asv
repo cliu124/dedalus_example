@@ -750,7 +750,7 @@ classdef post_inclined_porous_convection
                 
                 %also plot the version that put time in the vertical axis.
                 data{1}.x=obj.x_list;
-                data{1}.y=obj.t_list(t_begin:t_end);;
+                data{1}.y=obj;
                 data{1}.z=data{1}.z';
                 plot_config.label_list={1,'$x$','$t$'};
                 plot_config.print_size=[1,700,1100];

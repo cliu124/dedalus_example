@@ -2,10 +2,10 @@ clear all;
 close all;
 clc;
 
-Ra_list=linspace(27,28,10);
+Ra_list=linspace(25,30,20);
 phi_list=0;%35/180*pi;
 kappa_list=1;
-kx_list=linspace(2.2,2.4,30);
+kx_list=linspace(2,3,30);
 % kx_list=5;
 ky_list=0;
 
