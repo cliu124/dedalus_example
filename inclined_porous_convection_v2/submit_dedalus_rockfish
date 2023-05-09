@@ -12,7 +12,6 @@ export SLURM_EXPORT_ENV=ALL
 #export I_MPI_FABRICS=shm,tcp
 ###conda init bash
 module load anaconda
-source /path/to/venv/bin/activate
 
 conda activate dedalus2
 
