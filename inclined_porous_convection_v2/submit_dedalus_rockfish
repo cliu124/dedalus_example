@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=bigmem
+####SBATCH --partition=defq
 #SBATCH -A avankan_bigmem
 #SBATCH --nodes=1
 #SBATCH --ntasks=48
@@ -10,6 +11,9 @@
 export SLURM_EXPORT_ENV=ALL
 #export I_MPI_FABRICS=shm,tcp
 ###conda init bash
+module load anaconda
+source /path/to/venv/bin/activate
+
 conda activate dedalus2
 
 SUBMITDIR=$SLURM_SUBMIT_DIR
