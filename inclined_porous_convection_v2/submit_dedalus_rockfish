@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --account=fc_phact2d3D
-#SBATCH --partition=savio
+#SBATCH --partition=bigmem
+#SBATCH -A avankan_bigmem
 #SBATCH --nodes=1
-#SBATCH --ntasks=20
+#SBATCH --ntasks=48
 #SBATCH --cpus-per-task=1
-#SBATCH --time=00:40:00
+#SBATCH --time=00:5:00
 #SBATCH --job-name=dedalus
 #SBATCH --output=dedalus_output_%j
 export SLURM_EXPORT_ENV=ALL
@@ -13,10 +13,10 @@ export SLURM_EXPORT_ENV=ALL
 conda activate dedalus2
 
 SUBMITDIR=$SLURM_SUBMIT_DIR
-WORKDIR=/global/scratch/users/changliu/dedalus_example/inclined_porous_convection_v2/dedalus_$SLURM_JOB_ID
+WORKDIR=/home/ext-changliu0520/dedalus_example/inclined_porous_convection_v2/dedalus_$SLURM_JOB_ID
 mkdir -p "$WORKDIR" && cp -r inclined_porous_convection.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cd "$WORKDIR" || exit -1
 
-ln -s /global/home/users/changliu/dedalus_example/inclined_porous_convection_v2/X1_checkpoint_s1.h5 restart.h5
+ln -s /home/ext-changliu0520/dedalus_example/inclined_porous_convection_v2/X1_checkpoint_s1.h5 restart.h5
 mpiexec -n $SLURM_NTASKS python3 inclined_porous_convection.py
 mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs analysis --cleanup
 mpiexec -n $SLURM_NTASKS python3 plot_slices.py analysis/*.h5

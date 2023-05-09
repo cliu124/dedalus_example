@@ -6,7 +6,6 @@
 #SBATCH --time=00:10:00
 #SBATCH --job-name=dedalus
 #SBATCH --output=dedalus_output_%j
-#SBATCH --error=dedalus_error_%j
 export SLURM_EXPORT_ENV=ALL
 #export I_MPI_FABRICS=shm,tcp
 

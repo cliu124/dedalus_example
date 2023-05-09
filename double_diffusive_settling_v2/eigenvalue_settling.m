@@ -2,13 +2,13 @@ clear all;
 close all;
 clc;
 
-k_list=linspace(-1,1,201);
-l_list=logspace(-5,1,401);
+k_list=linspace(-1,1,101);
+l_list=logspace(-5,1,201);
 phi_list=0;
-R_rho_list=1.5;
-tau_list=1;
-Wst_list=1;
-Pr_list=7;
+R_rho_list=0.001;%;[0.01,0.1,0.5,1,10,50,100];
+tau_list=278.767;
+Wst_list=1456;
+Pr_list=700;
 
 for Pr_ind=1:length(Pr_list)
     Pr=Pr_list(Pr_ind);
