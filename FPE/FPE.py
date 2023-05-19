@@ -31,7 +31,7 @@ flag.initial_dt=0.01
 flag.post_store_dt=0.1
 
 # Create bases and domain
-x_basis = de.Hermite('x', flag.Nx, interval=(-flag.Lx, flag.Lx), dealias=3/2)
+x_basis = de.Hermite('x', flag.Nx, center=0, stretch=1, dealias=1)
 domain = de.Domain([x_basis], grid_dtype=np.float64)
 x = domain.grid(0)
 
