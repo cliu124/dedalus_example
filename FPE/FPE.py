@@ -38,11 +38,10 @@ x = domain.grid(0)
 def floor_t(t):
     return np.floor(t)
 
-floor_t = operators.GeneralFunction(domain,'g',floor_t,args=[])
 #governing equations
-problem = de.IVP(domain, variables=['q','qx'])
-problem.parameters['floor_t'] = floor_t
-problem.add_equation("dt(q) = 1/(floor_t+21)*dx((2*x+0.3*x**2+0.04*x**3)*q)+2/(floor_t+21)**2*dx(qx)")
+problem = de.IVP(domain, variables=['q'])
+
+problem.add_equation("dt(q) = 1/(t+21)*dx((2*x+0.3*x**2+0.04*x**3)*q)+2/(t+21)**2*dx(qx)")
 problem.add_equation("qx-dx(q)=0")
 
 # Build solver
@@ -74,8 +73,6 @@ def print_file(flag):
     print(', '+', '.join("%s: %s, \n" % item for item in flag_attrs.items()),file=flag_text)
     flag_text.close()
 # Main loop
-
-floor_t.args = 0
 
 try:
     logger.info('Starting loop')
