@@ -2,14 +2,24 @@ clear all;
 close all;
 clc;
 
-k_list=linspace(-1,1,201);
-l_list=logspace(-5,1,401);
-phi_list=0;
-R_rho_list=1.5;
-tau_list=1;
-Wst_list=1;
+%Only change this parameter
+R_rho_list=0.1;
+
+tau_list=0.01;
+Wst_list=0;
 Pr_list=7;
 
+k_list=linspace(-3,3,201);
+l_list=logspace(-7,1,401);
+phi_list=1;
+
+%This is reproduction for validation
+%grad_T_vertical=1;
+%phi_C=phi_list;
+
+%This corresponds to horizontal gradient only
+grad_T_vertical=0;
+phi_C=0;
 
 for Pr_ind=1:length(Pr_list)
     Pr=Pr_list(Pr_ind);
@@ -31,10 +41,10 @@ for Pr_ind=1:length(Pr_list)
                             0,1,0;
                             0,0,1];
                         A=[-K2*K2/l^2, 1,-1;
-                            phi*k/l-1, -K2, 0;
-                            phi*k/l-1/R_rho,0,-tau*K2+Wst*1i*k];
+                            phi*k/l-grad_T_vertical*1, -K2, 0;
+                            phi_C*k/l-1/R_rho,0,-tau*K2+Wst*1i*k];
                         [eig_vec,eig_val]=eig(A,M);
-                        growth_rate{Pr_ind,Wst_ind,tau_ind,R_rho_ind,phi_ind,G_ind}(k_ind,l_ind)=...
+                        growth_rate{Pr_ind,Wst_ind,tau_ind,R_rho_ind,phi_ind}(k_ind,l_ind)=...
                             max(real(diag(eig_val)));
                     end
                  end
