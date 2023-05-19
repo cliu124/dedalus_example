@@ -35,10 +35,13 @@ x_basis = de.Hermite('x', flag.Nx, center=0, stretch=1, dealias=1)
 domain = de.Domain([x_basis], grid_dtype=np.float64)
 x = domain.grid(0)
 
+def floor_t(t):
+    return np.floor(t)
+
 #governing equations
 problem = de.IVP(domain, variables=['q'])
 
-problem.add_equation("dt(q) = 1/(np.floor(t)+21)*dx((2*x+0.3*x**2+0.04*x**3)*q)+2/(np.floor(t)+21)**2*dx(qx)")
+problem.add_equation("dt(q) = 1/(floor_t+21)*dx((2*x+0.3*x**2+0.04*x**3)*q)+2/(floor_t+21)**2*dx(qx)")
 problem.add_equation("qx-dx(q)=0")
 
 # Build solver
@@ -78,6 +81,7 @@ try:
     print_file(flag)
     dt=flag.initial_dt
     while solver.ok:
+        floor_t.args = [solver.sim_time]
         solver.step(dt)
         if (solver.iteration-1) % 100 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
