@@ -74,6 +74,8 @@ def print_file(flag):
     flag_text.close()
 # Main loop
 
+floor_t.args = 0
+
 try:
     logger.info('Starting loop')
     start_time = time.time()
