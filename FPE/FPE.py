@@ -38,6 +38,7 @@ x = domain.grid(0)
 def floor_t(t):
     return np.floor(t)
 
+floor_t = operators.GeneralFunction(domain,'g',floor_t,args=[])
 #governing equations
 problem = de.IVP(domain, variables=['q'])
 problem.parameters['floor_t'] = floor_t
