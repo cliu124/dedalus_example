@@ -40,7 +40,7 @@ def floor_t(t):
 
 floor_t = operators.GeneralFunction(domain,'g',floor_t,args=[])
 #governing equations
-problem = de.IVP(domain, variables=['q'])
+problem = de.IVP(domain, variables=['q','qx'])
 problem.parameters['floor_t'] = floor_t
 problem.add_equation("dt(q) = 1/(floor_t+21)*dx((2*x+0.3*x**2+0.04*x**3)*q)+2/(floor_t+21)**2*dx(qx)")
 problem.add_equation("qx-dx(q)=0")
