@@ -48,13 +48,13 @@ flag=flag()
 # Parameters
 flag.Lx, flag.Lz = (4., 1.)
 flag.Prandtl = 1.
-flag.Rayleigh = 1e6
-flag.Nx=256
-flag.Nz=64
+flag.Rayleigh = 1e8
+flag.Nx=512
+flag.Nz=128
 flag.A_noise=1e-3
 flag.initial_dt=0.125
-flag.stop_sim_time=300
-flag.post_store_dt=0.25
+flag.stop_sim_time=6000
+flag.post_store_dt=100
 
 
 # Create bases and domain
@@ -127,7 +127,8 @@ solver.stop_sim_time = stop_sim_time
 
 # Analysis
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
-analysis.add_system(solver.state)
+#analysis.add_system(solver.state)
+analysis.add_task("b",layout='g',name='b')
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=dt, cadence=10, safety=0.5,
