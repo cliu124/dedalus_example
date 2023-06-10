@@ -129,8 +129,8 @@ solver.stop_sim_time = stop_sim_time
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 #analysis.add_system(solver.state)
 analysis.add_task("b",layout='g',name='b')
-analysis.add_task("w",layout='g',name='b')
-analysis.add_task("bz",layout='g',name='b')
+analysis.add_task("w",layout='g',name='w')
+analysis.add_task("bz",layout='g',name='bz')
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=dt, cadence=10, safety=0.5,
