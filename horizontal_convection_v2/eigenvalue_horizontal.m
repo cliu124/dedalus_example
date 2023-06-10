@@ -3,7 +3,7 @@ close all;
 clc;
 
 %Only change this parameter
-R_rho_list=0.1;
+R_rho_list=0.5;
 
 tau_list=0.01;
 Wst_list=0;
@@ -58,5 +58,6 @@ growth_rate{1}(find(growth_rate{1}<0))=NaN;
 data{1}.x=k_list;
 data{1}.y=log10(l_list);
 data{1}.z=growth_rate{1}';
+plot_config.print_size=[1,1000,900];
 plot_config.label_list={1,'$k$','log$_{10}(l)$'};
 plot_contour(data,plot_config);

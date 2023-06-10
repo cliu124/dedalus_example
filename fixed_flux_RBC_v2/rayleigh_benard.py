@@ -53,8 +53,8 @@ flag.Nx=512
 flag.Nz=128
 flag.A_noise=1e-3
 flag.initial_dt=0.125
-flag.stop_sim_time=6000
-flag.post_store_dt=100
+flag.stop_sim_time=1000
+flag.post_store_dt=10
 
 
 # Create bases and domain
@@ -129,6 +129,8 @@ solver.stop_sim_time = stop_sim_time
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 #analysis.add_system(solver.state)
 analysis.add_task("b",layout='g',name='b')
+analysis.add_task("w",layout='g',name='b')
+analysis.add_task("bz",layout='g',name='b')
 
 # CFL
 CFL = flow_tools.CFL(solver, initial_dt=dt, cadence=10, safety=0.5,
