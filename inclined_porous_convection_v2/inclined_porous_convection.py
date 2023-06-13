@@ -104,12 +104,30 @@ logger.info('Solver built')
 
 # Initial conditions or restart
 if flag.collision1!=0 and flag.collision2!=0:
+    #half horizontal domain, just read the data
     x_basis = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx), dealias=3/2)
+    
+    #ignore below, just repeat building solvers.
     z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
     domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
-    
-    # 2D Boussinesq hydrodynamics
     problem = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
+    problem.parameters['Ra'] = flag.Rayleigh
+    problem.parameters['sin_phi'] = np.sin(flag.phi)
+    problem.parameters['cos_phi'] = np.cos(flag.phi)
+    problem.parameters['kappa'] = flag.kappa
+    problem.add_equation("dx(u) + wz = 0")
+    problem.add_equation("dt(T) - (dx(dx(T)) + dz(Tz))-w+Ra*sin_phi*(1/2-z)*dx(T) = -((u)*dx(T) + w*Tz)")
+    problem.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
+    problem.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
+    problem.add_equation("Tz - dz(T) = 0")
+    problem.add_equation("wz - dz(w) = 0")
+    problem.add_bc("T(z='left') = 0")
+    problem.add_bc("(1-kappa)*T(z='right')+kappa*Tz(z='right') = 0")
+    problem.add_bc("w(z='left') = 0")
+    problem.add_bc("w(z='right') = 0", condition="(nx != 0)")
+    problem.add_bc("integ(p) = 0", condition="(nx == 0)")
+    #ignore above, nothing special
+
     solver_half1 = problem.build_solver(de.timesteppers.RK222)
     solver_half2 = problem.build_solver(de.timesteppers.RK222)
 
