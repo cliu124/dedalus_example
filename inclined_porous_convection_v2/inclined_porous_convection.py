@@ -138,13 +138,14 @@ if flag.collision1!=0 and flag.collision2!=0:
     #wz_half1=solver_half.state['wz']['g']
     #u_half1=solver_half.state['u']['g']
     #p_half1=solver_half.state['p']['g']
-
-    solver.state['T']['g'][0:flag.Nx/2-1,:]=solver_half.state['T']['g']
-    solver.state['Tz']['g'][0:flag.Nx/2-1,:]=solver_half.state['Tz']['g']
-    solver.state['w']['g'][0:flag.Nx/2-1,:]=solver_half.state['w']['g']
-    solver.state['wz']['g'][0:flag.Nx/2-1,:]=solver_half.state['wz']['g']
-    solver.state['u']['g'][0:flag.Nx/2-1,:]=solver_half.state['u']['g']
-    solver.state['p']['g'][0:flag.Nx/2-1,:]=solver_half.state['p']['g']
+    slices = domain.dist.grid_layout.slices(scales=1)
+    print(slices)
+    solver.state['T']['g'][slices]=solver_half.state['T']['g'][slices]
+    solver.state['Tz']['g'][slices]=solver_half.state['Tz']['g'][slices]
+    solver.state['w']['g'][slices]=solver_half.state['w']['g'][slices]
+    solver.state['wz']['g'][slices]=solver_half.state['wz']['g'][slices]
+    solver.state['u']['g'][slices]=solver_half.state['u']['g'][slices]
+    solver.state['p']['g'][slices]=solver_half.state['p']['g'][slices]
 
 
     # x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
@@ -171,13 +172,13 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     # solver_half2 = problem2.build_solver(de.timesteppers.RK222)
     solver_half.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
-    
-    solver.state['T']['g'][flag.Nx/2:-1,:]=solver_half.state['T']['g']
-    solver.state['Tz']['g'][flag.Nx/2:-1,:]=solver_half.state['Tz']['g']
-    solver.state['w']['g'][flag.Nx/2:-1,:]=solver_half.state['w']['g']
-    solver.state['wz']['g'][flag.Nx/2:-1,:]=solver_half.state['wz']['g']
-    solver.state['u']['g'][flag.Nx/2:-1,:]=solver_half.state['u']['g']
-    solver.state['p']['g'][flag.Nx/2:-1,:]=solver_half.state['p']['g']
+    #slices = domain.dist.grid_layout.slices(scales=1)
+    #solver.state['T']['g'][flag.Nx/2:-1,:]=solver_half.state['T']['g']
+    #solver.state['Tz']['g'][flag.Nx/2:-1,:]=solver_half.state['Tz']['g']
+    #solver.state['w']['g'][flag.Nx/2:-1,:]=solver_half.state['w']['g']
+    #solver.state['wz']['g'][flag.Nx/2:-1,:]=solver_half.state['wz']['g']
+    #solver.state['u']['g'][flag.Nx/2:-1,:]=solver_half.state['u']['g']
+    #solver.state['p']['g'][flag.Nx/2:-1,:]=solver_half.state['p']['g']
 
     
     #T_half2=solver_half.state['T']['g']
@@ -202,12 +203,12 @@ if flag.collision1!=0 and flag.collision2!=0:
     #solver.state['u']['g']=np.vstack((solver_half1.state['u']['g'],solver_half2.state['u']['g']))
     #solver.state['p']['g']=np.vstack((solver_half1.state['p']['g'],solver_half2.state['p']['g']))
 
-    solver.state['T']['g']=np.vstack((T_half1,T_half2))
-    solver.state['Tz']['g']=np.vstack((Tz_half1,Tz_half2))
-    solver.state['w']['g']=np.vstack((w_half1,w_half2))
-    solver.state['wz']['g']=np.vstack((wz_half1,wz_half2))
-    solver.state['u']['g']=np.vstack((u_half1,u_half2))
-    solver.state['p']['g']=np.vstack((p_half1,p_half2))
+    #solver.state['T']['g']=np.vstack((T_half1,T_half2))
+    #solver.state['Tz']['g']=np.vstack((Tz_half1,Tz_half2))
+    #solver.state['w']['g']=np.vstack((w_half1,w_half2))
+    #solver.state['wz']['g']=np.vstack((wz_half1,wz_half2))
+    #solver.state['u']['g']=np.vstack((u_half1,u_half2))
+    #solver.state['p']['g']=np.vstack((p_half1,p_half2))
 
 
     #print((T['g']))
