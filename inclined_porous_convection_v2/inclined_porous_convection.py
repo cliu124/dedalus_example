@@ -132,7 +132,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     solver_half2 = problem.build_solver(de.timesteppers.RK222)
 
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
-    solver_half2.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
+    solver_half2.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
     solver_half1.step(flag.initial_dt)
     solver_half2.step(flag.initial_dt)
     #print((solver_half1.state['T']['g']))

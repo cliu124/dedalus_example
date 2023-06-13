@@ -62,6 +62,9 @@ classdef post_inclined_porous_convection
         
         dy_T_mean=-1;
         flux_T=0;
+        
+        collision1=0;
+        collision2=0;
     end
     
     methods
@@ -128,7 +131,7 @@ classdef post_inclined_porous_convection
             end
             variable_max=max(max(max(obj.(variable_name))));
             variable_min=min(min(min(obj.(variable_name))));
-            plot_config.zlim_list=[1,variable_min,variable_max];
+            %plot_config.zlim_list=[1,variable_min,variable_max];
 
             
             %Update 2022/09/14, update the zlim_list option so I could turn
@@ -164,7 +167,7 @@ classdef post_inclined_porous_convection
                     plot_config.visible=obj.visible;
                     plot_config.ylim_list=[1,round(min(data{1}.y)),round(max(data{1}.y))];
                     plot_config.xlim_list=[1,round(min(data{1}.x)),round(max(data{1}.x))];
-                    plot_config.zlim_list=[1,round(min(min(data{1}.z))),round(max(max(data{1}.z)))];
+                    %plot_config.zlim_list=[1,round(min(min(data{1}.z))),round(max(max(data{1}.z)))];
                     plot_config.ztick_list=[1,0,0.5,1];
                     plot_config.daspect=[1,1,1,1];
                     plot_config.fontsize=28;
