@@ -133,19 +133,25 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
     solver_half2.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
-    print((solver_half1.state['T']['g']))
-    print(len(solver_half1.state['T']['g'][:,1]))
-    print(len(solver_half1.state['T']['g'][1,:]))
+    #print((solver_half1.state['T']['g']))
+    #print(len(solver_half1.state['T']['g'][:,1]))
+    #print(len(solver_half1.state['T']['g'][1,:]))
     
-    T = solver.state['T']
-    print((T['g']))
-    print(len(solver.state['T']['g'][:,1]))
-    print(len(solver.state['T']['g'][1,:]))
-    Tz = solver.state['Tz']
-    w = solver.state['w']
-    wz = solver.state['wz']
-    u = solver.state['u']
-    p = solver.state['p']
+    solver.state['T']['g']=np.concatenate(solver_half1.state['T']['g'],solver_half2.state['T']['g'])
+    solver.state['Tz']['g']=np.concatenate(solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g'])
+    solver.state['w']['g']=np.concatenate(solver_half1.state['w']['g'],solver_half2.state['w']['g'])
+    solver.state['wz']['g']=np.concatenate(solver_half1.state['wz']['g'],solver_half2.state['wz']['g'])
+    solver.state['u']['g']=np.concatenate(solver_half1.state['u']['g'],solver_half2.state['u']['g'])
+    solver.state['p']['g']=np.concatenate(solver_half1.state['p']['g'],solver_half2.state['p']['g'])
+
+    #print((T['g']))
+    #print(len(solver.state['T']['g'][:,1]))
+    #print(len(solver.state['T']['g'][1,:]))
+    #Tz = solver.state['Tz']
+    #w = solver.state['w']
+    #wz = solver.state['wz']
+    #u = solver.state['u']
+    #p = solver.state['p']
         
 else:
     if not pathlib.Path('restart.h5').exists():
