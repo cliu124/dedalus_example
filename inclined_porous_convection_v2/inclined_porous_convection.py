@@ -133,12 +133,14 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
     solver_half2.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
-    print(np.size(solver_half1.state['T']['g']))
-    print(np.size(solver_half2.state['w']['g']))
-    
+    print((solver_half1.state['T']['g']))
+    print(len(solver_half1.state['T']['g'][:,1]))
+    print(len(solver_half1.state['T']['g'][1,:]))
     
     T = solver.state['T']
-    print(np.size(T['g']))
+    print((T['g']))
+    print(len(solver.state['T']['g'][:,1]))
+    print(len(solver.state['T']['g'][1,:]))
     Tz = solver.state['Tz']
     w = solver.state['w']
     wz = solver.state['wz']
@@ -210,7 +212,7 @@ analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_
 analysis.add_system(solver.state)
 
 # CFL
-CFL = flow_tools.CFL(solver, initial_dt=dt, cadence=10, safety=0.5,
+CFL = flow_tools.CFL(solver, initial_dt=flag.initial_dt, cadence=10, safety=0.5,
                      max_change=1.5, min_change=0.5, max_dt=0.125, threshold=0.05)
 CFL.add_velocities(('u', 'w'))
 
