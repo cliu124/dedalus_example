@@ -130,6 +130,8 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half1 = problem1.build_solver(de.timesteppers.RK222)
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
+    print(len(solver_half1.state['T']['g'][:,1]))
+    print(len(solver_half1.state['T']['g'][1,:]))
     
     x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
     #ignore below, just repeat building solvers.
@@ -158,8 +160,8 @@ if flag.collision1!=0 and flag.collision2!=0:
     #solver_half1.step(flag.initial_dt)
     #solver_half2.step(flag.initial_dt)
     #print((solver_half1.state['T']['g']))
-    #print(len(solver_half1.state['T']['g'][:,1]))
-    #print(len(solver_half1.state['T']['g'][1,:]))
+    print(len(solver_half2.state['T']['g'][:,1]))
+    print(len(solver_half2.state['T']['g'][1,:]))
     
     solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
     solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
