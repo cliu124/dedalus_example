@@ -152,7 +152,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     # #ignore below, just repeat building solvers.
     z_basis2 = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=1)
     domain2 = de.Domain([x_basis2, z_basis2], grid_dtype=np.float64)
-    problem2 = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
+    problem2 = de.IVP(domain2, variables=['p','T','u','w','Tz','wz'])
     problem2.parameters['Ra'] = flag.Rayleigh
     problem2.parameters['sin_phi'] = np.sin(flag.phi)
     problem2.parameters['cos_phi'] = np.cos(flag.phi)
