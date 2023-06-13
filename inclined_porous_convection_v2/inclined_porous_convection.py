@@ -130,45 +130,68 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half1 = problem1.build_solver(de.timesteppers.RK222)
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
-    print(len(solver_half1.state['T']['g'][:,1]))
-    print(len(solver_half1.state['T']['g'][1,:]))
-    
-    x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
-    #ignore below, just repeat building solvers.
-    z_basis2 = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=1)
-    domain2 = de.Domain([x_basis2, z_basis2], grid_dtype=np.float64)
-    problem2 = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
-    problem2.parameters['Ra'] = flag.Rayleigh
-    problem2.parameters['sin_phi'] = np.sin(flag.phi)
-    problem2.parameters['cos_phi'] = np.cos(flag.phi)
-    problem2.parameters['kappa'] = flag.kappa
-    problem2.add_equation("dx(u) + wz = 0")
-    problem2.add_equation("dt(T) - (dx(dx(T)) + dz(Tz))-w+Ra*sin_phi*(1/2-z)*dx(T) = -((u)*dx(T) + w*Tz)")
-    problem2.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
-    problem2.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
-    problem2.add_equation("Tz - dz(T) = 0")
-    problem2.add_equation("wz - dz(w) = 0")
-    problem2.add_bc("T(z='left') = 0")
-    problem2.add_bc("(1-kappa)*T(z='right')+kappa*Tz(z='right') = 0")
-    problem2.add_bc("w(z='left') = 0")
-    problem2.add_bc("w(z='right') = 0", condition="(nx != 0)")
-    problem2.add_bc("integ(p) = 0", condition="(nx == 0)")
-    #ignore above, nothing special
+    #print(len(solver_half1.state['T']['g'][:,1]))
+    #print(len(solver_half1.state['T']['g'][1,:]))
+    T_half1=solver_half1.state['T']['g']
+    Tz_half1=solver_half1.state['Tz']['g']
+    w_half1=solver_half1.state['w']['g']
+    wz_half1=solver_half1.state['wz']['g']
+    u_half1=solver_half1.state['u']['g']
+    p_half1=solver_half1.state['p']['g']
 
-    solver_half2 = problem2.build_solver(de.timesteppers.RK222)
-    solver_half2.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
+    # x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
+    # #ignore below, just repeat building solvers.
+    # z_basis2 = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=1)
+    # domain2 = de.Domain([x_basis2, z_basis2], grid_dtype=np.float64)
+    # problem2 = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
+    # problem2.parameters['Ra'] = flag.Rayleigh
+    # problem2.parameters['sin_phi'] = np.sin(flag.phi)
+    # problem2.parameters['cos_phi'] = np.cos(flag.phi)
+    # problem2.parameters['kappa'] = flag.kappa
+    # problem2.add_equation("dx(u) + wz = 0")
+    # problem2.add_equation("dt(T) - (dx(dx(T)) + dz(Tz))-w+Ra*sin_phi*(1/2-z)*dx(T) = -((u)*dx(T) + w*Tz)")
+    # problem2.add_equation(" u + dx(p) - Ra*sin_phi*T = 0")
+    # problem2.add_equation(" w + dz(p) - Ra*cos_phi*T = 0")
+    # problem2.add_equation("Tz - dz(T) = 0")
+    # problem2.add_equation("wz - dz(w) = 0")
+    # problem2.add_bc("T(z='left') = 0")
+    # problem2.add_bc("(1-kappa)*T(z='right')+kappa*Tz(z='right') = 0")
+    # problem2.add_bc("w(z='left') = 0")
+    # problem2.add_bc("w(z='right') = 0", condition="(nx != 0)")
+    # problem2.add_bc("integ(p) = 0", condition="(nx == 0)")
+    # #ignore above, nothing special
+
+    # solver_half2 = problem2.build_solver(de.timesteppers.RK222)
+    solver_half1.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
+    T_half2=solver_half1.state['T']['g']
+    Tz_half2=solver_half1.state['Tz']['g']
+    w_half2=solver_half1.state['w']['g']
+    wz_half2=solver_half1.state['wz']['g']
+    u_half2=solver_half1.state['u']['g']
+    p_half2=solver_half1.state['p']['g']
+
+    
+    
     #solver_half1.step(flag.initial_dt)
     #solver_half2.step(flag.initial_dt)
     #print((solver_half1.state['T']['g']))
-    print(len(solver_half2.state['T']['g'][:,1]))
-    print(len(solver_half2.state['T']['g'][1,:]))
+    #print(len(solver_half2.state['T']['g'][:,1]))
+    #print(len(solver_half2.state['T']['g'][1,:]))
     
-    solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
-    solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
-    solver.state['w']['g']=np.vstack((solver_half1.state['w']['g'],solver_half2.state['w']['g']))
-    solver.state['wz']['g']=np.vstack((solver_half1.state['wz']['g'],solver_half2.state['wz']['g']))
-    solver.state['u']['g']=np.vstack((solver_half1.state['u']['g'],solver_half2.state['u']['g']))
-    solver.state['p']['g']=np.vstack((solver_half1.state['p']['g'],solver_half2.state['p']['g']))
+    #solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
+    #solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
+    #solver.state['w']['g']=np.vstack((solver_half1.state['w']['g'],solver_half2.state['w']['g']))
+    #solver.state['wz']['g']=np.vstack((solver_half1.state['wz']['g'],solver_half2.state['wz']['g']))
+    #solver.state['u']['g']=np.vstack((solver_half1.state['u']['g'],solver_half2.state['u']['g']))
+    #solver.state['p']['g']=np.vstack((solver_half1.state['p']['g'],solver_half2.state['p']['g']))
+
+    solver.state['T']['g']=np.vstack((T_half1,T_half2))
+    solver.state['Tz']['g']=np.vstack((Tz_half1,Tz_half2))
+    solver.state['w']['g']=np.vstack((w_half1,w_half2))
+    solver.state['wz']['g']=np.vstack((wz_half1,wz_half2))
+    solver.state['u']['g']=np.vstack((u_half1,u_half2))
+    solver.state['p']['g']=np.vstack((p_half1,p_half2))
+
 
     #print((T['g']))
     #print(len(solver.state['T']['g'][:,1]))
