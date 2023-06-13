@@ -46,10 +46,10 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (10., 1.) #domain size
+flag.Lx, flag.Lz = (20., 1.) #domain size
 flag.phi = 35/180*np.pi #inclination angle
 flag.Rayleigh = 1e2 #Rayleigh number
-flag.Nx=256 #grid point number in x
+flag.Nx=512 #grid point number in x
 flag.Nz=64 #grid point number in z
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
@@ -105,7 +105,7 @@ logger.info('Solver built')
 # Initial conditions or restart
 if flag.collision1!=0 and flag.collision2!=0:
     #half horizontal domain, just read the data
-    x_basis = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx), dealias=3/2)
+    x_basis = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=3/2)
     
     #ignore below, just repeat building solvers.
     z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
