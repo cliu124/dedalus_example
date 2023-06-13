@@ -105,10 +105,10 @@ logger.info('Solver built')
 # Initial conditions or restart
 if flag.collision1!=0 and flag.collision2!=0:
     #half horizontal domain, just read the data
-    x_basis = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=3/2)
+    x_basis = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
     
     #ignore below, just repeat building solvers.
-    z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
+    z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=1)
     domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
     problem = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
     problem.parameters['Ra'] = flag.Rayleigh
