@@ -137,12 +137,12 @@ if flag.collision1!=0 and flag.collision2!=0:
     #print(len(solver_half1.state['T']['g'][:,1]))
     #print(len(solver_half1.state['T']['g'][1,:]))
     
-    solver.state['T']['g']=np.concatenate(solver_half1.state['T']['g'],solver_half2.state['T']['g'])
-    solver.state['Tz']['g']=np.concatenate(solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g'])
-    solver.state['w']['g']=np.concatenate(solver_half1.state['w']['g'],solver_half2.state['w']['g'])
-    solver.state['wz']['g']=np.concatenate(solver_half1.state['wz']['g'],solver_half2.state['wz']['g'])
-    solver.state['u']['g']=np.concatenate(solver_half1.state['u']['g'],solver_half2.state['u']['g'])
-    solver.state['p']['g']=np.concatenate(solver_half1.state['p']['g'],solver_half2.state['p']['g'])
+    solver.state['T']['g']=np.concatenate((solver_half1.state['T']['g'],solver_half2.state['T']['g']),axis=1)
+    solver.state['Tz']['g']=np.concatenate((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']),axis=1)
+    solver.state['w']['g']=np.concatenate((solver_half1.state['w']['g'],solver_half2.state['w']['g']),axis=1)
+    solver.state['wz']['g']=np.concatenate((solver_half1.state['wz']['g'],solver_half2.state['wz']['g']),axis=1)
+    solver.state['u']['g']=np.concatenate((solver_half1.state['u']['g'],solver_half2.state['u']['g']),axis=1)
+    solver.state['p']['g']=np.concatenate((solver_half1.state['p']['g'],solver_half2.state['p']['g']),axis=1)
 
     #print((T['g']))
     #print(len(solver.state['T']['g'][:,1]))
