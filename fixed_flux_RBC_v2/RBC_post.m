@@ -34,6 +34,7 @@ classdef RBC_post
         u;
         w;
         b;
+        bz;
         
         u_coeff;
         w_coeff;

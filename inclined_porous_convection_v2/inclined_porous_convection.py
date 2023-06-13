@@ -67,7 +67,8 @@ flag.A_LS=1 #The magnitude of initial localized structure guess
 flag.modulation='gaussian'# The modulation function shape, either 'sin' or 'gaussian'
 flag.gaussian_sigma=1 #The sigma parameter in the Gaussian modulation
 flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, will continue the previous one 
-
+flag.collision1=1
+flag.collision2=2
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
@@ -102,60 +103,86 @@ solver = problem.build_solver(de.timesteppers.RK222)
 logger.info('Solver built')
 
 # Initial conditions or restart
-if not pathlib.Path('restart.h5').exists():
-    print('Set up initial condition!')
-    # Initial conditions
-    x, z = domain.all_grids()
+if flag.collision1!=0 and flag.collision2!=0:
+    x_basis = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx), dealias=3/2)
+    z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
+    domain = de.Domain([x_basis, z_basis], grid_dtype=np.float64)
+    
+    # 2D Boussinesq hydrodynamics
+    problem = de.IVP(domain, variables=['p','T','u','w','Tz','wz'])
+    solver_half1 = problem.build_solver(de.timesteppers.RK222)
+    solver_half2 = problem.build_solver(de.timesteppers.RK222)
+
+    solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
+    solver_half2.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
+    print(np.size(solver_half1.state['T']))
+    print(np.size(solver_half2.state['w']))
+    
     
     T = solver.state['T']
+    print(np.size(T))
     Tz = solver.state['Tz']
     w = solver.state['w']
     wz = solver.state['wz']
     u = solver.state['u']
-    # Random perturbations, initialized globally for same results in parallel
-    gshape = domain.dist.grid_layout.global_shape(scales=1)
-    slices = domain.dist.grid_layout.slices(scales=1)
-    rand = np.random.RandomState(seed=42)
-    noise = rand.standard_normal(gshape)[slices]
-
-    # Linear background + perturbations damped at walls
-    #zb, zt = z_basis.interval
-    pert = flag.A_noise * noise * z * (1 - z)
-    
-    #flag.A_LS=1 gives 3 wave LS...
-    #flag.A_LS=5 gives 2 wave LS... 
-    #flag.A_LS=3 gives steady convection roll, not LS..
-    
-    if flag.modulation=='sin':
-        T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-        #pert
-        T.differentiate('z', out=Tz)
-        w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-        u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-    elif flag.modulation == 'gaussian':
-        T['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-        #pert
-        T.differentiate('z', out=Tz)
-        w['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-        u['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-    
-    # Timestepping and output
-    dt = flag.initial_dt
-    stop_sim_time = flag.stop_sim_time
-    fh_mode = 'overwrite'
-
+    p = solver.state['p']
+        
 else:
-    # Restart
-    print('Restart')
-    write, last_dt = solver.load_state('restart.h5', -1)
+    if not pathlib.Path('restart.h5').exists():
 
-    # Timestepping and output
-    dt = last_dt
-    stop_sim_time = flag.stop_sim_time
-    fh_mode = 'append'
-    if flag.restart_t0:
-        solver.sim_time=0
-        fh_mode='overwrite'
+        print('Set up initial condition!')
+        # Initial conditions
+        x, z = domain.all_grids()
+        
+        T = solver.state['T']
+        Tz = solver.state['Tz']
+        w = solver.state['w']
+        wz = solver.state['wz']
+        u = solver.state['u']
+        # Random perturbations, initialized globally for same results in parallel
+        gshape = domain.dist.grid_layout.global_shape(scales=1)
+        slices = domain.dist.grid_layout.slices(scales=1)
+        rand = np.random.RandomState(seed=42)
+        noise = rand.standard_normal(gshape)[slices]
+    
+        # Linear background + perturbations damped at walls
+        #zb, zt = z_basis.interval
+        pert = flag.A_noise * noise * z * (1 - z)
+        
+        #flag.A_LS=1 gives 3 wave LS...
+        #flag.A_LS=5 gives 2 wave LS... 
+        #flag.A_LS=3 gives steady convection roll, not LS..
+        
+        if flag.modulation=='sin':
+            T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            #pert
+            T.differentiate('z', out=Tz)
+            w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+        elif flag.modulation == 'gaussian':
+            T['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            #pert
+            T.differentiate('z', out=Tz)
+            w['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            u['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+        
+        # Timestepping and output
+        dt = flag.initial_dt
+        stop_sim_time = flag.stop_sim_time
+        fh_mode = 'overwrite'
+    
+    else:
+        # Restart
+        print('Restart')
+        write, last_dt = solver.load_state('restart.h5', -1)
+    
+        # Timestepping and output
+        dt = last_dt
+        stop_sim_time = flag.stop_sim_time
+        fh_mode = 'append'
+        if flag.restart_t0:
+            solver.sim_time=0
+            fh_mode='overwrite'
 
 # Integration parameters
 solver.stop_sim_time = stop_sim_time
