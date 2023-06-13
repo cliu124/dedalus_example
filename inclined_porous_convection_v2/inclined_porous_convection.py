@@ -54,12 +54,12 @@ flag.Nz=64 #grid point number in z
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
-flag.kappa=0.05
+flag.kappa=0.1
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
-flag.stop_sim_time=100 #The simulation time to stop
-flag.post_store_dt=0.4 #The time step to store the data
+flag.stop_sim_time=1.5 #The simulation time to stop
+flag.post_store_dt=0.1 #The time step to store the data
 
 #paramter for the initial guess
 flag.A_noise=1e-3 #random noise magnitude in the initial condition
