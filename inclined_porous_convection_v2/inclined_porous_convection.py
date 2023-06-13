@@ -133,12 +133,12 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
     solver_half2.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
-    print(np.size(solver_half1.state['T']))
-    print(np.size(solver_half2.state['w']))
+    print(np.size(solver_half1.state['T']['g']))
+    print(np.size(solver_half2.state['w']['g']))
     
     
     T = solver.state['T']
-    print(np.size(T))
+    print(np.size(T['g']))
     Tz = solver.state['Tz']
     w = solver.state['w']
     wz = solver.state['wz']
@@ -203,7 +203,7 @@ else:
             fh_mode='overwrite'
 
 # Integration parameters
-solver.stop_sim_time = stop_sim_time
+solver.stop_sim_time = flag.stop_sim_time
 
 # Analysis
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
