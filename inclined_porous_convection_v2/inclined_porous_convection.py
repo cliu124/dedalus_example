@@ -46,15 +46,15 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (20., 1.) #domain size
+flag.Lx, flag.Lz = (10., 1.) #domain size
 flag.phi = 35/180*np.pi #inclination angle
 flag.Rayleigh = 1e2 #Rayleigh number
-flag.Nx=512 #grid point number in x
+flag.Nx=256 #grid point number in x
 flag.Nz=64 #grid point number in z
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
-flag.kappa=0.1
+flag.kappa=0
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
@@ -69,7 +69,7 @@ flag.initial_phase=np.pi/2
 flag.gaussian_sigma=1 #The sigma parameter in the Gaussian modulation
 flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, will continue the previous one 
 flag.collision1=0
-flag.collision2=0
+flag.collision2=1
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
