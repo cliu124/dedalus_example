@@ -225,12 +225,44 @@ elif flag.collision1==0 and flag.collision2!=0:
     #the second is zero, so it is not active. This is only for flip the direction of collision 1 state
     solver.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
     if flag.collision2<0:
-        solver.state['T']['g']=-np.flip(solver.state['T']['g'])
-        solver.state['Tz']['g']=np.flip(solver.state['Tz']['g'])
-        solver.state['w']['g']=-np.flip(solver.state['w']['g'])
-        solver.state['wz']['g']=np.flip(solver.state['wz']['g'])
-        solver.state['u']['g']=-np.flip(solver.state['u']['g'])
-        solver.state['p']['g']=np.flip(solver.state['p']['g'])
+        #create a temporary variable
+        
+        #flip the T variable and change sign
+        tmp1=domain.new_field()
+        tmp1['c']=solver.state['T']['c']
+        tmp1.require_layout(domain.dist.layouts[1])
+        tmp1.data[1:,:]=tmp1.data[:0:-1,::-1]
+        solver.state['T']['g']=-tmp1['g']
+        
+        tmp2=domain.new_field()
+        tmp2['c']=solver.state['Tz']['c']
+        tmp2.require_layout(domain.dist.layouts[1])
+        tmp2.data[1:,:]=tmp1.data[:0:-1,::-1]
+        solver.state['Tz']['g']=tmp2['g']
+        
+        tmp3=domain.new_field()
+        tmp3['c']=solver.state['w']['c']
+        tmp3.require_layout(domain.dist.layouts[1])
+        tmp3.data[1:,:]=tmp1.data[:0:-1,::-1]
+        solver.state['w']['g']=-tmp3['g']
+        
+        tmp4=domain.new_field()
+        tmp4['c']=solver.state['wz']['c']
+        tmp4.require_layout(domain.dist.layouts[1])
+        tmp4.data[1:,:]=tmp1.data[:0:-1,::-1]
+        solver.state['wz']['g']=tmp4['g']
+        
+        tmp5=domain.new_field()
+        tmp5['c']=solver.state['u']['c']
+        tmp5.require_layout(domain.dist.layouts[1])
+        tmp5.data[1:,:]=tmp1.data[:0:-1,::-1]
+        solver.state['u']['g']=-tmp5['g']
+        
+        tmp6=domain.new_field()
+        tmp6['c']=solver.state['p']['c']
+        tmp6.require_layout(domain.dist.layouts[1])
+        tmp6.data[1:,:]=tmp1.data[:0:-1,::-1]
+        solver.state['p']['g']=tmp6['g']
     if flag.restart_t0:
         solver.sim_time=0
         fh_mode='overwrite'
