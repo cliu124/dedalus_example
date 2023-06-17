@@ -65,6 +65,8 @@ classdef post_inclined_porous_convection
         
         collision1=0;
         collision2=0;
+        
+        initial_phase;
     end
     
     methods

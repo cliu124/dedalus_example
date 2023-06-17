@@ -46,15 +46,15 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (10., 1.) #domain size
+flag.Lx, flag.Lz = (20., 1.) #domain size
 flag.phi = 35/180*np.pi #inclination angle
 flag.Rayleigh = 1e2 #Rayleigh number
-flag.Nx=256 #grid point number in x
+flag.Nx=512 #grid point number in x
 flag.Nz=64 #grid point number in z
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
-flag.kappa=0
+flag.kappa=0.1
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
@@ -221,8 +221,18 @@ if flag.collision1!=0 and flag.collision2!=0:
     #wz = solver.state['wz']
     #u = solver.state['u']
     #p = solver.state['p']
-        
-else:
+elif flag.collision1==0 and flag.collision2!=0:
+    #the second is zero, so it is not active. This is only for flip the direction of collision 1 state
+    solver.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
+    if flag.collision2<0:
+        solver.state['T']['g']=-np.flip(solver.state['T']['g'])
+        solver.state['Tz']['g']=np.flip(solver.state['Tz']['g'])
+        solver.state['w']['g']=-np.flip(solver.state['w']['g'])
+        solver.state['wz']['g']=np.flip(solver.state['wz']['g'])
+        solver.state['u']['g']=-np.flip(solver.state['u']['g'])
+        solver.state['p']['g']=np.flip(solver.state['p']['g'])
+
+elif flag.collision1==0 and flag.collision2==0:
     if not pathlib.Path('restart.h5').exists():
 
         print('Set up initial condition!')
