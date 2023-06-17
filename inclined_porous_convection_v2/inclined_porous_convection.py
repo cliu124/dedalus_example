@@ -69,7 +69,7 @@ flag.initial_phase=np.pi/2
 flag.gaussian_sigma=1 #The sigma parameter in the Gaussian modulation
 flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, will continue the previous one 
 flag.collision1=0
-flag.collision2=1
+flag.collision2=-1
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
@@ -231,7 +231,10 @@ elif flag.collision1==0 and flag.collision2!=0:
         solver.state['wz']['g']=np.flip(solver.state['wz']['g'])
         solver.state['u']['g']=-np.flip(solver.state['u']['g'])
         solver.state['p']['g']=np.flip(solver.state['p']['g'])
-
+    if flag.restart_t0:
+        solver.sim_time=0
+        fh_mode='overwrite'
+        
 elif flag.collision1==0 and flag.collision2==0:
     if not pathlib.Path('restart.h5').exists():
 
