@@ -46,29 +46,30 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (20., 1.) #domain size
+flag.Lx, flag.Lz = (10., 1.) #domain size
 flag.phi = 35/180*np.pi #inclination angle
 flag.Rayleigh = 1e2 #Rayleigh number
-flag.Nx=512 #grid point number in x
+flag.Nx=256 #grid point number in x
 flag.Nz=64 #grid point number in z
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
-flag.kappa=0.1
+flag.kappa=0
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
-flag.stop_sim_time=1.5 #The simulation time to stop
+flag.stop_sim_time=1 #The simulation time to stop
 flag.post_store_dt=0.1 #The time step to store the data
 
 #paramter for the initial guess
 flag.A_noise=1e-3 #random noise magnitude in the initial condition
-flag.A_LS=1 #The magnitude of initial localized structure guess
-flag.modulation='gaussian'# The modulation function shape, either 'sin' or 'gaussian'
+flag.A_LS=5 #The magnitude of initial localized structure guess
+flag.modulation='sin'# The modulation function shape, either 'sin' or 'gaussian'
+flag.initial_phase=np.pi/2
 flag.gaussian_sigma=1 #The sigma parameter in the Gaussian modulation
 flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, will continue the previous one 
-flag.collision1=1
-flag.collision2=2
+flag.collision1=0
+flag.collision2=0
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
@@ -192,10 +193,10 @@ if flag.collision1!=0 and flag.collision2!=0:
     
     #solver_half1.step(flag.initial_dt)
     #solver_half2.step(flag.initial_dt)
-    print(len(solver_half1.state['T']['g'][:,1]))
-    print(len(solver_half1.state['T']['g'][1,:]))
-    print(len(solver_half2.state['T']['g'][:,1]))
-    print(len(solver_half2.state['T']['g'][1,:]))
+    #print(len(solver_half1.state['T']['g'][:,1]))
+    #print(len(solver_half1.state['T']['g'][1,:]))
+    #print(len(solver_half2.state['T']['g'][:,1]))
+    #print(len(solver_half2.state['T']['g'][1,:]))
     
     solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
     solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
@@ -248,11 +249,11 @@ else:
         #flag.A_LS=3 gives steady convection roll, not LS..
         
         if flag.modulation=='sin':
-            T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            T['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x+flag.initial_phase)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
             #pert
             T.differentiate('z', out=Tz)
-            w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
-            u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            w['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x+flag.initial_phase)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
+            u['g'] = flag.A_LS*np.sin(2*np.pi/(2*flag.Lx)*x+flag.initial_phase)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
         elif flag.modulation == 'gaussian':
             T['g'] = flag.A_LS*np.exp(-(x-flag.Lx/2)**2/2/flag.gaussian_sigma**2)*np.sin(2*np.pi/2*x)*(1-z)*z +pert
             #pert
