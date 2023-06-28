@@ -173,30 +173,6 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half2 = problem2.build_solver(de.timesteppers.RK222)
     solver_half2.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
-    #slices = domain.dist.grid_layout.slices(scales=1)
-    #solver.state['T']['g'][flag.Nx/2:-1,:]=solver_half.state['T']['g']
-    #solver.state['Tz']['g'][flag.Nx/2:-1,:]=solver_half.state['Tz']['g']
-    #solver.state['w']['g'][flag.Nx/2:-1,:]=solver_half.state['w']['g']
-    #solver.state['wz']['g'][flag.Nx/2:-1,:]=solver_half.state['wz']['g']
-    #solver.state['u']['g'][flag.Nx/2:-1,:]=solver_half.state['u']['g']
-    #solver.state['p']['g'][flag.Nx/2:-1,:]=solver_half.state['p']['g']
-
-    
-    #T_half2=solver_half2.state['T']['g']
-    #Tz_half2=solver_half2.state['Tz']['g']
-    #w_half2=solver_half2.state['w']['g']
-    #wz_half2=solver_half2.state['wz']['g']
-    #u_half2=solver_half2.state['u']['g']
-    #p_half2=solver_half2.state['p']['g']
-
-    
-    
-    #solver_half1.step(flag.initial_dt)
-    #solver_half2.step(flag.initial_dt)
-    #print(len(solver_half1.state['T']['g'][:,1]))
-    #print(len(solver_half1.state['T']['g'][1,:]))
-    #print(len(solver_half2.state['T']['g'][:,1]))
-    #print(len(solver_half2.state['T']['g'][1,:]))
     
     solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
     solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
@@ -205,22 +181,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     solver.state['u']['g']=np.vstack((solver_half1.state['u']['g'],solver_half2.state['u']['g']))
     solver.state['p']['g']=np.vstack((solver_half1.state['p']['g'],solver_half2.state['p']['g']))
 
-    #solver.state['T']['g']=np.vstack((T_half1,T_half2))
-    #solver.state['Tz']['g']=np.vstack((Tz_half1,Tz_half2))
-    #solver.state['w']['g']=np.vstack((w_half1,w_half2))
-    #solver.state['wz']['g']=np.vstack((wz_half1,wz_half2))
-    #solver.state['u']['g']=np.vstack((u_half1,u_half2))
-    #solver.state['p']['g']=np.vstack((p_half1,p_half2))
-
-
-    #print((T['g']))
-    #print(len(solver.state['T']['g'][:,1]))
-    #print(len(solver.state['T']['g'][1,:]))
-    #Tz = solver.state['Tz']
-    #w = solver.state['w']
-    #wz = solver.state['wz']
-    #u = solver.state['u']
-    #p = solver.state['p']
+   
 elif flag.collision1==0 and flag.collision2!=0:
     #the second is zero, so it is not active. This is only for flip the direction of collision 1 state
     solver.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
