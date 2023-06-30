@@ -131,24 +131,7 @@ if flag.collision1!=0 and flag.collision2!=0:
 
     solver_half1 = problem_half1.build_solver(de.timesteppers.RK222)
     solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
-    #print(len(solver_half1.state['T']['g'][:,1]))
-    #print(len(solver_half1.state['T']['g'][1,:]))
-    #T_half1=solver_half.state['T']['g']
-    #Tz_half1=solver_half.state['Tz']['g']
-    #w_half1=solver_half.state['w']['g']
-    #wz_half1=solver_half.state['wz']['g']
-    #u_half1=solver_half.state['u']['g']
-    #p_half1=solver_half.state['p']['g']
-    #slices = domain.dist.grid_layout.slices(scales=1)
-    #print(slices)
-    #solver.state['T']['g'][slices]=solver_half.state['T']['g'][slices]
-    #solver.state['Tz']['g'][slices]=solver_half.state['Tz']['g'][slices]
-    #solver.state['w']['g'][slices]=solver_half.state['w']['g'][slices]
-    #solver.state['wz']['g'][slices]=solver_half.state['wz']['g'][slices]
-    #solver.state['u']['g'][slices]=solver_half.state['u']['g'][slices]
-    #solver.state['p']['g'][slices]=solver_half.state['p']['g'][slices]
-
-
+    
     x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
     # #ignore below, just repeat building solvers.
     z_basis2 = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=1)
@@ -193,37 +176,37 @@ elif flag.collision1==0 and flag.collision2!=0:
         tmp1['c']=solver.state['T']['c']
         tmp1.require_layout(domain.dist.layouts[1])
         tmp1.data[1:,:]=tmp1.data[:0:-1,::-1]
-        solver.state['T']['g']=-tmp1['g']
+        solver.state['T']['g'][0:flag.Nx-1,0:flag.Nz-1]=-tmp1['g']
         
         tmp2=domain.new_field()
         tmp2['c']=solver.state['Tz']['c']
         tmp2.require_layout(domain.dist.layouts[1])
         tmp2.data[1:,:]=tmp1.data[:0:-1,::-1]
-        solver.state['Tz']['g']=tmp2['g']
+        solver.state['Tz']['g'][0:flag.Nx-1,0:flag.Nz-1]=tmp2['g']
         
         tmp3=domain.new_field()
         tmp3['c']=solver.state['w']['c']
         tmp3.require_layout(domain.dist.layouts[1])
         tmp3.data[1:,:]=tmp1.data[:0:-1,::-1]
-        solver.state['w']['g']=-tmp3['g']
+        solver.state['w']['g'][0:flag.Nx-1,0:flag.Nz-1]=-tmp3['g']
         
         tmp4=domain.new_field()
         tmp4['c']=solver.state['wz']['c']
         tmp4.require_layout(domain.dist.layouts[1])
         tmp4.data[1:,:]=tmp1.data[:0:-1,::-1]
-        solver.state['wz']['g']=tmp4['g']
+        solver.state['wz']['g'][0:flag.Nx-1,0:flag.Nz-1]=tmp4['g']
         
         tmp5=domain.new_field()
         tmp5['c']=solver.state['u']['c']
         tmp5.require_layout(domain.dist.layouts[1])
         tmp5.data[1:,:]=tmp1.data[:0:-1,::-1]
-        solver.state['u']['g']=-tmp5['g']
+        solver.state['u']['g'][0:flag.Nx-1,0:flag.Nz-1]=-tmp5['g']
         
         tmp6=domain.new_field()
         tmp6['c']=solver.state['p']['c']
         tmp6.require_layout(domain.dist.layouts[1])
         tmp6.data[1:,:]=tmp1.data[:0:-1,::-1]
-        solver.state['p']['g']=tmp6['g']
+        solver.state['p']['g'][0:flag.Nx-1,0:flag.Nz-1]=tmp6['g']
     if flag.restart_t0:
         solver.sim_time=0
         fh_mode='overwrite'
