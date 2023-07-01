@@ -58,8 +58,8 @@ flag.kappa=0
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
-flag.stop_sim_time=1 #The simulation time to stop
-flag.post_store_dt=0.1 #The time step to store the data
+flag.stop_sim_time=0.1 #The simulation time to stop
+flag.post_store_dt=0.001 #The time step to store the data
 
 #paramter for the initial guess
 flag.A_noise=1e-3 #random noise magnitude in the initial condition
