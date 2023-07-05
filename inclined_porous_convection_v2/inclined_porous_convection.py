@@ -46,10 +46,10 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (10., 1.) #domain size
+flag.Lx, flag.Lz = (20., 1.) #domain size
 flag.phi = 35/180*np.pi #inclination angle
 flag.Rayleigh = 1e2 #Rayleigh number
-flag.Nx=256 #grid point number in x
+flag.Nx=512 #grid point number in x
 flag.Nz=64 #grid point number in z
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
@@ -58,8 +58,8 @@ flag.kappa=0
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
-flag.stop_sim_time=0.1 #The simulation time to stop
-flag.post_store_dt=0.001 #The time step to store the data
+flag.stop_sim_time=100 #The simulation time to stop
+flag.post_store_dt=0.4 #The time step to store the data
 
 #paramter for the initial guess
 flag.A_noise=0 #random noise magnitude in the initial condition
@@ -73,8 +73,8 @@ flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, wi
 #flag.collision1=flag.collision2=0 will give the same results as before
 #flag.collision1=[1,2,3,4,5,6] will specify the pulse number in the left domain. Note that 6 corresponds to conduction state
 #flag.collision2=[1,2,3,4,5,6] will specify the pulse number in the right domain. Note that 6 corresponds to conduction state
-flag.collision1=0
-flag.collision2=0
+flag.collision1=1
+flag.collision2=6
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
