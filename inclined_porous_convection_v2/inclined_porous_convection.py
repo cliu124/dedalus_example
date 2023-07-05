@@ -62,14 +62,19 @@ flag.stop_sim_time=0.1 #The simulation time to stop
 flag.post_store_dt=0.001 #The time step to store the data
 
 #paramter for the initial guess
-flag.A_noise=1e-3 #random noise magnitude in the initial condition
-flag.A_LS=5 #The magnitude of initial localized structure guess
+flag.A_noise=0 #random noise magnitude in the initial condition
+flag.A_LS=0 #The magnitude of initial localized structure guess
 flag.modulation='sin'# The modulation function shape, either 'sin' or 'gaussian'
 flag.initial_phase=np.pi/2
 flag.gaussian_sigma=1 #The sigma parameter in the Gaussian modulation
 flag.restart_t0=1 #if 1, the simulation time will start from zero. Otherwise, will continue the previous one 
+
+#collision index
+#flag.collision1=flag.collision2=0 will give the same results as before
+#flag.collision1=[1,2,3,4,5,6] will specify the pulse number in the left domain. Note that 6 corresponds to conduction state
+#flag.collision2=[1,2,3,4,5,6] will specify the pulse number in the right domain. Note that 6 corresponds to conduction state
 flag.collision1=0
-flag.collision2=-1
+flag.collision2=0
 
 # Create bases and domain
 x_basis = de.Fourier('x', flag.Nx, interval=(0, flag.Lx), dealias=3/2)
