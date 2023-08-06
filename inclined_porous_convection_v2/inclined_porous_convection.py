@@ -135,7 +135,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     #ignore above, nothing special
 
     solver_half1 = problem_half1.build_solver(de.timesteppers.RK222)
-    solver_half1.load_state('X'+str(np.abs(flag.collision1))+'_checkpoint_s1.h5',-1)
+    solver_half1.load_state('X'+str(flag.collision1)+'_checkpoint_s1.h5',-1)
     
     x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
     # #ignore below, just repeat building solvers.
@@ -160,7 +160,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     # #ignore above, nothing special
 
     solver_half2 = problem2.build_solver(de.timesteppers.RK222)
-    solver_half2.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
+    solver_half2.load_state('X'+str(flag.collision2)+'_checkpoint_s1.h5',-1)
     
     solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
     solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
@@ -172,70 +172,70 @@ if flag.collision1!=0 and flag.collision2!=0:
    
 elif flag.collision1==0 and flag.collision2!=0:
     #the second is zero, so it is not active. This is only for flip the direction of collision 1 state
-    solver.load_state('X'+str(np.abs(flag.collision2))+'_checkpoint_s1.h5',-1)
-    if flag.collision2<0:
-        #create a temporary variable
+    solver.load_state('X'+str(flag.collision2)+'_checkpoint_s1.h5',-1)
+    # if flag.collision2<0:
+    #     #create a temporary variable
         
-        #flip the T variable and change sign
-        tmp1=domain.new_field()
-        tmp1['c']=solver.state['T']['c']
-        #tmp1.require_layout(domain.dist.layouts[0])
-        #tmp1.data[1:,:]=tmp1.data[:0:-1,:]
-        tmp1.require_layout(domain.dist.layouts[1])
-        tmp1.data[:,:]=np.flipud(tmp1.data[:,::-1])
-        #tmp1.data=np.flipud(tmp1.data)
-        tmp1.set_scales(1.5)
-        solver.state['T']['g']=-tmp1['g']
+    #     #flip the T variable and change sign
+    #     tmp1=domain.new_field()
+    #     tmp1['c']=solver.state['T']['c']
+    #     #tmp1.require_layout(domain.dist.layouts[0])
+    #     #tmp1.data[1:,:]=tmp1.data[:0:-1,:]
+    #     tmp1.require_layout(domain.dist.layouts[1])
+    #     tmp1.data[:,:]=np.flipud(tmp1.data[:,::-1])
+    #     #tmp1.data=np.flipud(tmp1.data)
+    #     tmp1.set_scales(1.5)
+    #     solver.state['T']['g']=-tmp1['g']
         
-        tmp2=domain.new_field()
-        tmp2['c']=solver.state['Tz']['c']
-        #tmp2.require_layout(domain.dist.layouts[0])
-        #tmp2.data[1:,:]=tmp2.data[:0:-1,:]
-        tmp2.require_layout(domain.dist.layouts[1])
-        tmp2.data[:,:]=np.flipud(tmp2.data[:,::-1])
-        ##tmp2.data=np.flipud(tmp2.data)
-        tmp2.set_scales(1.5)
-        solver.state['Tz']['g']=tmp2['g']
+    #     tmp2=domain.new_field()
+    #     tmp2['c']=solver.state['Tz']['c']
+    #     #tmp2.require_layout(domain.dist.layouts[0])
+    #     #tmp2.data[1:,:]=tmp2.data[:0:-1,:]
+    #     tmp2.require_layout(domain.dist.layouts[1])
+    #     tmp2.data[:,:]=np.flipud(tmp2.data[:,::-1])
+    #     ##tmp2.data=np.flipud(tmp2.data)
+    #     tmp2.set_scales(1.5)
+    #     solver.state['Tz']['g']=tmp2['g']
         
-        tmp3=domain.new_field()
-        tmp3['c']=solver.state['w']['c']
-        #tmp3.require_layout(domain.dist.layouts[0])
-        #tmp3.data[1:,:]=tmp3.data[:0:-1,:]
-        tmp3.require_layout(domain.dist.layouts[1])
-        tmp3.data[:,:]=np.flipud(tmp3.data[:,::-1])
-        #tmp3.data=np.flipud(tmp3.data)
-        tmp3.set_scales(1.5)
-        solver.state['w']['g']=-tmp3['g']
+    #     tmp3=domain.new_field()
+    #     tmp3['c']=solver.state['w']['c']
+    #     #tmp3.require_layout(domain.dist.layouts[0])
+    #     #tmp3.data[1:,:]=tmp3.data[:0:-1,:]
+    #     tmp3.require_layout(domain.dist.layouts[1])
+    #     tmp3.data[:,:]=np.flipud(tmp3.data[:,::-1])
+    #     #tmp3.data=np.flipud(tmp3.data)
+    #     tmp3.set_scales(1.5)
+    #     solver.state['w']['g']=-tmp3['g']
         
-        tmp4=domain.new_field()
-        tmp4['c']=solver.state['wz']['c']
-        #tmp4.require_layout(domain.dist.layouts[0])
-        #tmp4.data[1:,:]=tmp4.data[:0:-1,:]
-        tmp4.require_layout(domain.dist.layouts[1])
-        tmp4.data[:,:]=np.flipud(tmp4.data[:,::-1])
-        #tmp4.data=np.flipud(tmp4.data)
-        tmp4.set_scales(1.5)
-        solver.state['wz']['g']=tmp4['g']
+    #     tmp4=domain.new_field()
+    #     tmp4['c']=solver.state['wz']['c']
+    #     #tmp4.require_layout(domain.dist.layouts[0])
+    #     #tmp4.data[1:,:]=tmp4.data[:0:-1,:]
+    #     tmp4.require_layout(domain.dist.layouts[1])
+    #     tmp4.data[:,:]=np.flipud(tmp4.data[:,::-1])
+    #     #tmp4.data=np.flipud(tmp4.data)
+    #     tmp4.set_scales(1.5)
+    #     solver.state['wz']['g']=tmp4['g']
         
-        tmp5=domain.new_field()
-        tmp5['c']=solver.state['u']['c']
-        #tmp5.require_layout(domain.dist.layouts[0])
-        #tmp5.data[1:,:]=tmp5.data[:0:-1,:]
-        tmp5.require_layout(domain.dist.layouts[1])
-        tmp5.data[:,:]=np.flipud(tmp5.data[:,::-1])
-        #tmp5.data=np.flipud(tmp5.data)
-        tmp5.set_scales(1.5)
-        solver.state['u']['g']=-tmp5['g']
+    #     tmp5=domain.new_field()
+    #     tmp5['c']=solver.state['u']['c']
+    #     #tmp5.require_layout(domain.dist.layouts[0])
+    #     #tmp5.data[1:,:]=tmp5.data[:0:-1,:]
+    #     tmp5.require_layout(domain.dist.layouts[1])
+    #     tmp5.data[:,:]=np.flipud(tmp5.data[:,::-1])
+    #     #tmp5.data=np.flipud(tmp5.data)
+    #     tmp5.set_scales(1.5)
+    #     solver.state['u']['g']=-tmp5['g']
         
-        tmp6=domain.new_field()
-        tmp6['c']=solver.state['p']['c']
-        #tmp6.require_layout(domain.dist.layouts[0])
-        #tmp6.data[1:,:]=tmp6.data[:0:-1,:]
-        tmp6.require_layout(domain.dist.layouts[1])
-        tmp6.data[:,:]=np.flipud(tmp6.data[:,::-1])
-        #tmp6.data=np.flipud(tmp6.data)
-        tmp6.set_scales(1.5)
-        solver.state['p']['g']=tmp6['g']
+    #     tmp6=domain.new_field()
+    #     tmp6['c']=solver.state['p']['c']
+    #     #tmp6.require_layout(domain.dist.layouts[0])
+    #     #tmp6.data[1:,:]=tmp6.data[:0:-1,:]
+    #     tmp6.require_layout(domain.dist.layouts[1])
+    #     tmp6.data[:,:]=np.flipud(tmp6.data[:,::-1])
+    #     #tmp6.data=np.flipud(tmp6.data)
+    #     tmp6.set_scales(1.5)
+    #     solver.state['p']['g']=tmp6['g']
     if flag.restart_t0:
         solver.sim_time=0
         fh_mode='overwrite'
