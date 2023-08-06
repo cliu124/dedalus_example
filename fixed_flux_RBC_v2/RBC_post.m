@@ -250,7 +250,7 @@ classdef RBC_post
                 
                 plot_config.zlim_list=0;
                 plot_config.ztick_list=0;
-                plot_config.xlim_list=[1,0,50];
+                plot_config.xlim_list=[1,0,10];
                 
                 plot_config.visible=1;%obj.visible;
                 plot_config.fontsize=32;
