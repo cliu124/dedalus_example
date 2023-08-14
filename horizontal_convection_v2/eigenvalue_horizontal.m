@@ -3,10 +3,11 @@ close all;
 clc;
 
 %Only change this parameter
-R_rho_list=0.5;
+R_rho_list=10;
 
 tau_list=0.01;
 Wst_list=0;
+Wst_T=0;
 Pr_list=7;
 
 k_list=linspace(-3,3,201);
@@ -41,7 +42,7 @@ for Pr_ind=1:length(Pr_list)
                             0,1,0;
                             0,0,1];
                         A=[-K2*K2/l^2, 1,-1;
-                            phi*k/l-grad_T_vertical*1, -K2, 0;
+                            phi*k/l-grad_T_vertical*1, -K2, Wst_T*1i*k;
                             phi_C*k/l-1/R_rho,0,-tau*K2+Wst*1i*k];
                         [eig_vec,eig_val]=eig(A,M);
                         growth_rate{Pr_ind,Wst_ind,tau_ind,R_rho_ind,phi_ind}(k_ind,l_ind)=...
@@ -59,5 +60,6 @@ data{1}.x=k_list;
 data{1}.y=log10(l_list);
 data{1}.z=growth_rate{1}';
 plot_config.print_size=[1,1000,900];
+plot_config.name=['growth_rate_R_rho=',num2str(R_rho_list),'.png'];
 plot_config.label_list={1,'$k$','log$_{10}(l)$'};
 plot_contour(data,plot_config);
