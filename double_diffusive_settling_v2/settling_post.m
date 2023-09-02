@@ -294,6 +294,7 @@ classdef settling_post
                 0.001,0.01,0.1,1,10,100,1000];
             plot_config.xtick_list=[1,10^(-8),10^(-7),10^(-6),10^(-5),10^(-4),...
                 0.001,0.01,0.1,1,10,100,1000];
+            
             plot_line(data,plot_config);
         end
         
