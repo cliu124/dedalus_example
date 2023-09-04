@@ -1,0 +1,27 @@
+#!/bin/bash
+####SBATCH --partition=bigmem
+#SBATCH --partition=defq
+####SBATCH -A avankan_bigmem
+#SBATCH --nodes=1
+#SBATCH --ntasks=48
+#SBATCH --cpus-per-task=1
+#SBATCH --time=2:00:00
+#SBATCH --job-name=dedalus
+#SBATCH --output=dedalus_output_%j
+export SLURM_EXPORT_ENV=ALL
+#export I_MPI_FABRICS=shm,tcp
+###conda init bash
+module load anaconda
+
+conda activate dedalus2
+
+SUBMITDIR=$SLURM_SUBMIT_DIR
+WORKDIR=/scratch4/avankan/changliu/ext-changliu0520/dedalus_example/fixed_flux_RBC_v2/dedalus_$SLURM_JOB_ID
+mkdir -p "$WORKDIR" && cp -r rayleigh_benard.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cp -r X*_checkpoint_s1.h5 "$WORKDIR" && cd "$WORKDIR" || exit -1
+
+##ln -s /home/ext-changliu0520/dedalus_example/fixed_flux_RBC_v2/X1_checkpoint_s1.h5 restart.h5
+mpiexec -n $SLURM_NTASKS python3 rayleigh_benard.py
+mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs analysis --cleanup
+mpiexec -n $SLURM_NTASKS python3 plot_slices.py analysis/*.h5
+
+cd "$SUBMITDIR" && cp dedalus_output_$SLURM_JOB_ID "$WORKDIR"
