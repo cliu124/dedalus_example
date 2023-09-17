@@ -46,7 +46,7 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lx, flag.Lz = (4., 4.)
+flag.Lx, flag.Lz = (16., 16.)
 flag.Nx, flag.Nz = (256,256)
 flag.Prandtl = 1.
 #Rayleigh = 1e6
@@ -55,9 +55,9 @@ flag.R_rho=2 #density ratio
 flag.d_T_z=0 #background temperature gradient
 flag.d_C_z=1 #background salinity gradient
 flag.W_st=0 #non-dimensional settling velocity
-flag.initial_dt = 0.125
-flag.stop_sim_time = 300
-flag.post_store_dt = 0.25
+flag.initial_dt = 0.1
+flag.stop_sim_time = 50
+flag.post_store_dt = 0.5
 flag.A_noise=1e-3
 flag.phi=1
 flag.phi_C=0
