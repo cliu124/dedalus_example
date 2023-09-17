@@ -77,7 +77,6 @@ problem.parameters['d_C_z'] = flag.d_C_z
 problem.parameters['W_st'] = flag.W_st
 problem.parameters['phi'] = flag.phi
 problem.parameters['phi_C'] = flag.phi_C
-problem.parameters['grad_T_vertical'] = flag.grad_T_vertical
 
 problem.add_equation("dx(u) + dz(w) = 0",condition="(nx!=0) or (nz!=0)") #\nabla \cdot \boldsymbol{u}=0
 problem.add_equation("p=0", condition="(nx==0) and (nz==0)") #pressure gauge condition
