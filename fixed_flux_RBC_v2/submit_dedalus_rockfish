@@ -17,7 +17,7 @@ conda activate dedalus2
 
 SUBMITDIR=$SLURM_SUBMIT_DIR
 WORKDIR=/scratch4/avankan/changliu/ext-changliu0520/dedalus_example/fixed_flux_RBC_v2/dedalus_$SLURM_JOB_ID
-mkdir -p "$WORKDIR" && cp -r rayleigh_benard.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cp -r X*_checkpoint_s1.h5 "$WORKDIR" && cd "$WORKDIR" || exit -1
+mkdir -p "$WORKDIR" && cp -r rayleigh_benard.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cd "$WORKDIR" || exit -1
 
 ##ln -s /home/ext-changliu0520/dedalus_example/fixed_flux_RBC_v2/X1_checkpoint_s1.h5 restart.h5
 mpiexec -n $SLURM_NTASKS python3 rayleigh_benard.py

@@ -22,7 +22,7 @@ def main(filename, start, count, output):
     """Save plot of specified tasks for given range of analysis writes."""
 
     # Plot settings
-    tasks = ['T', 'p', 'u', 'w']
+    tasks = ['T', 'C', 'u', 'w']
     scale = 2.5
     dpi = 100
     title_func = lambda sim_time: 't = {:.3f}'.format(sim_time)
