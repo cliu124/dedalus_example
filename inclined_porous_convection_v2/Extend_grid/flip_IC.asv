@@ -1,0 +1,41 @@
+clear all;
+close all;
+
+read_folder='Lx_10_Nx_256';
+write_folder_list={'Lx_15_Nx_384','Lx_20_Nx_512',...
+    'Lx_30_Nx_768','Lx_40_Nx_1024'};
+
+for write_folder_ind=1:length(write_folder_list)
+    write_folder=write_folder_list{wirte_folder_ind};
+    switch write_folder
+        case 'Lx_10_Nx_256'
+            Nx_write=256;
+        case 'Lx_15_Nx_384'
+            Nx_write=384;
+        case 'Lx_20_Nx_512'
+            Nx_write=512;
+        case 'Lx_30_Nx_768'
+            Nx_write=768;
+        case 'Lx_40_Nx_1024'
+            Nx_write=1024;
+    end
+    for ind=1:5
+       T=h5read_complex([read_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/T'); 
+       h5write([write_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/T',-fliplr(flipud(T)));
+
+       w=h5read_complex([read_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/w'); 
+       h5write([write_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/w',-fliplr(flipud(w)));
+
+       Tz=h5read_complex([read_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/Tz'); 
+       h5write([write_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/Tz',fliplr(flipud(Tz)));
+
+       wz=h5read_complex([read_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/wz'); 
+       h5write([write_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/wz',fliplr(flipud(wz)));
+
+       u=h5read_complex([read_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/u'); 
+       h5write([write_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/u',fliplr(flipud(u)));
+
+       p=h5read_complex([read_folder,'X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/p'); 
+       h5write(['X',num2str(ind),'_checkpoint_s1.h5'],'/tasks/p',fliplr(flipud(p)));
+    end
+end
