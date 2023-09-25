@@ -1,7 +1,7 @@
 #!/bin/bash
-####SBATCH --partition=bigmem
-#SBATCH --partition=defq
-####SBATCH -A avankan_bigmem
+#SBATCH --partition=bigmem
+####SBATCH --partition=defq
+#SBATCH -A avankan_bigmem
 #SBATCH --nodes=1
 #SBATCH --ntasks=48
 #SBATCH --cpus-per-task=1
@@ -19,7 +19,7 @@ SUBMITDIR=$SLURM_SUBMIT_DIR
 WORKDIR=/scratch4/avankan/changliu/ext-changliu0520/dedalus_example/inclined_porous_convection_v2/dedalus_$SLURM_JOB_ID
 mkdir -p "$WORKDIR" && cp -r inclined_porous_convection.py "$WORKDIR" && cp -r plot_slices.py "$WORKDIR" && cp -r X*_checkpoint_s1.h5 "$WORKDIR" && cd "$WORKDIR" || exit -1
 
-ln -s /home/ext-changliu0520/dedalus_example/inclined_porous_convection_v2/Extend_grid/Lx_15_Nx_384/X1_checkpoint_s1.h5 restart.h5
+ln -s /home/ext-changliu0520/dedalus_example/inclined_porous_convection_v2/Lx_40_Nx_1024/X1_checkpoint_s1.h5 restart.h5
 mpiexec -n $SLURM_NTASKS python3 inclined_porous_convection.py
 mpiexec -n $SLURM_NTASKS python3 -m dedalus merge_procs analysis --cleanup
 mpiexec -n $SLURM_NTASKS python3 plot_slices.py analysis/*.h5
