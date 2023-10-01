@@ -5,7 +5,7 @@ clc;
 Ra_list=100;%linspace(25,30,20);
 phi_list=35/180*pi;
 kappa_list=0;
-lambda_t=0;
+c=0;
 
 N=128;
 [xi, DM] = chebdif(N, 2);
@@ -25,7 +25,7 @@ for Ra_ind=1:length(Ra_list)
             A=[O, I, O, O;
                 -D2, O, Ra*sin(phi)*D1, -Ra*cos(phi)*I;
                 O, O, O, I;
-                O, I, lambda_t-D2, Ra*sin(phi)*diag(1/2-z)];
+                O, I, -D2, Ra*sin(phi)*diag(1/2-z)-c*I];
 
             %velocity boundary condition, w(z=0)=w(z=1)=0
             A(1+N,:)=[zeros(1,N), 1,zeros(1,N-1), zeros(1,N), zeros(1,N)];
@@ -46,9 +46,9 @@ for Ra_ind=1:length(Ra_list)
         end
     end
 end
-N_disp=10;
+N_disp=20;
 plot(real(eig_sort),imag(eig_sort),'*');
 xlim([min(real(eig_sort(1:N_disp))),max(real(eig_sort(1:N_disp)))]);
 ylim([min(imag(eig_sort(1:N_disp))),max(imag(eig_sort(1:N_disp)))]);
 disp(['First ',num2str(N_disp),' spatial eigenvalue with real part cloest to the origin:']);
-eig_sort(1:N_disp);
+eig_sort(1:N_disp)
