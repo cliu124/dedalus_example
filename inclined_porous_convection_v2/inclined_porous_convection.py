@@ -135,7 +135,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     #ignore above, nothing special
 
     solver_half1 = problem_half1.build_solver(de.timesteppers.RK222)
-    solver_half1.load_state('X'+str(flag.collision1)+'_checkpoint_s1.h5',-1)
+    write, last_dt_half1 = solver_half1.load_state('X'+str(flag.collision1)+'_checkpoint_s1.h5',-1) #edit this path if you are reading data from a different path
     
     x_basis2 = de.Fourier('x', flag.Nx/2, interval=(0, flag.Lx/2), dealias=1)
     # #ignore below, just repeat building solvers.
@@ -160,7 +160,7 @@ if flag.collision1!=0 and flag.collision2!=0:
     # #ignore above, nothing special
 
     solver_half2 = problem2.build_solver(de.timesteppers.RK222)
-    solver_half2.load_state('X'+str(flag.collision2)+'_checkpoint_s1.h5',-1)
+    write, last_dt_half2 = solver_half2.load_state('X'+str(flag.collision2)+'_checkpoint_s1.h5',-1) #Edit this path if you are reading data from a different path
     
     solver.state['T']['g']=np.vstack((solver_half1.state['T']['g'],solver_half2.state['T']['g']))
     solver.state['Tz']['g']=np.vstack((solver_half1.state['Tz']['g'],solver_half2.state['Tz']['g']))
@@ -168,6 +168,15 @@ if flag.collision1!=0 and flag.collision2!=0:
     solver.state['wz']['g']=np.vstack((solver_half1.state['wz']['g'],solver_half2.state['wz']['g']))
     solver.state['u']['g']=np.vstack((solver_half1.state['u']['g'],solver_half2.state['u']['g']))
     solver.state['p']['g']=np.vstack((solver_half1.state['p']['g'],solver_half2.state['p']['g']))
+    
+    dt = np.min([last_dt_half1,last_dt_half2])
+    stop_sim_time = flag.stop_sim_time
+    if flag.restart_t0:
+        solver.sim_time=0
+        fh_mode='overwrite'
+    else: 
+        solver.sim_time=np.max([solver_half1.sim_time,solver_half2.sim_time])
+        fh_mode = 'append'
 
    
 elif flag.collision1==0 and flag.collision2!=0:
