@@ -118,7 +118,7 @@ kappa = (Rayleigh * Prandtl)**(-1/2)
 nu = (Rayleigh / Prandtl)**(-1/2)
 # Problem
 
-problem = d3.IVP([u, v, w, p, Jx, Jy, Jz, phi, U0, V0, T0, \
+problem = d3.IVP([u, v, w, p, Jx, Jy, Jz, phi, T, U0, V0, T0, \
                   tau_u_1, tau_u_2, tau_v_1, tau_v_2, tau_w_1, tau_w_2, tau_T_1, tau_T_2, \
                   tau_U0_1, tau_U0_2, tau_V0_1, tau_V0_2, tau_T0_1, tau_T0_2, \
                       tau_phi_1, tau_phi_2,\
