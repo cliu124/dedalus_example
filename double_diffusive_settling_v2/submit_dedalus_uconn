@@ -17,12 +17,11 @@ export SLURM_EXPORT_ENV=ALL
 ##the slurm number to restart simulation... This need full state to be stored.
 SUBMITDIR=$SLURM_SUBMIT_DIR
 WORKDIR=/scratch/chl23026/chl23026/dedalus_$SLURM_JOB_ID
-mkdir -p "$WORKDIR" && cp -r double*.py "$WORKDIR" && cp submit_dedalus_uconn "$WORKDIR" && cd "$WORKDIR" || exit -1
+mkdir -p "$WORKDIR" && cp -r *.py "$WORKDIR" && cp submit_dedalus_uconn "$WORKDIR" && cd "$WORKDIR" || exit -1
 
 conda activate dedalus2
 
 mpiexec -n $SLURM_NTASKS python3 double_diffusive_settling.py
-
 
 cd "$SUBMITDIR" && cp dedalus_output_$SLURM_JOB_ID "$WORKDIR"
 
