@@ -39,7 +39,7 @@ timestepper = d3.SBDF2
 timestep = 2e-3
 stop_sim_time=1000
 
-zi=np.sqrt(-1)
+zi=1j
 
 # Bases
 zcoord = d3.Coordinate('z')
