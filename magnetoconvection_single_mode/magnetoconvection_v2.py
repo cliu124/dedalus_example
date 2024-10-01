@@ -213,7 +213,7 @@ try:
     while solver.proceed:
         # dt = CFL.compute_dt()
         dt = solver.step(dt)
-        if (solver.iteration-1) % 10 == 0:
+        if (solver.iteration-1) % 1000 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
             logger.info('TKE = %f' %flow.max('TKE'))
 
