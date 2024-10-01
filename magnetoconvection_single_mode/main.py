@@ -163,7 +163,7 @@ problem.add_equation("T(z=Lz)=0")
 problem.add_equation("T0(z=0)=0")
 problem.add_equation("T0(z=Lz)=0")
 
-delta=0.1
+delta=1
 z = dist.local_grid(zbasis)
 w['g']=delta*np.sin(np.pi*z)
 T['g']=delta*np.sin(np.pi*z)
@@ -176,19 +176,21 @@ u.change_scales(1)
 u_list = [np.copy(u['g'])]
 w_list = [np.copy(w['g'])]
 T_list = [np.copy(T['g'])]
+T0_list = [np.copy(T0['g'])]
 t_list = [solver.sim_time]
-Nu_list = [np.copy(Tz['g'][1])]
+Nu_list = [np.copy(T0z['g'][1])]
 while solver.proceed:
     solver.step(timestep)
     if solver.iteration % 100 == 0:
-        logger.info('Iteration=%i, Time=%e, dt=%e, Nu=%e' %(solver.iteration, solver.sim_time, timestep, Tz['g'][1]))
+        logger.info('Iteration=%i, Time=%e, dt=%e, Nu-1=%e' %(solver.iteration, solver.sim_time, timestep, T0z['g'][1]))
         
     if solver.iteration % 25 == 0:
         u.change_scales(1)
         u_list.append(np.copy(u['g']))
         w_list.append(np.copy(w['g']))
         T_list.append(np.copy(T['g']))
-        Nu_list.append(np.copy(Tz['g'][1]))
+        T0_list.append(np.copy(T0['g']))
+        Nu_list.append(np.copy(T0z['g'][1]))
         t_list.append(solver.sim_time)
         
         
