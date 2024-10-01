@@ -50,7 +50,7 @@ flag.Lz = (1.) #domain size
 flag.Rayleigh = 1.3*10**7 #Rayleigh number
 flag.Prandtl = 1
 flag.Nz=128 #grid point number in z
-flag.kx=1
+flag.kx=20*2*np.pi/5
 flag.ky=0
 flag.Q=1e6
 flag.A_noise=0.1
@@ -186,7 +186,7 @@ analysis.add_system(solver.state)
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("integ(sqrt(u*conj(u) +v*conj(v)+ w*conj(w)))/2", name='TKE')           
-
+flow.add_property('-Tz[g][0]',name='Nu-1')
 
 def print_screen(flag,logger):
     #print the flag onto the screen
@@ -214,8 +214,8 @@ try:
         # dt = CFL.compute_dt()
         dt = solver.step(dt)
         if (solver.iteration-1) % 1000 == 0:
-            logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
-            logger.info('TKE = %f' %flow.max('TKE'))
+            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),flow.max('Nu-1')))
+            # logger.info('TKE = %f' %flow.max('TKE'))
 
     #add check point, only store one snapshot
     checkpoint=solver.evaluator.add_file_handler('checkpoint')
