@@ -126,7 +126,7 @@ problem = d3.IVP([u, v, w, p, Jx, Jy, Jz, phi, T, U0, V0, T0, \
 
 problem.add_equation("dt(u)+zi*kx*p-nu*(uzz-kx*kx*u-ky*ky*u)-Q*nu*Jy=-zi*kx*U0*u-zi*ky*V0*u-w*U0z")
 problem.add_equation("dt(v)+zi*ky*p-nu*(vzz-kx*kx*v-ky*ky*v)+Q*nu*Jx=-zi*kx*U0*v-zi*ky*V0*v-w*V0z")
-problem.add_equation("dt(w)+dz(p)-nu*(wzz-kx*kx*w-ky*ky*w)=-zi*kx*U0*w-zi*ky*V0*w")
+problem.add_equation("dt(w)+dz(p)-nu*(wzz-kx*kx*w-ky*ky*w)-T=-zi*kx*U0*w-zi*ky*V0*w")
 problem.add_equation("zi*kx*u+zi*ky*v+wz+tau_p=0")
 problem.add_equation("integ(p)=0")
 
