@@ -178,10 +178,10 @@ solver.stop_sim_time = flag.stop_sim_time
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 analysis.add_system(solver.state)
 
-# CFL
-CFL = flow_tools.CFL(solver, initial_dt=flag.initial_dt, cadence=10, safety=0.5,
-                     max_change=1.5, min_change=0.5, max_dt=0.125, threshold=0.05)
-CFL.add_velocities(('u', 'w'))
+# # CFL
+# CFL = flow_tools.CFL(solver, initial_dt=flag.initial_dt, cadence=10, safety=0.5,
+#                      max_change=1.5, min_change=0.5, max_dt=0.125, threshold=0.05)
+# CFL.add_velocities(('u', 'w'))
 
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
@@ -211,7 +211,7 @@ try:
     print_screen(flag,logger)
     print_file(flag)
     while solver.proceed:
-        dt = CFL.compute_dt()
+        # dt = CFL.compute_dt()
         dt = solver.step(dt)
         if (solver.iteration-1) % 10 == 0:
             logger.info('Iteration: %i, Time: %e, dt: %e' %(solver.iteration, solver.sim_time, dt))
