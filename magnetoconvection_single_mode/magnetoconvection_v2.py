@@ -49,7 +49,7 @@ flag=flag()
 flag.Lz = (1.) #domain size
 flag.Rayleigh = 1e2 #Rayleigh number
 flag.Prandtl = 1
-flag.Nz=64 #grid point number in z
+flag.Nz=128 #grid point number in z
 flag.kx=1
 flag.ky=0
 
@@ -71,7 +71,6 @@ problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0
                                     'uz','vz','wz','Tz','U0z','V0z','T0z','phi_z'])
     
 problem.parameters['Ra'] = flag.Rayleigh
-problem.parameters['nu'] = np.sin(flag.phi)
 problem.parameters['kappa'] = (flag.Rayleigh * flag.Prandtl)**(-1/2)
 problem.parameters['nu'] = (flag.Rayleigh / flag.Prandtl)**(-1/2)
 problem.parameters['zi'] = 1j
