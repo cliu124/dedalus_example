@@ -171,6 +171,11 @@ T['g']=delta*np.sin(np.pi*z)
 solver = problem.build_solver(timestepper)
 solver.stop_sim_time = stop_sim_time
 
+# Flow properties
+flow = d3.GlobalFlowProperty(solver, cadence=10)
+flow.add_property(np.sqrt(u@u)/nu, name='Re')
+
+
 # Main loop
 u.change_scales(1)
 u_list = [np.copy(u['g'])]
