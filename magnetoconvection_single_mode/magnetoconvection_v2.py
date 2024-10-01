@@ -186,7 +186,6 @@ analysis.add_system(solver.state)
 # Flow properties
 flow = flow_tools.GlobalFlowProperty(solver, cadence=10)
 flow.add_property("integ(sqrt(u*conj(u) +v*conj(v)+ w*conj(w)))/2", name='TKE')           
-flow.add_property('-Tz[g][0]',name='Nu-1')
 
 def print_screen(flag,logger):
     #print the flag onto the screen
@@ -214,7 +213,7 @@ try:
         # dt = CFL.compute_dt()
         dt = solver.step(dt)
         if (solver.iteration-1) % 1000 == 0:
-            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),flow.max('Nu-1')))
+            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),-Tz['g'][0]))
             # logger.info('TKE = %f' %flow.max('TKE'))
 
     #add check point, only store one snapshot
