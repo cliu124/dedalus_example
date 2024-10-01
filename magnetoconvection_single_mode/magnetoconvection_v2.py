@@ -133,7 +133,7 @@ if not pathlib.Path('restart.h5').exists():
 
     print('Set up initial condition!')
     # Initial conditions
-    x, z = domain.all_grids()
+    z = domain.all_grids()
     
     T = solver.state['T']
     Tz = solver.state['Tz']
