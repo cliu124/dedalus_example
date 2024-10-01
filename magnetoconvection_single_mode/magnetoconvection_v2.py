@@ -47,11 +47,12 @@ flag=flag()
 
 # Parameters
 flag.Lz = (1.) #domain size
-flag.Rayleigh = 1e2 #Rayleigh number
+flag.Rayleigh = 1.3*10**7 #Rayleigh number
 flag.Prandtl = 1
 flag.Nz=128 #grid point number in z
 flag.kx=1
 flag.ky=0
+flag.Q=1e6
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
@@ -59,7 +60,7 @@ flag.ky=0
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
 flag.stop_sim_time=100 #The simulation time to stop
-flag.post_store_dt=10 #The time step to store the data
+flag.post_store_dt=1 #The time step to store the data
 
 # Create bases and domain
 z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
@@ -76,6 +77,7 @@ problem.parameters['nu'] = (flag.Rayleigh / flag.Prandtl)**(-1/2)
 problem.parameters['zi'] = 1j
 problem.parameters['kx'] = flag.kx
 problem.parameters['ky'] = flag.ky
+problem.parameters['Q'] = flag.Q
 
 problem.add_equation("uz - dz(u) = 0")
 problem.add_equation("vz - dz(v) = 0")
