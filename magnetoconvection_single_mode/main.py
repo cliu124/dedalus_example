@@ -170,7 +170,7 @@ solver.stop_sim_time = stop_sim_time
 # Main loop
 u.change_scales(1)
 u_list = [np.copy(u['g'])]
-w_list= [np.copy(w['w'])]
+w_list= [np.copy(w['g'])]
 t_list = [solver.sim_time]
 while solver.proceed:
     solver.step(timestep)
