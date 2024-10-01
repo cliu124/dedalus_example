@@ -44,7 +44,7 @@ zi=1j
 # Bases
 zcoord = d3.Coordinate('z')
 dist = d3.Distributor(zcoord, dtype=dtype)
-zbasis = d3.Chebyshev(zcoord, size=Nz, bounds=(0, Lz))
+zbasis = d3.ChebyshevT(zcoord, size=Nz, bounds=(0, Lz))
 
 # Define derivative and lift operators. 
 dz = lambda A: d3.Differentiate(A, zcoord)
