@@ -214,7 +214,7 @@ try:
         # dt = CFL.compute_dt()
         dt = solver.step(dt)
         if (solver.iteration-1) % 1000 == 0:
-            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),T0z['g'][0]))
+            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),-T0z['g'][0]))
             # logger.info('TKE = %f' %flow.max('TKE'))
 
     #add check point, only store one snapshot
