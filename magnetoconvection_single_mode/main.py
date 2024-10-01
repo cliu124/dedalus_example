@@ -121,7 +121,8 @@ nu = (Rayleigh / Prandtl)**(-1/2)
 problem = d3.IVP([u, v, w, p, Jx, Jy, Jz, phi, U0, V0, T0, \
                   tau_u_1, tau_u_2, tau_v_1, tau_v_2, tau_w_1, tau_w_2, tau_T_1, tau_T_2, \
                   tau_U0_1, tau_U0_2, tau_V0_1, tau_V0_2, tau_T0_1, tau_T0_2, \
-                      tau_phi_1, tau_phi_2], namespace=locals())
+                      tau_phi_1, tau_phi_2,\
+                          tau_p, tau_phi], namespace=locals())
 
 problem.add_equation("dt(u)+zi*kx*p-nu*(uzz-kx*kx*u-ky*ky*u)-Q*nu*Jy=-zi*kx*U0*u-zi*ky*V0*u-w*U0z")
 problem.add_equation("dt(v)+zi*ky*p-nu*(vzz-kx*kx*v-ky*ky*v)+Q*nu*Jx=-zi*kx*U0*v-zi*ky*V0*v-w*V0z")
