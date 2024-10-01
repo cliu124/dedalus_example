@@ -122,7 +122,7 @@ problem.add_bc("phi_z(z='right')=0")
 #B.C. for temperature
 problem.add_bc("T(z='left')=0")
 problem.add_bc("T(z='right')=0")
-problem.add_bc("T0(z='left)=0")
+problem.add_bc("T0(z='left')=0")
 problem.add_bc("T0(z='right')=0")
 
 # Build solver
