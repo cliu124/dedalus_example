@@ -163,6 +163,10 @@ problem.add_equation("T(z=Lz)=0")
 problem.add_equation("T0(z=0)=0")
 problem.add_equation("T0(z=Lz)=0")
 
+delta=0.1
+z = dist.local_grid(zbasis)
+w['g']=delta*np.sin(np.pi*z)
+T['g']=delta*np.sin(np.pi*z)
 
 solver = problem.build_solver(timestepper)
 solver.stop_sim_time = stop_sim_time
@@ -189,7 +193,6 @@ while solver.proceed:
         
         
         
-z = dist.local_grid(zbasis)
 
 # Plot
 plt.figure(figsize=(6, 4))
