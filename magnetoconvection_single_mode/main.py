@@ -170,17 +170,23 @@ solver.stop_sim_time = stop_sim_time
 # Main loop
 u.change_scales(1)
 u_list = [np.copy(u['g'])]
-w_list= [np.copy(w['g'])]
+w_list = [np.copy(w['g'])]
+T_list = [np.copy(T['g'])]
 t_list = [solver.sim_time]
+Nu_list = [np.copy(Tz['g'][1])]
 while solver.proceed:
     solver.step(timestep)
     if solver.iteration % 100 == 0:
-        logger.info('Iteration=%i, Time=%e, dt=%e' %(solver.iteration, solver.sim_time, timestep))
+        logger.info('Iteration=%i, Time=%e, dt=%e, Nu=%e' %(solver.iteration, solver.sim_time, timestep, Tz['g'][1]))
+        
     if solver.iteration % 25 == 0:
         u.change_scales(1)
         u_list.append(np.copy(u['g']))
         w_list.append(np.copy(w['g']))
+        T_list.append(np.copy(T['g']))
+        Nu_list.append(np.copy(Tz['g'][1]))
         t_list.append(solver.sim_time)
+        
         
         
 z = dist.local_grid(zbasis)
