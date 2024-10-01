@@ -39,6 +39,8 @@ timestepper = d3.SBDF2
 timestep = 2e-3
 stop_sim_time=1000
 
+zi=np.sqrt(-1)
+
 # Bases
 zcoord = d3.Coordinate('z')
 dist = d3.Distributor(zcoord, dtype=dtype)
@@ -119,19 +121,19 @@ nu = (Rayleigh / Prandtl)**(-1/2)
 problem = d3.IVP([u, w, p, Jx, Jz, phi, U0, V0, T0, \
                   tau_u_1, tau_u_2, tau_v_1, tau_v_2, tau_w_1, tau_w_2, \
                   tau_U0_1, tau_U0_2, tau_V0_1, tau_V0_2, tau_T0_1, tau_T0_2], namespace=locals())
-problem.add_equation("dt(u)+1j*kx*p-nu*(uzz-kx*kx*u-ky*ky*u)-Q*nu*Jy=-1j*kx*U0*u-1j*ky*V0*u-w*U0z")
-problem.add_equation("dt(v)+1j*ky*p-nu*(vzz-kx*kx*v-ky*ky*v)+Q*nu*Jx=-1j*kx*U0*v-1j*ky*V0*v-w*V0z")
-problem.add_equation("dt(w)+dz(p)-nu*(wzz-kx*kx*w-ky*ky*w)=-1j*kx*U0*w-1j*ky*V0*w")
-problem.add_equation("1j*kx*u+1j*ky*v+wz+tau_p=0")
+problem.add_equation("dt(u)+zi*kx*p-nu*(uzz-kx*kx*u-ky*ky*u)-Q*nu*Jy=-zi*kx*U0*u-zi*ky*V0*u-w*U0z")
+problem.add_equation("dt(v)+zi*ky*p-nu*(vzz-kx*kx*v-ky*ky*v)+Q*nu*Jx=-zi*kx*U0*v-zi*ky*V0*v-w*V0z")
+problem.add_equation("dt(w)+dz(p)-nu*(wzz-kx*kx*w-ky*ky*w)=-zi*kx*U0*w-zi*ky*V0*w")
+problem.add_equation("zi*kx*u+zi*ky*v+wz+tau_p=0")
 problem.add_equation("integ(p)=0")
 
-problem.add_equation("Jx+1j*kx*phi-v=0")
-problem.add_equation("Jy+1j*ky*phi+u=0")
+problem.add_equation("Jx+zi*kx*phi-v=0")
+problem.add_equation("Jy+zi*ky*phi+u=0")
 problem.add_equation("Jz+phi_z=0")
-problem.add_equation("phi_zz-kx*kx*phi-ky*ky*phi-1j*kx*v+1j*ky*u+tau_phi=0")
+problem.add_equation("phi_zz-kx*kx*phi-ky*ky*phi-zi*kx*v+zi*ky*u+tau_phi=0")
 problem.add_equation("integ(phi)=0")
 
-problem.add_equation("dt(T)-w-kappa*(Tzz-kx*kx*T-ky*ky*T)=-1j*kx*U0*T-1j*ky*V0*T-w*T0z")
+problem.add_equation("dt(T)-w-kappa*(Tzz-kx*kx*T-ky*ky*T)=-zi*kx*U0*T-zi*ky*V0*T-w*T0z")
 problem.add_equation("dt(U0)-nu*U0zz=-dz(conj(w)*u+w*conj(u))")
 problem.add_equation("dt(V0)-nu*V0zz=-dz(conj(w)*v+w*conj(v))")
 problem.add_equation("dt(T0)-kappa*T0zz=-dz(conj(w)*T+w*conj(T))")
