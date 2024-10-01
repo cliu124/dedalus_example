@@ -53,6 +53,7 @@ flag.Nz=128 #grid point number in z
 flag.kx=1
 flag.ky=0
 flag.Q=1e6
+flag.A_noise=0.1
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
