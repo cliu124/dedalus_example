@@ -141,6 +141,7 @@ if not pathlib.Path('restart.h5').exists():
     w = solver.state['w']
     wz = solver.state['wz']
     u = solver.state['u']
+    T0z = solver.state['T0z']
     # Random perturbations, initialized globally for same results in parallel
     gshape = domain.dist.grid_layout.global_shape(scales=1)
     slices = domain.dist.grid_layout.slices(scales=1)
@@ -213,7 +214,7 @@ try:
         # dt = CFL.compute_dt()
         dt = solver.step(dt)
         if (solver.iteration-1) % 1000 == 0:
-            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),Tz['g'][0]))
+            logger.info('Iteration: %i, Time: %e, dt: %e, TKE = %f, Nu-1=%f' %(solver.iteration, solver.sim_time, dt, flow.max('TKE'),T0z['g'][0]))
             # logger.info('TKE = %f' %flow.max('TKE'))
 
     #add check point, only store one snapshot
