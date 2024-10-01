@@ -196,12 +196,33 @@ while solver.proceed:
 
 # Plot
 plt.figure(figsize=(6, 4))
-plt.pcolormesh(z.ravel(), np.array(t_list), np.array(u_list), cmap='RdBu_r', shading='gouraud', rasterized=True, clim=(-0.8, 0.8))
+plt.pcolormesh(z.ravel(), np.array(t_list), np.real(np.array(u_list)), cmap='RdBu_r', shading='gouraud', rasterized=True, clim=(-0.8, 0.8))
 plt.xlim(0, Lz)
 plt.ylim(0, stop_sim_time)
 plt.xlabel('z')
 plt.ylabel('t')
 plt.title('Single-mode of magnetoconvection')
 plt.tight_layout()
-plt.savefig('kdv_burgers.pdf')
-plt.savefig('kdv_burgers.png', dpi=200)
+plt.savefig('u.png', dpi=200)
+
+
+plt.figure(figsize=(6, 4))
+plt.pcolormesh(z.ravel(), np.array(t_list), np.real(np.array(w_list)), cmap='RdBu_r', shading='gouraud', rasterized=True, clim=(-0.8, 0.8))
+plt.xlim(0, Lz)
+plt.ylim(0, stop_sim_time)
+plt.xlabel('z')
+plt.ylabel('t')
+plt.title('Single-mode of magnetoconvection')
+plt.tight_layout()
+plt.savefig('w.png', dpi=200)
+
+
+plt.figure(figsize=(6, 4))
+plt.pcolormesh(z.ravel(), np.array(t_list), np.real(np.array(T_list)), cmap='RdBu_r', shading='gouraud', rasterized=True, clim=(-0.8, 0.8))
+plt.xlim(0, Lz)
+plt.ylim(0, stop_sim_time)
+plt.xlabel('z')
+plt.ylabel('t')
+plt.title('Single-mode of magnetoconvection')
+plt.tight_layout()
+plt.savefig('T.png', dpi=200)
