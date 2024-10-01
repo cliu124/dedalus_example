@@ -37,7 +37,7 @@ kx=2*np.pi/5*21
 ky=0
 timestepper = d3.SBDF2
 timestep = 2e-3
-stop_sim_time=1000
+stop_sim_time=300
 
 zi=1j
 
