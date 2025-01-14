@@ -100,9 +100,9 @@ problem.add_equation("Jz+phi_z=0")
 problem.add_equation("zi*kx*Jx+zi*ky*Jy+dz(Jz)=0")
 
 problem.add_equation("dt(T)-w-kappa*(dz(Tz)-kx*kx*T-ky*ky*T)=-zi*kx*U0*T-zi*ky*V0*T-w*T0z")
-problem.add_equation("dt(T0)-kappa*dz(T0z)=-dz(conj(w)*T+w*conj(T))")
-problem.add_equation("dt(U0)-nu*dz(U0z)=-dz(conj(w)*u+w*conj(u))")
-problem.add_equation("dt(V0)-nu*dz(V0z)=-dz(conj(w)*v+w*conj(v))")
+problem.add_equation("dt(T0)-kappa*dz(T0z)=-dz(conj(w)*T+conj(T)*w)")
+problem.add_equation("dt(U0)-nu*dz(U0z)=-dz(conj(w)*u+conj(u)*w)")
+problem.add_equation("dt(V0)-nu*dz(V0z)=-dz(conj(w)*v+conj(v)*w)")
 
 #add B.C.
 problem.add_bc("w(z='left')=0")# No penetration
