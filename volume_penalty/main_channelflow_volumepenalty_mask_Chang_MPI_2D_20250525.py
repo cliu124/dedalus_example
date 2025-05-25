@@ -18,8 +18,8 @@ initial_dt = 1e-5
 #nx, ny, nz = 192, 129, 160 #54, 129, 52
 nx, ny, nz = 54, 129, 52 #54, 129, 52
 
-geometry='xy' #xy (only streamwise and wall-normal) yz (only wall-normal and spanwise) or xyz(3D)
-wavy_wall='streamwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
+geometry='yz' #xy (only streamwise and wall-normal) yz (only wall-normal and spanwise) or xyz(3D)
+wavy_wall='spanwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
 k_inv_scheme='RHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
 noise_amp_IC=1e-6
 
@@ -57,7 +57,7 @@ elif geometry =='yz':
     #p = dist.Field(name='p', bases=(ybasis,zbasis))
     #for yz plane, we only need to solve U(y,z) and thus just define a velocity field instead of a vector
     u = dist.Field(name='u', bases=(ybasis,zbasis))
-    tau_u1 = dist.VectorField(coords,name='tau_u1', bases=(zbasis))
+    tau_u1 = dist.Field(name='tau_u1', bases=(zbasis))
     tau_u2 = dist.Field(name='tau_u2', bases=(zbasis))
     #tau_p = dist.Field(name='tau_p')
     
@@ -66,7 +66,7 @@ elif geometry =='yz':
     ey, ez = coords.unit_vector_fields(dist)
     lift_basis = ybasis.derivative_basis(1) # Chebyshev U basis
     lift = lambda A: d3.Lift(A, lift_basis, -1) # Shortcut for multiplying by U_{N-1}(y)
-    grad_u = d3.grad(u) - ey*lift(tau_u1) # Operator representing G
+    grad_u = d3.grad(u) - lift(tau_u1) # Operator representing G
     z_average = lambda A: d3.Average(A,'z')
     xz_average = lambda A: d3.Average(A, 'z')    
 
