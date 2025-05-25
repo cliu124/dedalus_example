@@ -136,12 +136,15 @@ if wavy_wall=='spanwise' and geometry=='yz':
     
     # initial condition: Laminar solution + perturbations damped at walls
     np.random.seed(0)
-    u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
+    u['g'] = 0
+    mask.set_scales(1.5)
+    #(1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
 
     #In this case, u is a scalar not vector and does not support CFL condition. 
     solver = problem.build_solver(timestepper)
     solver.stop_sim_time = stop_sim_time
    
+    
     # Flow properties
     flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
     flow.add_property(np.sqrt(u**2)/2, name='TKE')
