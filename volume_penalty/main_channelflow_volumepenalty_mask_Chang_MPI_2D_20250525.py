@@ -54,8 +54,9 @@ elif geometry =='yz':
     zbasis = d3.RealFourier(coords['z'], size=nz, bounds=(0, Lz), dealias=3/2)
     
     # Fields
-    p = dist.Field(name='p', bases=(ybasis,zbasis))
-    u = dist.VectorField(coords, name='u', bases=(ybasis,zbasis))
+    #p = dist.Field(name='p', bases=(ybasis,zbasis))
+    #for yz plane, we only need to solve U(y,z) and thus just define a velocity field instead of a vector
+    u = dist.Field(coords, name='u', bases=(ybasis,zbasis))
     tau_u1 = dist.VectorField(coords, name='tau_u1', bases=(zbasis))
     tau_u2 = dist.VectorField(coords, name='tau_u2', bases=(zbasis))
     tau_p = dist.Field(name='tau_p')
@@ -116,18 +117,29 @@ elif wavy_wall =='streamwise_spanwise':
 
 # Problem
 problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
-if k_inv_scheme=='RHS':
-    problem.add_equation("dt(u) - 1/Re*div(grad_u) + grad(p) + lift(tau_u2) =-dPdx*ex -dot(u,grad(u))-K_inv*mask*u")
-elif k_inv_scheme=='LHS':
-    problem.add_equation("dt(u) - 1/Re*div(grad_u) + grad(p) + lift(tau_u2)+K_inv*mask*u =-dPdx*ex -dot(u,grad(u))")
-
-#mass conservation and pressure gauge condition
-problem.add_equation("trace(grad_u) + tau_p = 0")
-problem.add_equation("integ(p) = 0")
-
-#B.C.
-problem.add_equation("u(y=-1) = 0") 
-problem.add_equation("u(y=+1) = 0")
+if wavy_wall=='spanwise' and geometry=='yz':
+    #This is a scalar equation for U(y,z) in streamwise momentum equation. The nonlinear term, pressure gradient disappear
+    #continuity is automatically satiafied and does not need to add. 
+    if k_inv_scheme=='RHS':
+        problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
+    elif k_inv_scheme=='LHS':
+        problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
+    #B.C.
+    problem.add_equation("u(y=-1) = 0") 
+    problem.add_equation("u(y=+1) = 0")
+else:
+    if k_inv_scheme=='RHS':
+        problem.add_equation("dt(u) - 1/Re*div(grad_u) + grad(p) + lift(tau_u2) =-dPdx*ex -dot(u,grad(u))-K_inv*mask*u")
+    elif k_inv_scheme=='LHS':
+        problem.add_equation("dt(u) - 1/Re*div(grad_u) + grad(p) + lift(tau_u2)+K_inv*mask*u =-dPdx*ex -dot(u,grad(u))")
+    
+    #mass conservation and pressure gauge condition
+    problem.add_equation("trace(grad_u) + tau_p = 0")
+    problem.add_equation("integ(p) = 0")
+    
+    #B.C.
+    problem.add_equation("u(y=-1) = 0") 
+    problem.add_equation("u(y=+1) = 0")
 
 # Build Solver
 stop_sim_time = 1000
