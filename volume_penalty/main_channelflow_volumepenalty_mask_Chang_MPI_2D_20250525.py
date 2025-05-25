@@ -24,7 +24,7 @@ nx, ny, nz = 54, 129, 52 #54, 129, 52
 
 geometry='yz' #xy (only streamwise and wall-normal) yz (only wall-normal and spanwise) or xyz(3D)
 wavy_wall='spanwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
-k_inv_scheme='RHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
+k_inv_scheme='LHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
 noise_amp_IC=1e-6
 
 if geometry=='xy':
@@ -125,14 +125,14 @@ if wavy_wall=='spanwise' and geometry=='yz':
     #continuity is automatically satiafied and does not need to add. 
     problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
-        print('RHS')
+        #print('RHS')
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
     elif k_inv_scheme == 'LHS':
-        print('LHF')
+        #print('LHS')
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
     #B.C.
-    problem.add_equation("u(y=-1) = 0") 
-    problem.add_equation("u(y=+1) = 0")
+    #problem.add_equation("u(y=-1) = 0") 
+    #problem.add_equation("u(y=+1) = 0")
     
     # initial condition: Laminar solution + perturbations damped at walls
     np.random.seed(0)
