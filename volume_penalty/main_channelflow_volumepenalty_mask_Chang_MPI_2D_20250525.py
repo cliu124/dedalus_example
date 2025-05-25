@@ -125,8 +125,10 @@ if wavy_wall=='spanwise' and geometry=='yz':
     #continuity is automatically satiafied and does not need to add. 
     problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
+        print('RHS')
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
-    elif k_inv_scheme=='LHS':
+    elif k_inv_scheme == 'LHS':
+        print('LHF')
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
     #B.C.
     problem.add_equation("u(y=-1) = 0") 
@@ -136,6 +138,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
     np.random.seed(0)
     u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
 
+    #In this case, u is a scalar not vector and does not support CFL condition. 
     solver = problem.build_solver(timestepper)
     solver.stop_sim_time = stop_sim_time
 
@@ -198,6 +201,7 @@ if geometry=='xyz':
 startup_iter = 10
 
 if wavy_wall=='spanwise' and geometry=='yz':
+    #Fixed time stepper, without using CFL
     try:
         logger.info('Starting main loop')
         while solver.proceed:
@@ -212,7 +216,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
     finally:
         solver.log_stats()
 else: 
-    
+    #Using CFL condition to update the time stepper.
     try:
         logger.info('Starting main loop')
         while solver.proceed:
