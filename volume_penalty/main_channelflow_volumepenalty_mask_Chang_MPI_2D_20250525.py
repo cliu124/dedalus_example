@@ -148,10 +148,10 @@ if wavy_wall=='spanwise' and geometry=='yz':
         problem = d3.NLBVP([u, tau_u1, tau_u2], namespace=locals())
         if k_inv_scheme=='RHS':
             #print('RHS')
-            problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
+            problem.add_equation("- 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
         elif k_inv_scheme == 'LHS':
             #print('LHS')
-            problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
+            problem.add_equation("- 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
         #B.C.
         problem.add_equation("u(y=-1) = 0") 
         problem.add_equation("u(y=+1) = 0")
@@ -235,7 +235,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
     elif solver=='NLBVP':
         pert_norm = np.inf
         u.change_scales(3/2) #dealising factor
-        steps = [u['g'].ravel().copy()]
+        #steps = [u['g'].ravel().copy()]
         tolerance = 1e-10
         while pert_norm > tolerance:
             solver.newton_iteration()
