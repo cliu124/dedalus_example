@@ -26,6 +26,8 @@ geometry='yz' #xy (only streamwise and wall-normal) yz (only wall-normal and spa
 wavy_wall='spanwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
 k_inv_scheme='LHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
 noise_amp_IC=1e-6
+solver='IVP' # or 'NLBVP'
+ncc_cutoff=1e-3
 
 if geometry=='xy':
     #coordinates
@@ -123,24 +125,37 @@ elif wavy_wall =='streamwise_spanwise':
 if wavy_wall=='spanwise' and geometry=='yz':
     #This is a scalar equation for U(y,z) in streamwise momentum equation. The nonlinear term, pressure gradient disappear
     #continuity is automatically satiafied and does not need to add. 
-    problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
-    if k_inv_scheme=='RHS':
-        #print('RHS')
-        problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
-    elif k_inv_scheme == 'LHS':
-        #print('LHS')
-        problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
-    #B.C.
-    #problem.add_equation("u(y=-1) = 0") 
-    #problem.add_equation("u(y=+1) = 0")
+    if solver=='IVP':
+        problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
+        if k_inv_scheme=='RHS':
+            #print('RHS')
+            problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
+        elif k_inv_scheme == 'LHS':
+            #print('LHS')
+            problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
+        #B.C.
+        problem.add_equation("u(y=-1) = 0") 
+        problem.add_equation("u(y=+1) = 0")
+        
+        # initial condition: Laminar solution + perturbations damped at walls
+        np.random.seed(0)
+        u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
     
-    # initial condition: Laminar solution + perturbations damped at walls
-    np.random.seed(0)
-    u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
-
-    #In this case, u is a scalar not vector and does not support CFL condition. 
-    solver = problem.build_solver(timestepper)
-    solver.stop_sim_time = stop_sim_time
+        #In this case, u is a scalar not vector and does not support CFL condition. 
+        solver = problem.build_solver(timestepper)
+        solver.stop_sim_time = stop_sim_time
+    elif solver=='NLBVP':
+        problem = d3.NLBVP([u, tau_u1, tau_u2], namespace=locals())
+        if k_inv_scheme=='RHS':
+            #print('RHS')
+            problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
+        elif k_inv_scheme == 'LHS':
+            #print('LHS')
+            problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2)+K_inv*mask*u =-dPdx")
+        #B.C.
+        problem.add_equation("u(y=-1) = 0") 
+        problem.add_equation("u(y=+1) = 0")
+        solver = problem.build_solver(ncc_cutoff=ncc_cutoff)
 
     # Flow properties
     flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
@@ -201,20 +216,35 @@ if geometry=='xyz':
 startup_iter = 10
 
 if wavy_wall=='spanwise' and geometry=='yz':
-    #Fixed time stepper, without using CFL
-    try:
-        logger.info('Starting main loop')
-        while solver.proceed:
-            timestep = initial_dt
-            solver.step(timestep)
-            if (solver.iteration-1) % 10 == 0:
-                max_TKE = flow.max('TKE')
-                logger.info('Iteration=%i, Time=%e, dt=%e, max(TKE)=%f' %(solver.iteration, solver.sim_time, timestep, max_TKE))
-    except:
-        logger.error('Exception raised, triggering end of main loop.')
-        raise
-    finally:
-        solver.log_stats()
+
+    if solver=='IVP':
+        #Fixed time stepper, without using CFL
+        try:
+            logger.info('Starting main loop')
+            while solver.proceed:
+                timestep = initial_dt
+                solver.step(timestep)
+                if (solver.iteration-1) % 10 == 0:
+                    max_TKE = flow.max('TKE')
+                    logger.info('Iteration=%i, Time=%e, dt=%e, max(TKE)=%f' %(solver.iteration, solver.sim_time, timestep, max_TKE))
+        except:
+            logger.error('Exception raised, triggering end of main loop.')
+            raise
+        finally:
+            solver.log_stats()
+    elif solver=='NLBVP':
+        pert_norm = np.inf
+        u.change_scales(3/2) #dealising factor
+        steps = [u['g'].ravel().copy()]
+        tolerance = 1e-10
+        while pert_norm > tolerance:
+            solver.newton_iteration()
+            pert_norm = sum(pert.allreduce_data_norm('c', 2) for pert in solver.perturbations)
+            logger.info(f'Perturbation norm: {pert_norm:.3e}')
+            max_TKE = flow.max('TKE')
+            logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
+
+        
 else: 
     #Using CFL condition to update the time stepper.
     try:
