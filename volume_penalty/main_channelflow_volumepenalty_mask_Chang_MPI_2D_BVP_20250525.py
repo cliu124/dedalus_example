@@ -26,7 +26,7 @@ geometry='yz' #xy (only streamwise and wall-normal) yz (only wall-normal and spa
 wavy_wall='spanwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
 k_inv_scheme='LHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
 noise_amp_IC=1e-6
-solver='IVP' # or 'NLBVP'
+solver='NLBVP' # or 'NLBVP'
 ncc_cutoff=1e-3
 
 if geometry=='xy':
