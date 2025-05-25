@@ -10,10 +10,14 @@ Re = 690 # U_b*H/nu , 16200
 #Retau = 180 # = u_tau*H/nu
 dtype = np.float64
 stop_sim_time = 50
+
+#timestepper, max time step, initial time step, and stop time. 
 #timestepper = d3.RK222
 timestepper = d3.SBDF4
 max_timestep = 1e-5  # 0.125 to 0.01
 initial_dt = 1e-5
+stop_sim_time = 1000
+
 # Create bases and domain
 #nx, ny, nz = 192, 129, 160 #54, 129, 52
 nx, ny, nz = 54, 129, 52 #54, 129, 52
@@ -132,6 +136,16 @@ if wavy_wall=='spanwise' and geometry=='yz':
     np.random.seed(0)
     u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
 
+    solver = problem.build_solver(timestepper)
+    solver.stop_sim_time = stop_sim_time
+    
+    CFL = d3.CFL(solver, initial_dt=initial_dt, cadence=5, safety=0.5, threshold=0.05,
+                 max_change=1.5, min_change=0.5, max_dt=max_timestep)
+    
+    # Flow properties
+    flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
+    flow.add_property(np.sqrt(u**2)/2, name='TKE')
+
 else:
     problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
@@ -150,13 +164,21 @@ else:
     # initial condition: Laminar solution + perturbations damped at walls
     np.random.seed(0)
     u['g'][0] = (1-y**2) + np.random.randn(*u['g'][0].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
-
+    
+    solver = problem.build_solver(timestepper)
+    solver.stop_sim_time = stop_sim_time
+    
+    CFL = d3.CFL(solver, initial_dt=initial_dt, cadence=5, safety=0.5, threshold=0.05,
+                 max_change=1.5, min_change=0.5, max_dt=max_timestep)
+    CFL.add_velocity(u) # changed threshold from 0.05 to 0.01
+    
+    # Flow properties
+    flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
+    flow.add_property(np.sqrt(u@u)/2, name='TKE')
 
 # Build Solver
-stop_sim_time = 1000
 fh_mode = 'overwrite'
-solver = problem.build_solver(timestepper)
-solver.stop_sim_time = stop_sim_time
+
 
 snapshots = solver.evaluator.add_file_handler('snapshots_channel', sim_dt=1e-4, max_writes=400)
 
@@ -174,13 +196,6 @@ if geometry=='xyz':
     snapshots_stress.add_task(xz_average(((u-xz_average(u))@ex)*(u-xz_average(u))@ey),name = 'u_prime_v_prime')
 
 # CFL
-CFL = d3.CFL(solver, initial_dt=initial_dt, cadence=5, safety=0.5, threshold=0.05,
-             max_change=1.5, min_change=0.5, max_dt=max_timestep)
-CFL.add_velocity(u) # changed threshold from 0.05 to 0.01
-
-# Flow properties
-flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
-flow.add_property(np.sqrt(u@u)/2, name='TKE')
 
 # Main loop
 startup_iter = 10
