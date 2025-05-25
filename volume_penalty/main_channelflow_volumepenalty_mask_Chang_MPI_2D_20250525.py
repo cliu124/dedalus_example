@@ -56,10 +56,10 @@ elif geometry =='yz':
     # Fields
     #p = dist.Field(name='p', bases=(ybasis,zbasis))
     #for yz plane, we only need to solve U(y,z) and thus just define a velocity field instead of a vector
-    u = dist.Field(coords, name='u', bases=(ybasis,zbasis))
-    tau_u1 = dist.VectorField(coords, name='tau_u1', bases=(zbasis))
-    tau_u2 = dist.VectorField(coords, name='tau_u2', bases=(zbasis))
-    tau_p = dist.Field(name='tau_p')
+    u = dist.Field(name='u', bases=(ybasis,zbasis))
+    tau_u1 = dist.VectorField(coords,name='tau_u1', bases=(zbasis))
+    tau_u2 = dist.Field(name='tau_u2', bases=(zbasis))
+    #tau_p = dist.Field(name='tau_p')
     
     # Substitutions
     y, z = dist.local_grids(ybasis, zbasis)
