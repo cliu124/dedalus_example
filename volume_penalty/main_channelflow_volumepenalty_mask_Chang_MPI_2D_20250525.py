@@ -127,6 +127,11 @@ if wavy_wall=='spanwise' and geometry=='yz':
     #B.C.
     problem.add_equation("u(y=-1) = 0") 
     problem.add_equation("u(y=+1) = 0")
+    
+    # initial condition: Laminar solution + perturbations damped at walls
+    np.random.seed(0)
+    u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
+
 else:
     problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
@@ -141,16 +146,17 @@ else:
     #B.C.
     problem.add_equation("u(y=-1) = 0") 
     problem.add_equation("u(y=+1) = 0")
+    
+    # initial condition: Laminar solution + perturbations damped at walls
+    np.random.seed(0)
+    u['g'][0] = (1-y**2) + np.random.randn(*u['g'][0].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
+
 
 # Build Solver
 stop_sim_time = 1000
 fh_mode = 'overwrite'
 solver = problem.build_solver(timestepper)
 solver.stop_sim_time = stop_sim_time
-
-# initial condition: Laminar solution + perturbations damped at walls
-np.random.seed(0)
-u['g'][0] = (1-y**2) + np.random.randn(*u['g'][0].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
 
 snapshots = solver.evaluator.add_file_handler('snapshots_channel', sim_dt=1e-4, max_writes=400)
 
