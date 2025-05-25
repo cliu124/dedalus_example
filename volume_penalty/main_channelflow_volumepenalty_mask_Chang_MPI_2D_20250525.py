@@ -137,13 +137,21 @@ if wavy_wall=='spanwise' and geometry=='yz':
         problem.add_equation("u(y=-1) = 0") 
         problem.add_equation("u(y=+1) = 0")
         
+        mask.set_scales(1.5)
         # initial condition: Laminar solution + perturbations damped at walls
         np.random.seed(0)
-        u['g'] = (1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
-    
+        u['g'] = 0
+        #(1-y**2) + np.random.randn(*u['g'].shape) * noise_amp_IC*np.sin(np.pi*(y+1)*0.5) # Laminar solution (plane Poiseuille)+  random perturbation
+        
         #In this case, u is a scalar not vector and does not support CFL condition. 
         solver = problem.build_solver(timestepper)
         solver.stop_sim_time = stop_sim_time
+        
+        # u,tau_u1,tau_u2 = (solver.state[name] for name in problem.variables)
+        # for field in [u, tau_u1, tau_u2]: 
+        #     field.set_scales(3/2)
+        #     field['g'] = 0
+        
     elif solver=='NLBVP':
         problem = d3.NLBVP([u, tau_u1, tau_u2], namespace=locals())
         if k_inv_scheme=='RHS':
