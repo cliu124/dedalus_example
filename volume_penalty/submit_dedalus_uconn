@@ -21,7 +21,7 @@ mkdir -p "$WORKDIR" && cp -r *.py "$WORKDIR" && cp submit_dedalus_uconn "$WORKDI
 
 conda activate dedalus2
 
-mpiexec -n $SLURM_NTASKS python3 main_channel_flow_turbulent_micro_channel_flow_penalty.py
+mpiexec -n $SLURM_NTASKS python3 main_channelflow_volumepenalty_mask_Chang_MPI_2D_20250525.py
 
 cd "$SUBMITDIR" && cp dedalus_output_$SLURM_JOB_ID "$WORKDIR"
 
