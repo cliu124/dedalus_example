@@ -66,7 +66,7 @@ elif geometry =='yz':
     ey, ez = coords.unit_vector_fields(dist)
     lift_basis = ybasis.derivative_basis(1) # Chebyshev U basis
     lift = lambda A: d3.Lift(A, lift_basis, -1) # Shortcut for multiplying by U_{N-1}(y)
-    grad_u = d3.grad(u) - lift(tau_u1) # Operator representing G
+    grad_u = d3.grad(u) - ey*lift(tau_u1) # Operator representing G
     z_average = lambda A: d3.Average(A,'z')
     xz_average = lambda A: d3.Average(A, 'z')    
 
