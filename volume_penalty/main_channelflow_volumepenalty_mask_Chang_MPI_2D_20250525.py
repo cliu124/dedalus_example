@@ -116,10 +116,10 @@ elif wavy_wall =='streamwise_spanwise':
     mask['g']= np.tanh(sharpness*(y-(y0+A*np.sin(2*np.pi/Lx*x)*np.sin(2*np.pi/Lz*z))))+1-np.tanh(sharpness*(y+y0+A*np.sin(2*np.pi/Lx*x)*np.sin(2*np.pi/Lz*z)))
 
 # Problem
-problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
 if wavy_wall=='spanwise' and geometry=='yz':
     #This is a scalar equation for U(y,z) in streamwise momentum equation. The nonlinear term, pressure gradient disappear
     #continuity is automatically satiafied and does not need to add. 
+    problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")
     elif k_inv_scheme=='LHS':
@@ -128,6 +128,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
     problem.add_equation("u(y=-1) = 0") 
     problem.add_equation("u(y=+1) = 0")
 else:
+    problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + grad(p) + lift(tau_u2) =-dPdx*ex -dot(u,grad(u))-K_inv*mask*u")
     elif k_inv_scheme=='LHS':
