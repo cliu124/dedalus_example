@@ -249,8 +249,9 @@ if wavy_wall=='spanwise' and geometry=='yz':
             solver.newton_iteration()
             pert_norm = sum(pert.allreduce_data_norm('c', 2) for pert in solver.perturbations)
             logger.info(f'Perturbation norm: {pert_norm:.3e}')
-            max_TKE = flow.max('TKE')
-            logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
+            #max_TKE = flow.max('TKE')
+            #logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
+            logger.info('Iteration=%i' %(solver.iteration))
 
         
 else: 
