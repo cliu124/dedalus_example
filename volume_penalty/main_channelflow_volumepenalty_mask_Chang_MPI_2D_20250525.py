@@ -12,8 +12,8 @@ dtype = np.float64
 stop_sim_time = 50
 #timestepper = d3.RK222
 timestepper = d3.SBDF4
-max_timestep = 0.002  # 0.125 to 0.01
-
+max_timestep = 1e-5  # 0.125 to 0.01
+initial_dt = 1e-5
 # Create bases and domain
 #nx, ny, nz = 192, 129, 160 #54, 129, 52
 nx, ny, nz = 54, 129, 52 #54, 129, 52
@@ -94,6 +94,8 @@ elif geometry =='xyz':
     xz_average = lambda A: d3.Average(d3.Average(A, 'x'), 'z')
 
 dPdx = -2/Re #Pressure gradient
+
+#parameters for volume penalty
 K_inv=100 #690
 y0=0.8 #average distance from the channel centerline of the wavy wall. 
 A=0.1 #amplitude of wavy wall. 
@@ -112,7 +114,6 @@ elif wavy_wall =='streamwise_spanwise':
     mask = dist.Field(name='mask', bases=(xbasis, ybasis, zbasis)) # mask function, is a function of x, y, and z
     mask['g']= np.tanh(sharpness*(y-(y0+A*np.sin(2*np.pi/Lx*x)*np.sin(2*np.pi/Lz*z))))+1-np.tanh(sharpness*(y+y0+A*np.sin(2*np.pi/Lx*x)*np.sin(2*np.pi/Lz*z)))
 
-
 # Problem
 problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
 if k_inv_scheme=='RHS':
@@ -129,7 +130,6 @@ problem.add_equation("u(y=-1) = 0")
 problem.add_equation("u(y=+1) = 0")
 
 # Build Solver
-dt = 0.00001 # 0.001
 stop_sim_time = 1000
 fh_mode = 'overwrite'
 solver = problem.build_solver(timestepper)
@@ -154,9 +154,8 @@ if geometry=='xyz':
     snapshots_stress.add_task(xz_average(((u-xz_average(u))@ez)**2),name = 'w_prime_w_prime')
     snapshots_stress.add_task(xz_average(((u-xz_average(u))@ex)*(u-xz_average(u))@ey),name = 'u_prime_v_prime')
 
-
 # CFL
-CFL = d3.CFL(solver, initial_dt=dt, cadence=5, safety=0.5, threshold=0.05,
+CFL = d3.CFL(solver, initial_dt=initial_dt, cadence=5, safety=0.5, threshold=0.05,
              max_change=1.5, min_change=0.5, max_dt=max_timestep)
 CFL.add_velocity(u) # changed threshold from 0.05 to 0.01
 
