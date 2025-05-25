@@ -138,10 +138,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
 
     solver = problem.build_solver(timestepper)
     solver.stop_sim_time = stop_sim_time
-    
-    CFL = d3.CFL(solver, initial_dt=initial_dt, cadence=5, safety=0.5, threshold=0.05,
-                 max_change=1.5, min_change=0.5, max_dt=max_timestep)
-    
+
     # Flow properties
     flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
     flow.add_property(np.sqrt(u**2)/2, name='TKE')
@@ -199,16 +196,33 @@ if geometry=='xyz':
 
 # Main loop
 startup_iter = 10
-try:
-    logger.info('Starting main loop')
-    while solver.proceed:
-        timestep = CFL.compute_timestep()
-        solver.step(timestep)
-        if (solver.iteration-1) % 10 == 0:
-            max_TKE = flow.max('TKE')
-            logger.info('Iteration=%i, Time=%e, dt=%e, max(TKE)=%f' %(solver.iteration, solver.sim_time, timestep, max_TKE))
-except:
-    logger.error('Exception raised, triggering end of main loop.')
-    raise
-finally:
-    solver.log_stats()
+
+if wavy_wall=='spanwise' and geometry=='yz':
+    try:
+        logger.info('Starting main loop')
+        while solver.proceed:
+            timestep = initial_dt
+            solver.step(timestep)
+            if (solver.iteration-1) % 10 == 0:
+                max_TKE = flow.max('TKE')
+                logger.info('Iteration=%i, Time=%e, dt=%e, max(TKE)=%f' %(solver.iteration, solver.sim_time, timestep, max_TKE))
+    except:
+        logger.error('Exception raised, triggering end of main loop.')
+        raise
+    finally:
+        solver.log_stats()
+else: 
+    
+    try:
+        logger.info('Starting main loop')
+        while solver.proceed:
+            timestep = CFL.compute_timestep()
+            solver.step(timestep)
+            if (solver.iteration-1) % 10 == 0:
+                max_TKE = flow.max('TKE')
+                logger.info('Iteration=%i, Time=%e, dt=%e, max(TKE)=%f' %(solver.iteration, solver.sim_time, timestep, max_TKE))
+    except:
+        logger.error('Exception raised, triggering end of main loop.')
+        raise
+    finally:
+        solver.log_stats()
