@@ -151,7 +151,11 @@ if wavy_wall=='spanwise' and geometry=='yz':
         # for field in [u, tau_u1, tau_u2]: 
         #     field.set_scales(3/2)
         #     field['g'] = 0
+        # Flow properties
         
+        flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
+        flow.add_property(np.sqrt(u**2)/2, name='TKE')
+
     elif solution_method=='NLBVP':
         problem = d3.NLBVP([u, tau_u1, tau_u2], namespace=locals())
         if k_inv_scheme=='RHS':
@@ -165,10 +169,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
         problem.add_equation("u(y=+1) = 0")
         solver = problem.build_solver(ncc_cutoff=ncc_cutoff)
 
-    # Flow properties
-    flow = d3.GlobalFlowProperty(solver, cadence=20) # changed cadence from 10 to 50
-    flow.add_property(np.sqrt(u**2)/2, name='TKE')
-
+    
 else:
     problem = d3.IVP([p, u, tau_p, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
@@ -259,7 +260,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
             #logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
             logger.info('Iteration=%i' %(solver.iteration))
 
-        solver.evaluator.evaluate_handlers([snapshots], world_time=0, wall_time=0, sim_time=0, timestep=0, iteration=0)
+        solver.evaluator.evaluate_handlers([snapshots])
  
 else: 
     #Using CFL condition to update the time stepper.
