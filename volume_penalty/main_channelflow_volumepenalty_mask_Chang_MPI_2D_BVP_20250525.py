@@ -206,7 +206,7 @@ fh_mode = 'overwrite'
 if solution_method=='IVP':
     snapshots = solver.evaluator.add_file_handler('snapshots_channel', sim_dt=1e-4, max_writes=400)
     snapshots.add_task(u, name='velocity')
-    snapshots.add_task(K_inv*mask, name='stiffness',layout='g')
+    #snapshots.add_task(K_inv*mask, name='stiffness',layout='g')
     snapshots.add_task(mask,name="mask",layout="g")
     
     if geometry=='xyz':
@@ -221,7 +221,7 @@ if solution_method=='IVP':
 elif solution_method=='NLBVP':
     snapshots = solver.evaluator.add_file_handler('snapshots_channel')
     snapshots.add_task(u, name='velocity')
-    snapshots.add_task(K_inv*mask, name='stiffness',layout='g')
+    #snapshots.add_task(K_inv*mask, name='stiffness',layout='g')
     snapshots.add_task(mask,name="mask",layout="g")
     
     
