@@ -252,6 +252,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
         #u.change_scales(3/2) #dealising factor
         #steps = [u['g'].ravel().copy()]
         tolerance = 1e-10
+        iteration=0
         while pert_norm > tolerance:
             solver.newton_iteration()
             pert_norm = sum(pert.allreduce_data_norm('c', 2) for pert in solver.perturbations)
@@ -259,8 +260,9 @@ if wavy_wall=='spanwise' and geometry=='yz':
             #max_TKE = flow.max('TKE')
             #logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
             logger.info('Iteration=%i' %(solver.iteration))
+            iteration=iteration+1
 
-        solver.evaluator.evaluate_handlers([snapshots])
+        solver.evaluator.evaluate_handlers([snapshots],iteration=iteration)
  
 else: 
     #Using CFL condition to update the time stepper.
