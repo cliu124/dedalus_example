@@ -26,7 +26,7 @@ geometry='yz' #xy (only streamwise and wall-normal) yz (only wall-normal and spa
 wavy_wall='spanwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
 k_inv_scheme='LHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
 noise_amp_IC=1e-6
-solver='NLBVP' # or 'NLBVP'
+solver_method='NLBVP' # or 'NLBVP'
 ncc_cutoff=1e-3
 
 if geometry=='xy':
@@ -125,7 +125,7 @@ elif wavy_wall =='streamwise_spanwise':
 if wavy_wall=='spanwise' and geometry=='yz':
     #This is a scalar equation for U(y,z) in streamwise momentum equation. The nonlinear term, pressure gradient disappear
     #continuity is automatically satiafied and does not need to add. 
-    if solver=='IVP':
+    if solver_method=='IVP':
         problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
         if k_inv_scheme=='RHS':
             #print('RHS')
@@ -152,7 +152,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
         #     field.set_scales(3/2)
         #     field['g'] = 0
         
-    elif solver=='NLBVP':
+    elif solver_method=='NLBVP':
         problem = d3.NLBVP([u, tau_u1, tau_u2], namespace=locals())
         if k_inv_scheme=='RHS':
             #print('RHS')
@@ -225,7 +225,7 @@ startup_iter = 10
 
 if wavy_wall=='spanwise' and geometry=='yz':
 
-    if solver=='IVP':
+    if solver_method=='IVP':
         #Fixed time stepper, without using CFL
         try:
             logger.info('Starting main loop')
@@ -240,7 +240,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
             raise
         finally:
             solver.log_stats()
-    elif solver=='NLBVP':
+    elif solver_method=='NLBVP':
         pert_norm = np.inf
         #u.change_scales(3/2) #dealising factor
         #steps = [u['g'].ravel().copy()]
