@@ -259,7 +259,8 @@ if wavy_wall=='spanwise' and geometry=='yz':
             #logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
             logger.info('Iteration=%i' %(solver.iteration))
 
-        
+        solver.evaluator.evaluate_handlers([snapshots], world_time=0, wall_time=0, sim_time=0, timestep=0, iteration=0)
+ 
 else: 
     #Using CFL condition to update the time stepper.
     try:
