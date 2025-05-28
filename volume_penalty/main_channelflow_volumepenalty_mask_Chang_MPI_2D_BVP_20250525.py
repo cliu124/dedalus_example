@@ -242,7 +242,7 @@ if wavy_wall=='spanwise' and geometry=='yz':
             solver.log_stats()
     elif solver=='NLBVP':
         pert_norm = np.inf
-        u.change_scales(3/2) #dealising factor
+        #u.change_scales(3/2) #dealising factor
         #steps = [u['g'].ravel().copy()]
         tolerance = 1e-10
         while pert_norm > tolerance:
