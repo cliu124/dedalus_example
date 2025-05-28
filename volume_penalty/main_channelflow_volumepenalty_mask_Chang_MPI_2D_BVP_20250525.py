@@ -24,7 +24,7 @@ nx, ny, nz = 54, 129, 52 #54, 129, 52
 
 geometry='yz' #xy (only streamwise and wall-normal) yz (only wall-normal and spanwise) or xyz(3D)
 wavy_wall='spanwise' #'streamwise': streamwise wavy wall; 'spanwise': spanwise wavy wall; 'streamwise_spanwise': 3D wavy wall varying in both streamwise and spanwise
-k_inv_scheme='LHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
+k_inv_scheme='RHS' #RHS: put k_inv term on the RHS of momentum equation, and LHS: put k_inv term on the LHS of the momentum equations
 noise_amp_IC=1e-6
 solution_method='NLBVP' # or 'NLBVP'
 ncc_cutoff=1e-3
@@ -106,7 +106,7 @@ dPdx = -2/Re #Pressure gradient
 K_inv=100 #690
 y0=0.8 #average distance from the channel centerline of the wavy wall. 
 A=0.1 #amplitude of wavy wall. 
-sharpness=30 #sharpness for the solid fluid boundary, a parameter in tanh function
+sharpness=20 #sharpness for the solid fluid boundary, a parameter in tanh function
 
 #
 if wavy_wall =='streamwise':
