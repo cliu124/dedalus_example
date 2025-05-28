@@ -253,14 +253,14 @@ if wavy_wall=='spanwise' and geometry=='yz':
         #steps = [u['g'].ravel().copy()]
         tolerance = 1e-10
         iteration=0
-        while pert_norm > tolerance:
+        pert = solver.perturbations.data
+        pert.fill(1+tolerance)
+        while np.sum(np.abs(pert)) > tolerance:
             solver.newton_iteration()
-            pert_norm = sum(pert.allreduce_data_norm('c', 2) for pert in solver.perturbations)
-            logger.info(f'Perturbation norm: {pert_norm:.3e}')
-            #max_TKE = flow.max('TKE')
-            #logger.info('Iteration=%i, max(TKE)=%f' %(solver.iteration, max_TKE))
-            logger.info('Iteration=%i' %(solver.iteration))
+            logger.info('Perturbation norm: {}'.format(np.sum(np.abs(pert))))
+            logger.info('TKE: {}'.format(np.sqrt(np.sum(np.sum(solver.state['u']['g']**2)))/2))
             iteration=iteration+1
+            logger.info('Iteration=%i' %(solver.iteration))
 
         solver.evaluator.evaluate_handlers([snapshots],iteration=iteration)
  
