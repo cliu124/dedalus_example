@@ -123,7 +123,7 @@ elif wavy_wall =='streamwise_spanwise':
 if wavy_wall=='spanwise' and geometry=='yz':
     #This is a scalar equation for U(y,z) in streamwise momentum equation. The nonlinear term, pressure gradient disappear
     #continuity is automatically satiafied and does not need to add. 
-    problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals(),ncc_cutoff=1e-10)
+    problem = d3.IVP([u, tau_u1, tau_u2], namespace=locals())
     if k_inv_scheme=='RHS':
         #print('RHS')
         problem.add_equation("dt(u) - 1/Re*div(grad_u) + lift(tau_u2) =-dPdx -K_inv*mask*u")

@@ -46,13 +46,16 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Lz = (1.) #domain size
 flag.Rayleigh = 1.3*10**7 #Rayleigh number
-flag.Prandtl = 1
-flag.Nz=128 #grid point number in z
-flag.kx=20*2*np.pi/5
-flag.ky=0
 flag.Q=1e6
+
+flag.Prandtl = 1
+flag.kx=2*np.pi*flag.Q**(1/6)
+flag.ky=0
+
+flag.Lz = (1.) #domain size
+flag.Nz=128 #grid point number in z
+
 flag.A_noise=0.1
 
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
@@ -62,6 +65,10 @@ flag.A_noise=0.1
 flag.initial_dt=0.001 #the initial time step
 flag.stop_sim_time=100 #The simulation time to stop
 flag.post_store_dt=1 #The time step to store the data
+
+flag.restart = False
+flag.restart_path = "/ocean/projects/phy240052p/zsong7/Rayleigh/quasiN/sqrt3/checkpoints/checkpoints_s1.h5"
+flag.restart_t0 = False 
 
 # Create bases and domain
 z_basis = de.Chebyshev('z', flag.Nz, interval=(0, flag.Lz), dealias=3/2)
@@ -130,8 +137,22 @@ problem.add_bc("T0(z='right')=0")
 solver = problem.build_solver(de.timesteppers.RK222)
 logger.info('Solver built')
 
-if not pathlib.Path('restart.h5').exists():
 
+
+if flag.restart:
+    # Restart
+    print('Restart')
+    write, last_dt = solver.load_state(flag.restart_path, -1)
+
+    # Timestepping and output
+    dt = last_dt
+    stop_sim_time = flag.stop_sim_time
+    fh_mode = 'append'
+    if flag.restart_t0:
+        solver.sim_time=0
+        fh_mode='overwrite'
+
+else: 
     print('Set up initial condition!')
     # Initial conditions
     z = domain.grid(0)
@@ -158,19 +179,6 @@ if not pathlib.Path('restart.h5').exists():
     dt = flag.initial_dt
     stop_sim_time = flag.stop_sim_time
     fh_mode = 'overwrite'
-
-else:
-    # Restart
-    print('Restart')
-    write, last_dt = solver.load_state('restart.h5', -1)
-
-    # Timestepping and output
-    dt = last_dt
-    stop_sim_time = flag.stop_sim_time
-    fh_mode = 'append'
-    if flag.restart_t0:
-        solver.sim_time=0
-        fh_mode='overwrite'
 
 # Integration parameters
 solver.stop_sim_time = flag.stop_sim_time
