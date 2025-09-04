@@ -58,6 +58,8 @@ flag.Nz=256 #grid point number in z
 
 flag.A_noise=0.1
 
+flag.A_pert=1
+
 #a parameter determine the boundary condition, kappa=0 is Dirichlet, and kappa=1 for Neumann
 #The top layer boundary condition reads as (1-kappa)*T(z=1)+kappa dT/dz(z=1)=0
 
@@ -176,11 +178,11 @@ else:
     #zb, zt = z_basis.interval
     pert = flag.A_noise * noise * z * (1 - z)
     
-    T['g'] = np.sin(np.pi*z) + pert
-    w['g'] = np.sin(np.pi*z) + pert
-    T0['g'] = np.sin(2*np.pi*z) + pert
-    u['g'] = np.sin(np.pi*z) + pert
-    v['g'] = np.sin(np.pi*z) + pert
+    T['g'] = flag.A_pert*np.sin(np.pi*z) + pert
+    w['g'] = flag.A_pert*np.sin(np.pi*z) + pert
+    T0['g'] = flag.A_pert*np.sin(2*np.pi*z) + pert
+    u['g'] = flag.A_pert*np.cos(np.pi*z) + pert
+    v['g'] = flag.A_pert*np.cos(np.pi*z) + pert
     
     # Timestepping and output
     dt = flag.initial_dt
