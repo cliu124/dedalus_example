@@ -163,6 +163,8 @@ else:
     wz = solver.state['wz']
     u = solver.state['u']
     T0 = solver.state['T0']
+    T0z = solver.state['T0z']
+
     # Random perturbations, initialized globally for same results in parallel
     gshape = domain.dist.grid_layout.global_shape(scales=1)
     slices = domain.dist.grid_layout.slices(scales=1)
