@@ -162,6 +162,7 @@ else:
     w = solver.state['w']
     wz = solver.state['wz']
     u = solver.state['u']
+    v = solver.state['v']
     T0 = solver.state['T0']
     T0z = solver.state['T0z']
 
@@ -178,6 +179,8 @@ else:
     T['g'] = np.sin(np.pi*z) + pert
     w['g'] = np.sin(np.pi*z) + pert
     T0['g'] = np.sin(2*np.pi*z) + pert
+    u['g'] = np.sin(np.pi*z) + pert
+    v['g'] = np.sin(np.pi*z) + pert
     
     # Timestepping and output
     dt = flag.initial_dt
