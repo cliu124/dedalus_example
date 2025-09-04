@@ -46,7 +46,7 @@ class flag:
 flag=flag()
 
 # Parameters
-flag.Rayleigh = 1.3*10**7 #Rayleigh number
+flag.Rayleigh = 1.5*10**7 #Rayleigh number
 flag.Q=1e6
 
 flag.Prandtl = 1
@@ -54,7 +54,7 @@ flag.kx=2*np.pi*flag.Q**(1/6)
 flag.ky=0
 
 flag.Lz = (1.) #domain size
-flag.Nz=128 #grid point number in z
+flag.Nz=256 #grid point number in z
 
 flag.A_noise=0.1
 
@@ -162,7 +162,7 @@ else:
     w = solver.state['w']
     wz = solver.state['wz']
     u = solver.state['u']
-    T0z = solver.state['T0z']
+    T0 = solver.state['T0']
     # Random perturbations, initialized globally for same results in parallel
     gshape = domain.dist.grid_layout.global_shape(scales=1)
     slices = domain.dist.grid_layout.slices(scales=1)
@@ -174,6 +174,8 @@ else:
     pert = flag.A_noise * noise * z * (1 - z)
     
     T['g'] = np.sin(np.pi*z) + pert
+    w['g'] = np.sin(np.pi*z) + pert
+    T0['g'] = np.sin(2*np.pi*z) + pert
     
     # Timestepping and output
     dt = flag.initial_dt
