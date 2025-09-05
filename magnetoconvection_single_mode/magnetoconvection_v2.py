@@ -75,7 +75,7 @@ print(flag.kx)
 flag.ky=0
 
 flag.Lz = (1.) #domain size
-flag.Nz=256 #grid point number in z
+flag.Nz=128 #grid point number in z
 
 flag.A_noise=0.1
 
