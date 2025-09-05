@@ -45,11 +45,10 @@ class flag:
 # Parameters
 flag=flag()
 
+
 # Parameters
-flag.Rayleigh = 1.5*10**7 #Rayleigh number
 flag.Q=1e6
 
-flag.Prandtl = 1
 #flag.kx=2*np.pi*flag.Q**(1/6)
 print("Wavenumber kx based on scaling law:")
 print(2*np.pi*flag.Q**(1/6))
@@ -71,6 +70,14 @@ print(real_roots)
 print("Wavenumber kx that minimize the critical Rayleigh number:")
 flag.kx=max(real_roots)
 print(flag.kx)
+
+Ra_c=((np.pi**2+flag.kx**2)**2+np.pi**2*flag.Q)*(np.pi**2+flag.kx**2)/flag.kx**2
+print("critical Rayleigh number:")
+print(Ra_c)
+
+flag.Rayleigh = 5*Ra_c #Rayleigh number
+
+flag.Prandtl = 1
 
 flag.ky=0
 
@@ -102,7 +109,6 @@ conj = lambda A: np.conj(A)
 problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0', \
                                     'uz','vz','wz','Tz','U0z','V0z','T0z','phi_z'])
     
-problem.parameters['Ra'] = flag.Rayleigh
 problem.parameters['kappa'] = (flag.Rayleigh * flag.Prandtl)**(-1/2)
 problem.parameters['nu'] = (flag.Rayleigh / flag.Prandtl)**(-1/2)
 problem.parameters['zi'] = 1j
@@ -131,6 +137,7 @@ problem.add_equation("zi*kx*Jx+zi*ky*Jy+dz(Jz)=0")
 
 problem.add_equation("dt(T)-w-kappa*(dz(Tz)-kx*kx*T-ky*ky*T)=-zi*kx*U0*T-zi*ky*V0*T-w*T0z")
 problem.add_equation("dt(T0)-kappa*dz(T0z)=-dz(conj(w)*T+conj(T)*w)")
+
 problem.add_equation("dt(U0)-nu*dz(U0z)=-dz(conj(w)*u+conj(u)*w)")
 problem.add_equation("dt(V0)-nu*dz(V0z)=-dz(conj(w)*v+conj(v)*w)")
 
