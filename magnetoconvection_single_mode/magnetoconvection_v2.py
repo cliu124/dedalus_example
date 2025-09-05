@@ -47,7 +47,7 @@ flag=flag()
 
 
 # Parameters
-flag.Q=1e6
+flag.Q=1e1
 
 #flag.kx=2*np.pi*flag.Q**(1/6)
 print("Wavenumber kx based on scaling law:")
@@ -93,7 +93,7 @@ flag.A_pert=1
 
 #parameter to control simulation and storage time
 flag.initial_dt=0.001 #the initial time step
-flag.stop_sim_time=100 #The simulation time to stop
+flag.stop_sim_time=1000 #The simulation time to stop
 flag.post_store_dt=1 #The time step to store the data
 
 flag.restart = False
