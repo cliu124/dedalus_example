@@ -156,6 +156,25 @@ if flag.restart:
 
 else: 
     print('Set up initial condition!')
+    nu=np.sqrt(flag.Prandtl/flag.Rayleigh)
+    kappa=1/np.sqrt(flag.Prandtl*flag.Rayleigh)
+    
+    M=np.array([[nu*(-np.pi**2-flag.kx**2+flag.Q*np.pi**2/(-np.pi**2-flag.kx**2)), flag.kx**2/(np.pi**2+flag.kx**2)],
+                [1, (-np.pi**2-flag.kx**2)*kappa]])
+    eigenvalues, eigenvectors = np.linalg.eig(M)
+    print("Eigenvalues:")
+    print(eigenvalues)  
+    
+    print("Eigenvectors:")
+    print(eigenvectors)
+    
+    max_index = np.argmax(np.real(eigenvalues))
+    principal_eigenvector = eigenvectors[:, max_index]
+    print("principal_eigenvector:")
+    print(principal_eigenvector)
+    #For the eigenvector corresponding to the largest real part, this will give the ratio T/w
+    w2T_ratio = principal_eigenvector[1]/principal_eigenvector[0]
+    
     # Initial conditions
     z = domain.grid(0)
     
@@ -164,7 +183,8 @@ else:
     w = solver.state['w']
     wz = solver.state['wz']
     u = solver.state['u']
-    v = solver.state['v']
+    uz = solver.state['uz']
+
     T0 = solver.state['T0']
     T0z = solver.state['T0z']
 
@@ -178,11 +198,14 @@ else:
     #zb, zt = z_basis.interval
     pert = flag.A_noise * noise * z * (1 - z)
     
-    T['g'] = flag.A_pert*np.sin(np.pi*z) + pert
     w['g'] = flag.A_pert*np.sin(np.pi*z) + pert
-    T0['g'] = flag.A_pert*np.sin(2*np.pi*z) + pert
-    u['g'] = flag.A_pert*np.cos(np.pi*z) + pert
-    v['g'] = flag.A_pert*np.cos(np.pi*z) + pert
+    wz['g'] = flag.A_pert*np.pi*np.cos(np.pi*z) + pert
+    
+    u['g'] = flag.A_pert*1j*np.pi/flag.kx*np.cos(np.pi*z) + pert
+    uz['g'] = flag.A_pert*1j*(-np.pi**2)/flag.kx*np.sin(np.pi*z) + pert
+    
+    T['g'] = w2T_ratio*flag.A_pert*np.sin(np.pi*z) + pert
+    Tz['g'] = w2T_ratio*flag.A_pert*np.pi*np.cos(np.pi*z) + pert
     
     # Timestepping and output
     dt = flag.initial_dt
