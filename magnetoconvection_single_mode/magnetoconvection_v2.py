@@ -50,7 +50,28 @@ flag.Rayleigh = 1.5*10**7 #Rayleigh number
 flag.Q=1e6
 
 flag.Prandtl = 1
-flag.kx=2*np.pi*flag.Q**(1/6)
+#flag.kx=2*np.pi*flag.Q**(1/6)
+print("Wavenumber kx based on scaling law:")
+print(2*np.pi*flag.Q**(1/6))
+
+# Coefficients of the polynomial (descending order)
+# 2*k_c^6 + 3*pi^2*k_c^4 + 0*k_c^3 + 0*k_c^2 + 0*k_c + (-pi^6 - Q*pi^4)
+coeffs = [2, 0, 3 * np.pi**2, 0, 0, 0, -(np.pi**6 + flag.Q * np.pi**4)]
+
+# Find roots
+roots = np.roots(coeffs)
+
+# Filter real roots
+real_roots = [r.real for r in roots if np.isreal(r)]
+
+# Output
+print("Real solutions for k_c:")
+print(real_roots)
+
+print("Wavenumber kx that minimize the critical Rayleigh number:")
+flag.kx=max(real_roots)
+print(flag.kx)
+
 flag.ky=0
 
 flag.Lz = (1.) #domain size
