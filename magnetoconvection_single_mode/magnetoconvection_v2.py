@@ -98,7 +98,7 @@ flag.post_store_dt=1 #The time step to store the data
 
 flag.restart = True
 #flag.restart_path = "/home/changliu/dedalus_example/magnetoconvection_single_mode/dedalus_20250905_214034/analysis/analysis_s1/analysis_s1_p0.h5"
-flag.restart_path"analysis_s1_p0.h5"
+flag.restart_path="analysis_s1_p0.h5"
 flag.restart_t0 = True
 
 # Create bases and domain
