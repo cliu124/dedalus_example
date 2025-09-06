@@ -167,6 +167,7 @@ problem.add_bc("T0(z='right')=0")
 solver = problem.build_solver(de.timesteppers.RK222)
 logger.info('Solver built')
 
+T0z = solver.state['T0z']
 
 
 if flag.restart:
@@ -178,6 +179,7 @@ if flag.restart:
     dt = last_dt
     stop_sim_time = flag.stop_sim_time
     fh_mode = 'append'
+
     if flag.restart_t0:
         solver.sim_time=0
         fh_mode='overwrite'
@@ -213,8 +215,8 @@ else:
     u = solver.state['u']
     uz = solver.state['uz']
 
-    T0 = solver.state['T0']
-    T0z = solver.state['T0z']
+    #T0 = solver.state['T0']
+    #T0z = solver.state['T0z']
 
     # Random perturbations, initialized globally for same results in parallel
     gshape = domain.dist.grid_layout.global_shape(scales=1)
