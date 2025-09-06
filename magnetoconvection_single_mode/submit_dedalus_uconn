@@ -19,7 +19,7 @@ SUBMITDIR=$SLURM_SUBMIT_DIR
 WORKDIR=/scratch/chl23026/chl23026/dedalus_$SLURM_JOB_ID
 mkdir -p "$WORKDIR" && cp -r *.py "$WORKDIR" && cp submit_dedalus_uconn "$WORKDIR" && cd "$WORKDIR" || exit -1
 
-mpiexec -n $SLURM_NTASKS python3 inclined_porous_convection.py
+mpiexec -n $SLURM_NTASKS python3 magnetoconvection_v2.py
 
 cd "$SUBMITDIR" && cp dedalus_output_$SLURM_JOB_ID "$WORKDIR"
 
