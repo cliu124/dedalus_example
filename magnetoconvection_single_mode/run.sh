@@ -1,5 +1,5 @@
 conda activate dedalus2
-now="dedalus_$(date +"%Y%m%d%H%M%S")"
+now="dedalus_$(date +"%Y%m%d_%H%M%S")"
 mkdir -p "$now"
 cp -r *.py "$now"
 cd "$now"
