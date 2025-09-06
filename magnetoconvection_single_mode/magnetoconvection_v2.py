@@ -75,7 +75,7 @@ Ra_c=((np.pi**2+flag.kx**2)**2+np.pi**2*flag.Q)*(np.pi**2+flag.kx**2)/flag.kx**2
 print("critical Rayleigh number:")
 print(Ra_c)
 
-flag.Rayleigh = 5*Ra_c #Rayleigh number
+flag.Rayleigh = 1.4590390894897762*Ra_c #Rayleigh number
 
 flag.Prandtl = 1
 
