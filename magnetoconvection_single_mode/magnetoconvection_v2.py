@@ -47,7 +47,7 @@ flag=flag()
 
 
 # Parameters
-flag.Q=1e1
+flag.Q=1e6
 
 #flag.kx=2*np.pi*flag.Q**(1/6)
 print("Wavenumber kx based on scaling law:")
