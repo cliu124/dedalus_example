@@ -8,7 +8,7 @@
 #SBATCH --constraint=epyc128 # This is optional
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=1:00:00
+#SBATCH --time=12:00:00
 #SBATCH --job-name=dedalus
 #SBATCH --output=dedalus_output_%j
 export SLURM_EXPORT_ENV=ALL
@@ -17,7 +17,7 @@ export SLURM_EXPORT_ENV=ALL
 ##the slurm number to restart simulation... This need full state to be stored.
 SUBMITDIR=$SLURM_SUBMIT_DIR
 WORKDIR=/scratch/chl23026/chl23026/dedalus_$SLURM_JOB_ID
-mkdir -p "$WORKDIR" && cp -r *.py "$WORKDIR" && cp submit_dedalus_uconn "$WORKDIR" && cd "$WORKDIR" || exit -1
+mkdir -p "$WORKDIR" && cp -r *.py "$WORKDIR" && cp -r *.h5 "$WORKDIR" && cp submit_dedalus_uconn "$WORKDIR" && cd "$WORKDIR" || exit -1
 
 mpiexec -n $SLURM_NTASKS python3 magnetoconvection_v2.py
 
