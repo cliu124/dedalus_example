@@ -268,8 +268,6 @@ analysis.add_task('sqrt(2)*abs(u)*sqrt(Ra/Pr)',name='Re_x') #For Figure 4(e)
 analysis.add_task('sqrt(2)*abs(w)*sqrt(Ra/Pr)',name='Re_z') #For Figure 4(e)
 
 #viscous dissipation, For Figure 4(c)
-analysis.add_task('epsilon_nu',name='epsilon_nu')
-
 analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
                                   +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
                                   +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2)',name='epsilon_nu') 
