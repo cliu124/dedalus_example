@@ -113,7 +113,7 @@ sqrt = lambda A: np.sqrt(A)
 
 #abs = lambda A: np.abs(A)
 
-problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0','Jx0','Jy0', \
+problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0', \
                                     'uz','vz','wz','Tz','U0z','V0z','T0z','phi_z'])
     
 problem.parameters['kappa'] = (flag.Rayleigh * flag.Prandtl)**(-1/2)
@@ -144,14 +144,12 @@ problem.add_equation("Jy+zi*ky*phi+u=0")
 problem.add_equation("Jz+phi_z=0")
 problem.add_equation("zi*kx*Jx+zi*ky*Jy+dz(Jz)=0")
 
-problem.add_equation("Jx0=V0")
-problem.add_equation("Jy0=-U0")
-
 problem.add_equation("dt(T)-w-kappa*(dz(Tz)-kx*kx*T-ky*ky*T)=-zi*kx*U0*T-zi*ky*V0*T-w*T0z")
 problem.add_equation("dt(T0)-kappa*dz(T0z)=-dz(conj(w)*T+conj(T)*w)")
 
-problem.add_equation("dt(U0)-nu*dz(U0z)-Q*nu*Jy0=-dz(conj(w)*u+conj(u)*w)")
-problem.add_equation("dt(V0)-nu*dz(V0z)+Q*nu*Jx0=-dz(conj(w)*v+conj(v)*w)")
+#Here, we substitute the expression that Jx0=V0 and Jy0=-U0 as the damping for the large-scale shear. 
+problem.add_equation("dt(U0)-nu*dz(U0z)+Q*nu*U0=-dz(conj(w)*u+conj(u)*w)")
+problem.add_equation("dt(V0)-nu*dz(V0z)+Q*nu*V0=-dz(conj(w)*v+conj(v)*w)")
 
 
 #add B.C.
