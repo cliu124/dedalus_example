@@ -109,6 +109,10 @@ domain = de.Domain([z_basis], grid_dtype=np.complex128)
 
 # 2D Boussinesq hydrodynamics
 conj = lambda A: np.conj(A)
+sqrt = lambda A: np.sqrt(A)
+
+#abs = lambda A: np.abs(A)
+
 problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0', \
                                     'uz','vz','wz','Tz','U0z','V0z','T0z','phi_z'])
     
@@ -251,6 +255,34 @@ solver.stop_sim_time = flag.stop_sim_time
 # Analysis
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 analysis.add_system(solver.state)
+
+#add other output quantities
+analysis.add_task('sqrt(2)*abs(T)',name='T_rms')
+analysis.add_task('sqrt(2)*abs(u)',name='u_rms')
+analysis.add_task('sqrt(2)*abs(v)',name='v_rms')
+analysis.add_task('sqrt(2)*abs(w)',name='w_rms')
+analysis.add_task('sqrt(2*abs(u)**2+2*abs(v)**2+2*abs(w)**2)',name='u_vec_rms')
+analysis.add_task('sqrt(2)*abs(u)*sqrt(Ra/Pr)',name='Re_x') #For Figure 4(e)
+analysis.add_task('sqrt(2)*abs(w)*sqrt(Ra/Pr)',name='Re_z') #For Figure 4(e)
+
+#viscous dissipation, For Figure 4(c)
+analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
+                                 +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
+                                 +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2)',name='epsilon_nu') 
+
+#Ohmic dissipation, For Figure 4(c)
+analysis.add_task('2*Q*sqrt(Pr/Ra)*(kx**2*abs(Jx)**2 + ky**2*abs(Jx)**2 + abs(dz(Jx))**2 \
+                                 +kx**2*abs(Jy)**2 + ky**2*abs(Jy)**2 + abs(dz(Jy))**2 \
+                                 +kx**2*abs(Jz)**2 + ky**2*abs(Jz)**2 + abs(dz(Jz))**2)',name='epsilon_eta') 
+
+#Thermal dissipation
+analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(T)**2 + ky**2*abs(T)**2 + abs(Tz)**2', name='epsilon_kappa')
+
+#Note that here we assume Lz=1 such that integ will be equivalent to the vertical averaging. 
+analysis.add_task('T0z(z=0)',name='Nu_p') #plate Nusselt number
+analysis.add_task('1+sqrt(Ra*Pr)*(integ(epsilon_nu)+integ(epsilon_eta))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
+analysis.add_task('sqrt(Ra*Pr)*integ(epsilon_kappa)',name='Nu_kappa') #Nusselt number based on thermal dissipation
+
 
 # # CFL
 # CFL = flow_tools.CFL(solver, initial_dt=flag.initial_dt, cadence=10, safety=0.5,
