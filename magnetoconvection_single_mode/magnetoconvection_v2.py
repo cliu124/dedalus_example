@@ -268,28 +268,28 @@ analysis.add_task('sqrt(2)*abs(u)*sqrt(Ra/Pr)',name='Re_x') #For Figure 4(e)
 analysis.add_task('sqrt(2)*abs(w)*sqrt(Ra/Pr)',name='Re_z') #For Figure 4(e)
 
 #viscous dissipation, For Figure 4(c)
-analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
-                                  +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
-                                  +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2)',name='epsilon_nu') 
+analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
+                                  +2*kx**2*abs(v)**2 + 2*ky**2*abs(v)**2 + 2*abs(vz)**2 \
+                                  +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2)',name='epsilon_nu') 
 
 #Ohmic dissipation, For Figure 4(c)
-analysis.add_task('2*Q*sqrt(Pr/Ra)*(kx**2*abs(Jx)**2 + ky**2*abs(Jx)**2 + abs(dz(Jx))**2 \
-                                 +kx**2*abs(Jy)**2 + ky**2*abs(Jy)**2 + abs(dz(Jy))**2 \
-                                 +kx**2*abs(Jz)**2 + ky**2*abs(Jz)**2 + abs(dz(Jz))**2)',name='epsilon_eta') 
+analysis.add_task('Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*abs(dz(Jx))**2 \
+                                 +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
+                                 +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)',name='epsilon_eta') 
 
 #Thermal dissipation
-analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(T)**2 + ky**2*abs(T)**2 + abs(Tz)**2)', name='epsilon_kappa')
+analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2)', name='epsilon_kappa')
 
 #Note that here we assume Lz=1 such that integ will be equivalent to the vertical averaging. 
-analysis.add_task('T0z(z=0)',name='Nu_p') #plate Nusselt number
-analysis.add_task('1+sqrt(Ra*Pr)*(integ(2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
-                                  +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
-                                  +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2))\
-                                   +integ(2*Q*sqrt(Pr/Ra)*(kx**2*abs(Jx)**2 + ky**2*abs(Jx)**2 + abs(dz(Jx))**2 \
-                                   +kx**2*abs(Jy)**2 + ky**2*abs(Jy)**2 + abs(dz(Jy))**2 \
-                                   +kx**2*abs(Jz)**2 + ky**2*abs(Jz)**2 + abs(dz(Jz))**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
+analysis.add_task('-T0z(z=0)',name='Nu_p') #plate Nusselt number
+analysis.add_task('1+sqrt(Ra*Pr)*(integ(sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
+                                  +2*kx**2*abs(v)**2 + 2*ky**2*abs(v)**2 + 2*abs(vz)**2 \
+                                  +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2))\
+                                   +integ(Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*abs(dz(Jx))**2 \
+                                   +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
+                                   +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
 
-analysis.add_task('sqrt(Ra*Pr)*integ(2*sqrt(Pr/Ra)*(kx**2*abs(T)**2 + ky**2*abs(T)**2 + abs(Tz)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
+analysis.add_task('sqrt(Ra*Pr)*integ(sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
 
 
 # # CFL
