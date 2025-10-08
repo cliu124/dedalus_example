@@ -113,7 +113,7 @@ sqrt = lambda A: np.sqrt(A)
 
 #abs = lambda A: np.abs(A)
 
-problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0','Jx0','Jy0' \
+problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0','Jx0','Jy0', \
                                     'uz','vz','wz','Tz','U0z','V0z','T0z','phi_z'])
     
 problem.parameters['kappa'] = (flag.Rayleigh * flag.Prandtl)**(-1/2)
