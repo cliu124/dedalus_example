@@ -113,11 +113,11 @@ sqrt = lambda A: np.sqrt(A)
 
 #abs = lambda A: np.abs(A)
 
-problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0', \
+problem = de.IVP(domain, variables=['u','v','w','p','Jx','Jy','Jz','phi','T','T0','U0','V0','Jx0','Jy0' \
                                     'uz','vz','wz','Tz','U0z','V0z','T0z','phi_z'])
     
 problem.parameters['kappa'] = (flag.Rayleigh * flag.Prandtl)**(-1/2)
-problem.parameters['nu'] = (flag.Rayleigh / flag.Prandtl)**(-1/2)
+problem.parameters['nu'] = (flag.Prandtl / flag.Rayleigh )**(1/2)
 problem.parameters['zi'] = 1j
 problem.parameters['kx'] = flag.kx
 problem.parameters['ky'] = flag.ky
@@ -144,11 +144,15 @@ problem.add_equation("Jy+zi*ky*phi+u=0")
 problem.add_equation("Jz+phi_z=0")
 problem.add_equation("zi*kx*Jx+zi*ky*Jy+dz(Jz)=0")
 
+problem.add_equation("Jx0=V0")
+problem.add_equation("Jy0=-U0")
+
 problem.add_equation("dt(T)-w-kappa*(dz(Tz)-kx*kx*T-ky*ky*T)=-zi*kx*U0*T-zi*ky*V0*T-w*T0z")
 problem.add_equation("dt(T0)-kappa*dz(T0z)=-dz(conj(w)*T+conj(T)*w)")
 
-problem.add_equation("dt(U0)-nu*dz(U0z)=-dz(conj(w)*u+conj(u)*w)")
-problem.add_equation("dt(V0)-nu*dz(V0z)=-dz(conj(w)*v+conj(v)*w)")
+problem.add_equation("dt(U0)-nu*dz(U0z)-Q*nu*Jy0=-dz(conj(w)*u+conj(u)*w)")
+problem.add_equation("dt(V0)-nu*dz(V0z)+Q*nu*Jx0=-dz(conj(w)*v+conj(v)*w)")
+
 
 #add B.C.
 problem.add_bc("w(z='left')=0")# No penetration
@@ -258,14 +262,14 @@ solver.stop_sim_time = flag.stop_sim_time
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 analysis.add_system(solver.state)
 
-#add other output quantities
-analysis.add_task('sqrt(2)*abs(T)',name='T_rms')
-analysis.add_task('sqrt(2)*abs(u)',name='u_rms')
-analysis.add_task('sqrt(2)*abs(v)',name='v_rms')
-analysis.add_task('sqrt(2)*abs(w)',name='w_rms')
+#add other output quantities. Here are rms of fluctuations. Only compute them using the fluctuations
+analysis.add_task('sqrt(2*abs(T)**2)',name='T_rms')
+analysis.add_task('sqrt(2*abs(u)**2)',name='u_rms')
+analysis.add_task('sqrt(2*abs(v)**2)',name='v_rms')
+analysis.add_task('sqrt(2*abs(w)**2)',name='w_rms')
 analysis.add_task('sqrt(2*abs(u)**2+2*abs(v)**2+2*abs(w)**2)',name='u_vec_rms')
-analysis.add_task('sqrt(2)*abs(u)*sqrt(Ra/Pr)',name='Re_x') #For Figure 4(e)
-analysis.add_task('sqrt(2)*abs(w)*sqrt(Ra/Pr)',name='Re_z') #For Figure 4(e)
+analysis.add_task('sqrt(2*abs(u)**2+abs(U0)**2)*sqrt(Ra/Pr)',name='Re_x') #For Figure 4(e), also add the mean velocity mode. 
+analysis.add_task('sqrt(2*abs(w)**2)*sqrt(Ra/Pr)',name='Re_z') #For Figure 4(e)
 
 #viscous dissipation, For Figure 4(c)
 analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
@@ -278,6 +282,7 @@ analysis.add_task('Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*ab
                                  +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)',name='epsilon_eta') 
 
 #Thermal dissipation
+#Note that for harmonic mode, we have a number 2 and for mean mode, there is no number 2 there.
 analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2)', name='epsilon_kappa')
 
 #Note that here we assume Lz=1 such that integ will be equivalent to the vertical averaging. 
