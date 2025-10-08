@@ -122,6 +122,8 @@ problem.parameters['zi'] = 1j
 problem.parameters['kx'] = flag.kx
 problem.parameters['ky'] = flag.ky
 problem.parameters['Q'] = flag.Q
+problem.parameters['Ra'] = flag.Rayleigh
+problem.parameters['Pr'] = flag.Prandtl
 
 problem.add_equation("uz - dz(u) = 0")
 problem.add_equation("vz - dz(v) = 0")
