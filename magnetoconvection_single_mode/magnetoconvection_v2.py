@@ -278,7 +278,7 @@ analysis.add_task('2*Q*sqrt(Pr/Ra)*(kx**2*abs(Jx)**2 + ky**2*abs(Jx)**2 + abs(dz
                                  +kx**2*abs(Jz)**2 + ky**2*abs(Jz)**2 + abs(dz(Jz))**2)',name='epsilon_eta') 
 
 #Thermal dissipation
-analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(T)**2 + ky**2*abs(T)**2 + abs(Tz)**2', name='epsilon_kappa')
+analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(T)**2 + ky**2*abs(T)**2 + abs(Tz)**2)', name='epsilon_kappa')
 
 #Note that here we assume Lz=1 such that integ will be equivalent to the vertical averaging. 
 analysis.add_task('T0z(z=0)',name='Nu_p') #plate Nusselt number
