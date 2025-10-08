@@ -258,6 +258,11 @@ solver.stop_sim_time = flag.stop_sim_time
 analysis = solver.evaluator.add_file_handler('analysis', sim_dt=flag.post_store_dt)
 analysis.add_system(solver.state)
 
+evaluator = solver.evaluator
+evaluator.vars['epsilon_nu'] = evaluator.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
+                                 +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
+                                 +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2)')
+
 #add other output quantities
 analysis.add_task('sqrt(2)*abs(T)',name='T_rms')
 analysis.add_task('sqrt(2)*abs(u)',name='u_rms')
@@ -268,9 +273,11 @@ analysis.add_task('sqrt(2)*abs(u)*sqrt(Ra/Pr)',name='Re_x') #For Figure 4(e)
 analysis.add_task('sqrt(2)*abs(w)*sqrt(Ra/Pr)',name='Re_z') #For Figure 4(e)
 
 #viscous dissipation, For Figure 4(c)
-analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
-                                 +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
-                                 +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2)',name='epsilon_nu') 
+analysis.add_task('epsilon_nu',name='epsilon_nu')
+
+# analysis.add_task('2*sqrt(Pr/Ra)*(kx**2*abs(u)**2 + ky**2*abs(u)**2 + abs(uz)**2 \
+#                                  +kx**2*abs(v)**2 + ky**2*abs(v)**2 + abs(vz)**2 \
+#                                  +kx**2*abs(w)**2 + ky**2*abs(w)**2 + abs(wz)**2)',name='epsilon_nu') 
 
 #Ohmic dissipation, For Figure 4(c)
 analysis.add_task('2*Q*sqrt(Pr/Ra)*(kx**2*abs(Jx)**2 + ky**2*abs(Jx)**2 + abs(dz(Jx))**2 \
