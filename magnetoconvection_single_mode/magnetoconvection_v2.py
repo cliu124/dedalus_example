@@ -139,10 +139,11 @@ problem.add_equation("dt(v)+zi*ky*p-nu*(dz(vz)-kx*kx*v-ky*ky*v)+Q*nu*Jx=-zi*kx*U
 problem.add_equation("dt(w)+dz(p)-nu*(dz(wz)-kx*kx*w-ky*ky*w)-T=-zi*kx*U0*w-zi*ky*V0*w")
 problem.add_equation("zi*kx*u+zi*ky*v+wz=0")
 
-problem.add_equation("Jx+zi*kx*phi-v=0")
-problem.add_equation("Jy+zi*ky*phi+u=0")
-problem.add_equation("Jz+phi_z=0")
-problem.add_equation("zi*kx*Jx+zi*ky*Jy+dz(Jz)=0")
+#Poisson equation of phi will become: \nabla^2 \phi=\partial_x v-\partial_y u=0. Thus \phi=0
+problem.add_equation("Jx+zi*kx*phi-v=0") #Jx=v=0 for current case
+problem.add_equation("Jy+zi*ky*phi+u=0") #Jy=-u, not equal to zero
+problem.add_equation("Jz+phi_z=0") #Jz=0
+problem.add_equation("zi*kx*Jx+zi*ky*Jy+dz(Jz)=0") #ky=0, and Jx=Jz=0. This will satisfies
 
 problem.add_equation("dt(T)-w-kappa*(dz(Tz)-kx*kx*T-ky*ky*T)=-zi*kx*U0*T-zi*ky*V0*T-w*T0z")
 problem.add_equation("dt(T0)-kappa*dz(T0z)=-dz(conj(w)*T+conj(T)*w)")
@@ -274,24 +275,35 @@ analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz
                                   +2*kx**2*abs(v)**2 + 2*ky**2*abs(v)**2 + 2*abs(vz)**2 \
                                   +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2)',name='epsilon_nu') 
 
-#Ohmic dissipation, For Figure 4(c)
-analysis.add_task('Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*abs(dz(Jx))**2 \
-                                 +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
-                                 +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)',name='epsilon_eta') 
+#Ohmic dissipation, For Figure 4(c), old version not correct
+# analysis.add_task('Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*abs(dz(Jx))**2 \
+#                                  +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
+#                                  +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)',name='epsilon_eta') 
 
+analysis.add_task('Q*sqrt(Pr/Ra)*(2*abs(Jx)**2 + 2*abs(Jy)**2 + 2*abs(Jz)**2)',name='epsilon_eta')    
+    
 #Thermal dissipation
 #Note that for harmonic mode, we have a number 2 and for mean mode, there is no number 2 there.
 analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2)', name='epsilon_kappa')
 
 #Note that here we assume Lz=1 such that integ will be equivalent to the vertical averaging. 
 analysis.add_task('-T0z(z=0)',name='Nu_p') #plate Nusselt number
+
+#Old version: 
+# analysis.add_task('1+sqrt(Ra*Pr)*(integ(sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
+#                                   +2*kx**2*abs(v)**2 + 2*ky**2*abs(v)**2 + 2*abs(vz)**2 \
+#                                   +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2))\
+#                                    +integ(Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*abs(dz(Jx))**2 \
+#                                    +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
+#                                    +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
+
+#correct version, Ohmic dissipation should not take the gradient.     
 analysis.add_task('1+sqrt(Ra*Pr)*(integ(sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
                                   +2*kx**2*abs(v)**2 + 2*ky**2*abs(v)**2 + 2*abs(vz)**2 \
                                   +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2))\
-                                   +integ(Q*sqrt(Pr/Ra)*(2*kx**2*abs(Jx)**2 + 2*ky**2*abs(Jx)**2 + 2*abs(dz(Jx))**2 \
-                                   +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
-                                   +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
-
+                                   +integ(Q*sqrt(Pr/Ra)*(2*abs(Jx)**2 + 2*abs(Jy)**2 + 2*abs(Jz)**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
+    
+    
 analysis.add_task('sqrt(Ra*Pr)*integ(sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
 
 
