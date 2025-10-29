@@ -287,7 +287,7 @@ analysis.add_task('Q*sqrt(Pr/Ra)*(2*abs(Jx)**2 + 2*abs(Jy)**2 + 2*abs(Jz)**2)',n
 analysis.add_task('sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2)', name='epsilon_kappa')
 
 #Note that here we assume Lz=1 such that integ will be equivalent to the vertical averaging. 
-analysis.add_task('-T0z(z=0)',name='Nu_p') #plate Nusselt number
+analysis.add_task('1-T0z(z=0)',name='Nu_p') #plate Nusselt number
 
 #Old version: 
 # analysis.add_task('1+sqrt(Ra*Pr)*(integ(sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
@@ -297,14 +297,14 @@ analysis.add_task('-T0z(z=0)',name='Nu_p') #plate Nusselt number
 #                                    +2*kx**2*abs(Jy)**2 + 2*ky**2*abs(Jy)**2 + 2*abs(dz(Jy))**2 \
 #                                    +2*kx**2*abs(Jz)**2 + 2*ky**2*abs(Jz)**2 + 2*abs(dz(Jz))**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
 
-#correct version, Ohmic dissipation should not take the gradient.     
+#correct version, Ohmic dissipation should not take the gradient on J.   
 analysis.add_task('1+sqrt(Ra*Pr)*(integ(sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2*abs(u)**2 + 2*abs(uz)**2 \
                                   +2*kx**2*abs(v)**2 + 2*ky**2*abs(v)**2 + 2*abs(vz)**2 \
                                   +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2))\
                                    +integ(Q*sqrt(Pr/Ra)*(2*abs(Jx)**2 + 2*abs(Jy)**2 + 2*abs(Jz)**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
     
     
-analysis.add_task('sqrt(Ra*Pr)*integ(sqrt(Pr/Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
+analysis.add_task('sqrt(Ra*Pr)*integ(sqrt(Pr/Ra)*(1+2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
 
 
 # # CFL
