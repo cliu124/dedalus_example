@@ -303,9 +303,12 @@ analysis.add_task('1+sqrt(Ra*Pr)*(integ(sqrt(Pr/Ra)*(2*kx**2*abs(u)**2 + 2*ky**2
                                   +2*kx**2*abs(w)**2 + 2*ky**2*abs(w)**2 + 2*abs(wz)**2))\
                                    +integ(Q*sqrt(Pr/Ra)*(2*abs(Jx)**2 + 2*abs(Jy)**2 + 2*abs(Jz)**2)))',name='Nu_nu_eta') #Nusselt number based on viscous dissipation and Ohmic dissipation
     
-    
-analysis.add_task('sqrt(Ra*Pr)*integ(sqrt(Pr/Ra)*(1+2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
+#old expression, does not seems correct, although does not influence results at Pr=1
+#analysis.add_task('sqrt(Ra*Pr)*integ(sqrt(Pr/Ra)*(1+2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
+analysis.add_task('1+sqrt(Ra*Pr)*integ(sqrt(Pr*Ra)*(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2))',name='Nu_kappa') #Nusselt number based on thermal dissipation
 
+
+#analysis.add_task('1+integ(2*kx**2*abs(T)**2 + 2*ky**2*abs(T)**2 + 2*abs(Tz)**2 + abs(T0z)**2)',name='Nu_kappa') #Nusselt number based on thermal dissipation
 
 # # CFL
 # CFL = flow_tools.CFL(solver, initial_dt=flag.initial_dt, cadence=10, safety=0.5,
